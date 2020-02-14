@@ -1,0 +1,62 @@
+"""Functions related to backups."""
+
+import shutil
+from pathlib import Path
+from .apply import _get_visiblefile_paths, _get_rootdir_path
+from .config import BACKUPDIR_NAME, TIMESTAMP_STR
+from .exceptions import BadFilenameError
+
+
+def move_datafiles_to_backupdir(
+    datadir=None, backupdir_name=BACKUPDIR_NAME, now=TIMESTAMP_STR
+):
+    """Move visible files in given data directory to named backup directory."""
+    # backup_depth, rootdir_path
+    if not datadir:
+        datadir = Path.cwd()
+    backupsub_path = _get_backupsub_path(
+        datadir=datadir, backupdir_name=backupdir_name, now=now
+    )
+    backupsub_path.mkdir(parents=True, exist_ok=True)
+    for visible_file in _get_visiblefile_paths(datadir):
+        shutil.move(str(visible_file), backupsub_path)
+
+
+def _get_backupsub_path(datadir=None, backupdir_name=BACKUPDIR_NAME, now=TIMESTAMP_STR):
+    """Return backups Path named for cwd."""
+    rootdir = _get_rootdir_path()
+    if not datadir:
+        datadir = Path.cwd()
+    sub_name = str(Path(datadir).relative_to(rootdir)).strip("/").replace("/", "_")
+    try:
+        backupsub_path = Path(rootdir) / backupdir_name / sub_name / now
+    except TypeError:
+        raise BadFilenameError(f"Bad 'backupdir_name' - try using default.")
+    return backupsub_path
+
+
+def delete_older_backupdirs(
+    depth=None, rootdir_path=None, backupdir_name=BACKUPDIR_NAME
+):
+    """Delete all but specified number of backups of current working directory."""
+    if not rootdir_path:
+        rootdir_path = _get_rootdir_path()
+    try:
+        depth = abs(int(depth))
+    except (ValueError, TypeError):
+        depth = 0
+    backup_path = Path(rootdir_path) / backupdir_name
+    subdirs = []
+    for subdir in sorted(Path(backup_path).glob("*")):
+        subdirs.append(subdir)
+        subsubdirs = []
+        for subsubdir in sorted(Path(subdir).glob("*")):
+            subsubdirs.insert(0, subsubdir)
+        while len(subsubdirs) > depth:
+            directory_to_be_deleted = subsubdirs.pop()
+            shutil.rmtree(directory_to_be_deleted)
+    for subdir in subdirs:
+        try:
+            subdir.rmdir()
+        except OSError:
+            pass

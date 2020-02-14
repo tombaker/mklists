@@ -1,0 +1,10 @@
+gets.py
+
+    get_datalines: want to stop mklists from running if
+    filenames matching specified bad filename patterns
+    are detected.
+
+ruleclass
+
+    Rules: do not want to stop people from specifying
+    filenames in rule fields

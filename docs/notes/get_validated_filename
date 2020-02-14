@@ -1,0 +1,6 @@
+    """Return filename, but only if it passes all sanity tests.
+    * is composed only of valid characters
+    * does not begin with a dot (ie, name of hidden file)
+    * is not None
+    * does not match "invalid filename" regex
+    * does not match name of an existing directory in current directory"""

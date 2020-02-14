@@ -1,0 +1,12 @@
+The function get_linkified_textline() wraps the URLs found in
+wraps URLs found in text lines with HTML tags to make
+them clickable.
+
+>>> from mklists.linkify import _get_linkified_textline
+
+Lines already containing HREF tags are left untouched:
+
+>>> line = """Line with <a href="http://example.org">HREF tags</a>.\n"""
+>>> _get_linkified_textline(line)
+'Line with <a href="http://example.org">HREF tags</a>.\n'
+

@@ -1,0 +1,25 @@
+def move_specified_datafiles_elsewhere(file2dirs_dict=None, rootdir_pathname=None):
+    """Moves data files to specified destination directories.
+
+    Uses a dictionary, configurable in 'mklists.yml', in which:
+    * filenames without a leading slash are relative to the root
+      directory of the mklists repo.
+    * filenames with a leading slash are relative to the whole
+      filesystem, which may result in their being moved out of
+      the mklists repo.
+    * names of non-existent files are simply ignored.
+
+    Args:
+        file2dirs_dict: keys are filenames, values are destination directories
+    """
+def write_new_datafiles(_name2lines_dict=None):
+    """Writes contents of file2lines dictionary in which:
+    * keys are names of files that will be created
+    * values are (non-empty) contents of such files (lists of text lines)
+
+    Note: assumes that filenames2datalines dictionary is correct:
+    * filenames are valid (e.g., no pathname slashes '/')
+
+    Args:
+        _name2lines_dict: dictionary relating strings to lists
+    """

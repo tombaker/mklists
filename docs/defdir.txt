@@ -1,0 +1,27 @@
+apply.py =============================================
+    apply_rules_to_datalines(ruleobjs, datalines)
+
+getrules.py =============================================
+    get_rules()
+
+gets.py =============================================
+    get_configdict()
+    get_datadir_paths_below()
+    get_datalines()
+
+--  Helper functions:
+    get_rootdir_path()
+    get_visiblefile_paths()
+
+voids.py =============================================
+    delete_older_backupdirs(backup_depth)
+    move_datafiles_to_backupsub(backupsub_path)
+    move_specified_datafiles_elsewhere(files2dirs_dict)
+    write_htmlfiles(filenames2lines_dict)
+    write_new_datafiles(filenames2lines_dict)
+    write_starter_configfile()
+    write_starter_rulefiles()
+
+Main structures:
+    filenames2lines_dict
+    files2dirs_dict

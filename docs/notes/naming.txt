@@ -1,0 +1,85 @@
+Types of file:
+    csvfile
+    datafile
+    htmlfile
+    rulefile
+    visiblefile
+    yamlfile
+
+Names:
+    filename (see: name2lines)
+    shortname
+    pathname
+
+Types of string and (string) line:
+    dataline (see: name2lines)
+    textline
+    htmlline
+    regexstr
+    yamlstr
+
+Types of directory:
+    rootdir
+    htmldir
+    backupdir
+    datadir
+    somedir
+
+Data constructs:
+    field
+    dict
+    list
+    integer
+    regex
+
+Verbs:
+    For boolean functions
+        is
+        are
+        was
+
+    For fruitful functions
+        return
+        read (they also return)
+
+    For void functions
+        delete
+        move
+        write
+
+Adjectives:
+    all
+    compiled
+    config (used as adjective)
+    consolidated
+    equal
+    example
+    initialized
+    match (used as adjective)
+    matchpattern (used as adjective)
+    minimal
+    number (used as adjective)
+    old (actually: older)
+    proper (actually: properly)
+    rule (used as adjective)
+    source (used as adjective)
+    specified
+    target (used as adjective)
+    valid
+
+Other:
+    as
+    from
+    not
+    to
+    under
+    by
+
+Objects:
+    ruleobj
+    yamlobj
+    dataobj
+    settingsobj   - Settings()
+
+Also:
+    name2lines
