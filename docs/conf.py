@@ -8,3 +8,4 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 html_theme = "sphinx_rtd_theme"
 github_project_url = "https://github.com/tombaker/mklists"
 html_static_path = ["_static"]
+master_doc = 'index'
