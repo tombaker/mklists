@@ -12,13 +12,6 @@ tests/__pycache__/
 notes.txt
 tags
 
-# Sphinx documentation
-docs/_static/
-docs/_templates/
-docs/_build/doctrees/
-docs/_build/html/_static/
-docs/_build/html/_sources/
-
 
 # General, as per https://github.com/tombaker/mklists/pull/4
 # Byte-compiled / optimized / DLL files
@@ -88,6 +81,10 @@ instance/
 
 # Scrapy stuff:
 .scrapy
+
+# Sphinx documentation
+doc/_build/
+docs/_build/
 
 # PyBuilder
 target/
