@@ -56,7 +56,7 @@ def test_return_names2lines_dict_no_rules_specified():
 
 
 def test_return_names2lines_dict_no_rules_specified_either():
-    """Exits with error if rule objects list passed as argument is empty."""
+    """Exits with error if list of rule objects, passed as argument, is empty."""
     rules = []
     lines = ["NOW Summer\n", "LATER Winter\n"]
     with pytest.raises(SystemExit):
@@ -79,3 +79,27 @@ def test_return_names2lines_dict_no_data_specified_either():
     lines = []
     with pytest.raises(SystemExit):
         apply_rules_to_datalines(rules=rules, datalines=lines)
+
+
+def test_target_lines_not_sorted_at_all_if_target_sortorder_is_none():
+    """Target lines are not sorted at all if target sort order is None."""
+    rules = [Rule(0, "i", "a.txt", "b.txt", None)]
+    lines = ["aiz\n", "aia\n"]
+    result_dict = {"b.txt": ["aiz\n", "aia\n"]}
+    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+
+
+def test_target_lines_sorted_on_whole_line_if_target_sortorder_is_zero():
+    """Target lines are sorted (on entire line) if target sort order is zero."""
+    rules = [Rule(0, "i", "a.txt", "b.txt", 0)]
+    lines = ["aiz zzz\n", "aia aaa\n"]
+    result_dict = {"b.txt": ["aia aaa\n", "aiz zzz\n"]}
+    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+
+
+def test_target_lines_sorted_correctly_if_target_sortorder_is_greater_than_zero():
+    """Target lines are sorted (on entire line) if target sort order is None."""
+    rules = [Rule(0, "i", "a.txt", "b.txt", 1)]
+    lines = ["aia zzz\n", "aiz aaa\n"]
+    result_dict = {"b.txt": ["aiz aaa\n", "aia zzz\n"]}
+    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
