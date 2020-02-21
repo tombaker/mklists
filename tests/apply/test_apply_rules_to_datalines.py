@@ -46,6 +46,7 @@ def test_target_lines_sorted_correctly_if_target_sortorder_is_greater_than_zero(
     assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
 
 
+@pytest.mark.skip
 def test_return_names2lines_dict_correct_result():
     """Returns correct dictionary from good inputs."""
     rules = [Rule(0, "i", "a.txt", "b.txt", 0)]
@@ -54,6 +55,7 @@ def test_return_names2lines_dict_correct_result():
     assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
 
 
+@pytest.mark.skip
 def test_return_names2lines_dict_another_correct_result():
     """Returns correct dictionary from good inputs."""
     rules = [Rule(2, "i", "a.txt", "b.txt", 1)]
@@ -62,6 +64,7 @@ def test_return_names2lines_dict_another_correct_result():
     assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
 
 
+@pytest.mark.skip
 def test_return_names2lines_dict_yet_another_correct_result():
     """Returns correct dictionary from good inputs."""
     rules = [

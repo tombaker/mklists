@@ -35,7 +35,9 @@ def apply_rules_to_datalines(rules=None, datalines=None):
             first_key_is_initialized = True
 
         for line in datadict[ruleobj.source]:
-            if _dataline_matches_ruleobj(ruleobj, line):
+            pattern = ruleobj.source_matchpattern
+            where_int = ruleobj.source_matchfield
+            if _line_matches_pattern(pattern, where_int, line):
                 datadict[ruleobj.target].append(line)
                 datadict[ruleobj.source].remove(line)
 
@@ -53,21 +55,16 @@ def apply_rules_to_datalines(rules=None, datalines=None):
     return filenames2lines_dict
 
 
-def _dataline_matches_ruleobj(ruleobj=None, dataline_str=None):
-    """Returns True if data line matches pattern specified in given rule."""
-    # Line does not match if given field greater than number of fields in line.
-    if ruleobj.source_matchfield > len(dataline_str.split()):
+def _line_matches_pattern(pattern=None, where_int=None, line=None):
+    """Line matches if given field matches given pattern."""
+    if where_int > len(line.split()):  # not enough fields in line for match
         return False
-
-    # Line matches if given field is zero and pattern is found anywhere in line.
-    if ruleobj.source_matchfield == 0:
-        if re.search(ruleobj.source_matchpattern, dataline_str):
+    if where_int == 0:  # pattern is found anywhere in line
+        if re.search(pattern, line):
             return True
-
-    # Line matches if pattern is found in given field.
-    if ruleobj.source_matchfield > 0:
-        eth = ruleobj.source_matchfield - 1
-        if re.search(ruleobj.source_matchpattern, dataline_str.split()[eth]):
+    if where_int > 0:  # pattern is found in given field
+        field_str = line.split()[where_int - 1]
+        if re.search(pattern, field_str):
             return True
     return False
 
