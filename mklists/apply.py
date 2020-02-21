@@ -55,15 +55,15 @@ def apply_rules_to_datalines(rules=None, datalines=None):
     return filenames2lines_dict
 
 
-def _line_matches_pattern(pattern=None, where_int=None, line=None):
+def _line_matches_pattern(pattern=None, field_int=None, line=None):
     """Line matches if given field matches given pattern."""
-    if where_int > len(line.split()):  # not enough fields in line for match
+    if field_int > len(line.split()):
         return False
-    if where_int == 0:  # pattern is found anywhere in line
+    if field_int == 0:
         if re.search(pattern, line):
             return True
-    if where_int > 0:  # pattern is found in given field
-        field_str = line.split()[where_int - 1]
+    if field_int > 0:
+        field_str = line.split()[field_int - 1]
         if re.search(pattern, field_str):
             return True
     return False
