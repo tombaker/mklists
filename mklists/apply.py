@@ -22,29 +22,20 @@ from .exceptions import (
 
 def apply_rules_to_datalines(rules=None, datalines=None):
     """Returns filename-to-lines dictionary after applying rules to datalines."""
-    datadict = defaultdict(list)
-    first_key_is_initialized = False
     if not rules:
         raise RulesError("No rules specified.")
     if not datalines:
         raise DataError("No data specified.")
-
-    # Evaluate rules, one-by-one, to process entries in datadict.
+    datadict = defaultdict(list)
+    first_key_is_initialized = False
     for ruleobj in rules:
-
-        # Initialize datadict with first rule.
-        #    key: valid filename (from 'source' field of first ruleobj)
-        #    value: list of all data lines
         if not first_key_is_initialized:
             datadict[ruleobj.source] = datalines
             first_key_is_initialized = True
 
-        # Match lines in 'ruleobj.source' against 'rulesobj.regex'.
-        #    append matching lines to value of 'ruleobj.target'
-        #    remove matching lines from value of 'ruleobj.source'
         for line in datadict[ruleobj.source]:
             if _dataline_matches_ruleobj(ruleobj, line):
-                datadict[ruleobj.target].extend([line])
+                datadict[ruleobj.target].append(line)
                 datadict[ruleobj.source].remove(line)
 
         # Sort 'ruleobj.target' lines by field if sortorder was specified.

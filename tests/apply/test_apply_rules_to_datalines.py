@@ -9,12 +9,49 @@ from mklists.apply import apply_rules_to_datalines
 # Right, because these are tests...
 
 
+@pytest.mark.skip
+def test_return_names2lines_dict_correct_result_too():
+    """Returns correct dictionary from good inputs."""
+    rules = [Rule(1, ".", "a.txt", "now.txt", 1)]
+    lines = ["LATER Winter\n", "NOW Summer\n"]
+    result_dict = {"now.txt": ["NOW Summer\n", "LATER Winter\n"], "a.txt": []}
+    assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+
+
+@pytest.mark.skip
+def test_target_lines_not_sorted_at_all_if_target_sortorder_is_none():
+    """Target lines are not sorted at all if target sort order is None."""
+    rules = [Rule(1, "i", "a.txt", "b.txt", None)]
+    lines = ["aiz\n", "aia\n"]
+    resulting_dict = apply_rules_to_datalines(rules, lines)
+    expected_dict = {"b.txt": ["aiz\n", "aia\n"]}
+    assert expected_dict == resulting_dict
+
+
+@pytest.mark.skip
+def test_target_lines_sorted_on_whole_line_if_target_sortorder_is_zero():
+    """Target lines are sorted (on entire line) if target sort order is zero."""
+    rules = [Rule(0, "i", "a.txt", "b.txt", 0)]
+    lines = ["aiz zzz\n", "aia aaa\n"]
+    result_dict = {"b.txt": ["aia aaa zzz\n", "aiz zzz xxx\n"]}
+    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+
+
+@pytest.mark.skip
+def test_target_lines_sorted_correctly_if_target_sortorder_is_greater_than_zero():
+    """Target lines are sorted (on entire line) if target sort order is None."""
+    rules = [Rule(0, "i", "a.txt", "b.txt", 1)]
+    lines = ["aia zzz\n", "aiz aaa\n"]
+    result_dict = {"b.txt": ["aiz aaa\n", "aia zzz\n"]}
+    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+
+
 def test_return_names2lines_dict_correct_result():
     """Returns correct dictionary from good inputs."""
     rules = [Rule(0, "i", "a.txt", "b.txt", 0)]
     lines = ["two ticks\n", "an ant\n", "the mite\n"]
     result_dict = {"a.txt": ["an ant\n"], "b.txt": ["two ticks\n", "the mite\n"]}
-    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+    assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
 
 
 def test_return_names2lines_dict_another_correct_result():
@@ -22,7 +59,7 @@ def test_return_names2lines_dict_another_correct_result():
     rules = [Rule(2, "i", "a.txt", "b.txt", 1)]
     lines = ["two ticks\n", "an ant\n", "the mite\n"]
     result_dict = {"a.txt": ["an ant\n"], "b.txt": ["the mite\n", "two ticks\n"]}
-    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+    assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
 
 
 def test_return_names2lines_dict_yet_another_correct_result():
@@ -37,15 +74,7 @@ def test_return_names2lines_dict_yet_another_correct_result():
         "later.txt": ["LATER Winter\n"],
         "a.txt": [],
     }
-    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
-
-
-def test_return_names2lines_dict_correct_result_too():
-    """Returns correct dictionary from good inputs."""
-    rules = [Rule(1, ".", "a.txt", "now.txt", 1)]
-    lines = ["LATER Winter\n", "NOW Summer\n"]
-    result_dict = {"now.txt": ["NOW Summer\n", "LATER Winter\n"], "a.txt": []}
-    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+    assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
 
 
 def test_return_names2lines_dict_no_rules_specified():
@@ -79,27 +108,3 @@ def test_return_names2lines_dict_no_data_specified_either():
     lines = []
     with pytest.raises(SystemExit):
         apply_rules_to_datalines(rules=rules, datalines=lines)
-
-
-def test_target_lines_not_sorted_at_all_if_target_sortorder_is_none():
-    """Target lines are not sorted at all if target sort order is None."""
-    rules = [Rule(0, "i", "a.txt", "b.txt", None)]
-    lines = ["aiz\n", "aia\n"]
-    result_dict = {"b.txt": ["aiz\n", "aia\n"]}
-    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
-
-
-def test_target_lines_sorted_on_whole_line_if_target_sortorder_is_zero():
-    """Target lines are sorted (on entire line) if target sort order is zero."""
-    rules = [Rule(0, "i", "a.txt", "b.txt", 0)]
-    lines = ["aiz zzz\n", "aia aaa\n"]
-    result_dict = {"b.txt": ["aia aaa\n", "aiz zzz\n"]}
-    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
-
-
-def test_target_lines_sorted_correctly_if_target_sortorder_is_greater_than_zero():
-    """Target lines are sorted (on entire line) if target sort order is None."""
-    rules = [Rule(0, "i", "a.txt", "b.txt", 1)]
-    lines = ["aia zzz\n", "aiz aaa\n"]
-    result_dict = {"b.txt": ["aiz aaa\n", "aia zzz\n"]}
-    apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
