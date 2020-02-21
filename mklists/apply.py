@@ -27,29 +27,30 @@ def apply_rules_to_datalines(rules=None, datalines=None):
     if not datalines:
         raise DataError("No data specified.")
     datadict = defaultdict(list)
-    first_key_is_initialized = False
+    is_first_rule = True
 
     for ruleobj in rules:
-        if not first_key_is_initialized:
+        pattern = ruleobj.source_matchpattern
+        where_int = ruleobj.source_matchfield
+
+        if is_first_rule:
             datadict[ruleobj.source] = datalines
-            first_key_is_initialized = True
+            is_first_rule = False
 
         for line in datadict[ruleobj.source]:
-            pattern = ruleobj.source_matchpattern
-            where_int = ruleobj.source_matchfield
             if _line_matches_pattern(pattern, where_int, line):
                 datadict[ruleobj.target].append(line)
                 datadict[ruleobj.source].remove(line)
 
-        # Sort 'ruleobj.target' lines by field if sortorder was specified.
-        if ruleobj.target_sortorder:
-            eth_sortorder = ruleobj.target_sortorder - 1
-            decorated = [
-                (line.split()[eth_sortorder], __, line)
-                for (__, line) in enumerate(datadict[ruleobj.target])
-            ]
-            decorated.sort()
-            datadict[ruleobj.target] = [line for (___, __, line) in decorated]
+        # # Sort 'ruleobj.target' lines by field if sortorder was specified.
+        # if ruleobj.target_sortorder:
+        #     eth_sortorder = ruleobj.target_sortorder - 1
+        #     decorated = [
+        #         (line.split()[eth_sortorder], __, line)
+        #         for (__, line) in enumerate(datadict[ruleobj.target])
+        #     ]
+        #     decorated.sort()
+        #     datadict[ruleobj.target] = [line for (___, __, line) in decorated]
 
     filenames2lines_dict = dict(datadict)
     return filenames2lines_dict

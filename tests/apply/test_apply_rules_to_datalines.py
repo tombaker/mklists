@@ -12,10 +12,11 @@ from mklists.apply import apply_rules_to_datalines
 @pytest.mark.skip
 def test_return_names2lines_dict_correct_result_too():
     """Returns correct dictionary from good inputs."""
-    rules = [Rule(1, ".", "a.txt", "now.txt", 1)]
+    rules = [Rule(1, ".", "a.txt", "b.txt", None)]
     lines = ["LATER Winter\n", "NOW Summer\n"]
-    result_dict = {"now.txt": ["NOW Summer\n", "LATER Winter\n"], "a.txt": []}
-    assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
+    expected_dict = {"a.txt": [], "b.txt": ["LATER Winter\n", "NOW Summer\n"]}
+    actual_dict = apply_rules_to_datalines(rules=rules, datalines=lines)
+    assert actual_dict == expected_dict
 
 
 @pytest.mark.skip
