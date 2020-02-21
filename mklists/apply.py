@@ -28,6 +28,7 @@ def apply_rules_to_datalines(rules=None, datalines=None):
         raise DataError("No data specified.")
     datadict = defaultdict(list)
     first_key_is_initialized = False
+
     for ruleobj in rules:
         if not first_key_is_initialized:
             datadict[ruleobj.source] = datalines
