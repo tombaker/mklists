@@ -37,20 +37,21 @@ def apply_rules_to_datalines(rules=None, datalines=None):
             datadict[ruleobj.source] = datalines
             is_first_rule = False
 
-        for line in datadict[ruleobj.source]:
+        source_lines_copy = datadict[ruleobj.source][:]
+        for line in source_lines_copy:
             if _line_matches_pattern(pattern, where_int, line):
                 datadict[ruleobj.target].append(line)
                 datadict[ruleobj.source].remove(line)
 
-        # # Sort 'ruleobj.target' lines by field if sortorder was specified.
-        # if ruleobj.target_sortorder:
-        #     eth_sortorder = ruleobj.target_sortorder - 1
-        #     decorated = [
-        #         (line.split()[eth_sortorder], __, line)
-        #         for (__, line) in enumerate(datadict[ruleobj.target])
-        #     ]
-        #     decorated.sort()
-        #     datadict[ruleobj.target] = [line for (___, __, line) in decorated]
+        # Sort 'ruleobj.target' lines by field if sortorder was specified.
+        if ruleobj.target_sortorder:
+            eth_sortorder = ruleobj.target_sortorder - 1
+            decorated = [
+                (line.split()[eth_sortorder], __, line)
+                for (__, line) in enumerate(datadict[ruleobj.target])
+            ]
+            decorated.sort()
+            datadict[ruleobj.target] = [line for (___, __, line) in decorated]
 
     filenames2lines_dict = dict(datadict)
     return filenames2lines_dict
