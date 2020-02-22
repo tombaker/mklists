@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from .apply import _get_visiblefile_paths, _get_rootdir_path
 from .config import BACKUPDIR_NAME, TIMESTAMP_STR
-from .exceptions import BadFilenameError, MklistsError
+from .exceptions import MklistsError
 
 
 def move_datafiles_to_backupdir(
@@ -28,10 +28,7 @@ def _get_backupsub_path(datadir=None, backupdir_name=BACKUPDIR_NAME, now=TIMESTA
     if not datadir:
         datadir = Path.cwd()
     sub_name = str(Path(datadir).relative_to(rootdir)).strip("/").replace("/", "_")
-    try:
-        backupsub_path = Path(rootdir) / backupdir_name / sub_name / now
-    except TypeError:
-        raise BadFilenameError(f"Bad 'backupdir_name' - try using default.")
+    backupsub_path = Path(rootdir) / backupdir_name / sub_name / now
     return backupsub_path
 
 
