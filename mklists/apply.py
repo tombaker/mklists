@@ -26,30 +26,28 @@ def apply_rules_to_datalines(rules=None, datalines=None):
         raise RulesError("No rules specified.")
     if not datalines:
         raise DataError("No data specified.")
-    filenames2lines_dict = defaultdict(list)
+    f2l_dict = defaultdict(list)
     is_first_rule = True
 
-    for ruleobj in rules:
-        pattern = ruleobj.source_matchpattern
-        where_int = ruleobj.source_matchfield
-
+    for rule in rules:
+        pattern = rule.source_matchpattern
+        where_int = rule.source_matchfield
         if is_first_rule:
-            filenames2lines_dict[ruleobj.source] = datalines
+            f2l_dict[rule.source] = datalines
             is_first_rule = False
 
-        source_lines_copy = filenames2lines_dict[ruleobj.source][:]
+        source_lines_copy = f2l_dict[rule.source][:]
         for line in source_lines_copy:
             if _line_matches_pattern(pattern, where_int, line):
-                filenames2lines_dict[ruleobj.target].append(line)
-                filenames2lines_dict[ruleobj.source].remove(line)
+                f2l_dict[rule.target].append(line)
+                f2l_dict[rule.source].remove(line)
 
-        if filenames2lines_dict[ruleobj.target]:
-            _dsusort_targetlines
+        f2l_dict[rule.target] = _dsusort_lines(f2l_dict[rule.target])
 
-    return dict(filenames2lines_dict)
+    return dict(f2l_dict)
 
 
-def _dsusort_targetlines(lines=None, sortorder=None):
+def _dsusort_lines(lines=None, sortorder=None):
     """Returns list of datalines sorted by awkfield-numbered sort-order."""
     if lines is None:
         raise DataError("No lines to sort.")
