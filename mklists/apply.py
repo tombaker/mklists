@@ -51,7 +51,7 @@ def _dsusort_lines(lines=None, sortorder=None):
     """Returns list of datalines sorted by awkfield-numbered sort-order."""
     if lines is None:
         raise DataError("No lines to sort.")
-    elif lines is []:
+    elif lines == []:
         return lines
     elif sortorder is None:
         return lines
