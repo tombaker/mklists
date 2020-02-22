@@ -55,9 +55,9 @@ def _dsusort_lines(lines=None, sortorder=None):
         raise DataError("No lines to sort.")
     if sortorder == 0:
         return sorted(lines)
-    elif not sortorder:
+    if not sortorder:
         return lines
-    elif sortorder > 0:
+    if sortorder > 0:
         zeroeth_sortorder = sortorder - 1
         decorated_lines = []
         for line in lines:
