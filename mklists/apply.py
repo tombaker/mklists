@@ -42,7 +42,9 @@ def apply_rules_to_datalines(rules=None, datalines=None):
                 f2l_dict[rule.target].append(line)
                 f2l_dict[rule.source].remove(line)
 
-        f2l_dict[rule.target] = _dsusort_lines(f2l_dict[rule.target])
+        lines_to_sort = f2l_dict[rule.target]
+        sortorder = rule.target_sortorder
+        f2l_dict[rule.target] = _dsusort_lines(lines_to_sort, sortorder)
 
     return dict(f2l_dict)
 
@@ -56,9 +58,15 @@ def _dsusort_lines(lines=None, sortorder=None):
     elif sortorder == 0:
         return sorted(lines)
     elif sortorder > 0:
-        ethorder = sortorder - 1
-        decorated_lines = sorted([(line.split()[ethorder], line) for line in lines])
-        return [line for (__, line) in decorated_lines]
+        zeroeth_sortorder = sortorder - 1
+        decorated_lines = []
+        for line in lines:
+            if sortorder > len(line.split()):
+                decorated_line = ("", line)
+            else:
+                decorated_line = (line.split()[zeroeth_sortorder], line)
+            decorated_lines.append(decorated_line)
+        return sorted([line for (__, line) in decorated_lines])
     return lines
 
 
