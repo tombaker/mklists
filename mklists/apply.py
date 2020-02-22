@@ -26,7 +26,7 @@ def apply_rules_to_datalines(rules=None, datalines=None):
         raise RulesError("No rules specified.")
     if not datalines:
         raise DataError("No data specified.")
-    datadict = defaultdict(list)
+    filenames2lines_dict = defaultdict(list)
     is_first_rule = True
 
     for ruleobj in rules:
@@ -34,27 +34,35 @@ def apply_rules_to_datalines(rules=None, datalines=None):
         where_int = ruleobj.source_matchfield
 
         if is_first_rule:
-            datadict[ruleobj.source] = datalines
+            filenames2lines_dict[ruleobj.source] = datalines
             is_first_rule = False
 
-        source_lines_copy = datadict[ruleobj.source][:]
+        source_lines_copy = filenames2lines_dict[ruleobj.source][:]
         for line in source_lines_copy:
             if _line_matches_pattern(pattern, where_int, line):
-                datadict[ruleobj.target].append(line)
-                datadict[ruleobj.source].remove(line)
+                filenames2lines_dict[ruleobj.target].append(line)
+                filenames2lines_dict[ruleobj.source].remove(line)
 
-        # Sort 'ruleobj.target' lines by field if sortorder was specified.
-        if ruleobj.target_sortorder:
-            eth_sortorder = ruleobj.target_sortorder - 1
-            decorated = [
-                (line.split()[eth_sortorder], __, line)
-                for (__, line) in enumerate(datadict[ruleobj.target])
-            ]
-            decorated.sort()
-            datadict[ruleobj.target] = [line for (___, __, line) in decorated]
+        if filenames2lines_dict[ruleobj.target]:
+            _dsusort_targetlines
 
-    filenames2lines_dict = dict(datadict)
-    return filenames2lines_dict
+    return dict(filenames2lines_dict)
+
+
+def _dsusort_targetlines(lines=None, sortorder=None):
+    """Returns list of datalines sorted by awkfield-numbered sort-order."""
+    if lines is None:
+        raise DataError("No lines to sort.")
+    elif lines is []:
+        return lines
+    elif sortorder is None:
+        return lines
+    elif sortorder == 0:
+        return sorted(lines)
+    elif sortorder > 0:
+        ethorder = sortorder - 1
+        decorated_lines = sorted([(line.split()[ethorder], line) for line in lines])
+        return [line for (__, line) in decorated_lines]
 
 
 def _line_matches_pattern(pattern=None, field_int=None, line=None):

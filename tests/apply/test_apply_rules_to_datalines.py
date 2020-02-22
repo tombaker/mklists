@@ -9,7 +9,6 @@ from mklists.apply import apply_rules_to_datalines
 # Right, because these are tests...
 
 
-@pytest.mark.skip
 def test_return_names2lines_dict_correct_result_too():
     """Returns correct dictionary from good inputs."""
     rules = [Rule(1, ".", "a.txt", "b.txt", None)]
@@ -17,34 +16,6 @@ def test_return_names2lines_dict_correct_result_too():
     expected_dict = {"a.txt": [], "b.txt": ["LATER Winter\n", "NOW Summer\n"]}
     actual_dict = apply_rules_to_datalines(rules=rules, datalines=lines)
     assert actual_dict == expected_dict
-
-
-@pytest.mark.skip
-def test_target_lines_not_sorted_at_all_if_target_sortorder_is_none():
-    """Target lines are not sorted at all if target sort order is None."""
-    rules = [Rule(1, "i", "a.txt", "b.txt", None)]
-    lines = ["aiz\n", "aia\n"]
-    resulting_dict = apply_rules_to_datalines(rules, lines)
-    expected_dict = {"b.txt": ["aiz\n", "aia\n"]}
-    assert expected_dict == resulting_dict
-
-
-@pytest.mark.skip
-def test_target_lines_sorted_on_whole_line_if_target_sortorder_is_zero():
-    """Target lines are sorted (on entire line) if target sort order is zero."""
-    rules = [Rule(0, "i", "a.txt", "b.txt", 0)]
-    lines = ["aiz zzz\n", "aia aaa\n"]
-    result_dict = {"b.txt": ["aia aaa zzz\n", "aiz zzz xxx\n"]}
-    assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
-
-
-@pytest.mark.skip
-def test_target_lines_sorted_correctly_if_target_sortorder_is_greater_than_zero():
-    """Target lines are sorted (on entire line) if target sort order is None."""
-    rules = [Rule(0, "i", "a.txt", "b.txt", 1)]
-    lines = ["aia zzz\n", "aiz aaa\n"]
-    result_dict = {"b.txt": ["aiz aaa\n", "aia zzz\n"]}
-    assert apply_rules_to_datalines(rules=rules, datalines=lines) == result_dict
 
 
 @pytest.mark.skip
