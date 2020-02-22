@@ -176,8 +176,6 @@ def _get_validated_filename(filename=None, valid_chars=VALID_FILENAME_CHARACTERS
     if isinstance(filename, Path):
         if str(filename) == Path(filename).name:
             filename = Path(filename).name
-        else:
-            raise BadFilenameError(f"{repr(filename)} is not a valid filename.")
     for char in filename:
         if not bool(re.search(valid_chars, char)):
             raise BadFilenameError(f"Filenames must use only {repr(valid_chars)}.")
@@ -185,6 +183,4 @@ def _get_validated_filename(filename=None, valid_chars=VALID_FILENAME_CHARACTERS
         raise BadFilenameError(f"{repr(filename)} is name of existing directory.")
     if re.match(r"\.", filename):
         raise BadFilenameError(f"{repr(filename)} must not start with dot.")
-    if not re.search(r"[A-Za-z0-9]", filename):
-        raise BadFilenameError(f"{repr(filename)} needs _some_ letters or numbers.")
     return filename
