@@ -1,13 +1,23 @@
 """@@@Docstring"""
 
+import pytest
 from mklists.apply import _dsusort_lines
 
 
-def test_lines_not_sorted_if_sortorder_is_none():
+def test_leave_lines_unsorted_if_sortorder_is_none():
     """Lines left unsorted if sort order is None."""
     input_lines = ["aiz\n", "aia\n"]
     expected_output = ["aiz\n", "aia\n"]
     sortorder = None
+    actual_output = _dsusort_lines(input_lines, sortorder)
+    assert expected_output == actual_output
+
+
+def test_leave_lines_unsorted_if_sortorder_is_not_integer():
+    """Lines left unsorted if sort order is not an integer."""
+    input_lines = ["aiz\n", "aia\n"]
+    expected_output = ["aiz\n", "aia\n"]
+    sortorder = -15.2
     actual_output = _dsusort_lines(input_lines, sortorder)
     assert expected_output == actual_output
 
@@ -37,6 +47,14 @@ def test_sort_on_field4_where_not_all_lines_have_four_fields():
     sortorder = 4
     actual_output = _dsusort_lines(input_lines, sortorder)
     assert actual_output == expected_output
+
+
+def test_exits_if_no_datalines_provided():
+    """Exits if no data lines provided."""
+    input_lines = []
+    sortorder = 1
+    with pytest.raises(SystemExit):
+        _dsusort_lines(input_lines, sortorder)
 
 
 # ['the tick\n', 'two mites\n']

@@ -1,8 +1,8 @@
 """Returns passed-in filename after validation and type coercion."""
 
 import os
-from pathlib import Path
 import pytest
+from pathlib import Path
 from mklists.rules import _get_validated_filename
 
 

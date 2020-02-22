@@ -59,8 +59,15 @@ def test_raise_exception_if_rootdir_not_found(tmp_path):
         _get_backupsub_path()
 
 
-def test_raise_exception_if_argument_is_wrong_type(tmp_path):
+def test_exit_if_passed_datadir_argument_of_wrong_type(tmp_path):
     """Raises exception if an argument of the wrong type is passed."""
     os.chdir(tmp_path)
     with pytest.raises(SystemExit):
         _get_backupsub_path(["asdf"])
+
+
+def test_exit_if_passed_backupdir_name_argument_of_wrong_type(tmp_path):
+    """Raises exception if an argument of the wrong type is passed."""
+    os.chdir(tmp_path)
+    with pytest.raises(SystemExit):
+        _get_backupsub_path(backupdir_name=123456)

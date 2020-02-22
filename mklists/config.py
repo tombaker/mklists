@@ -25,7 +25,6 @@ CONFIGFILE_CONTENT = (
     "- \.swp$\n"
     "- \.tmp$\n"
     "- ~$\n"
-    "\n"
     "# # files2dirs_dict maps file to directory where it should be moved\n"
     "# files2dirs_dict:\n"
     "#     to_a.txt: a\n"

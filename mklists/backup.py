@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from .apply import _get_visiblefile_paths, _get_rootdir_path
 from .config import BACKUPDIR_NAME, TIMESTAMP_STR
-from .exceptions import BadFilenameError
+from .exceptions import BadFilenameError, MklistsError
 
 
 def move_datafiles_to_backupdir(
@@ -41,10 +41,12 @@ def delete_older_backupdirs(
     """Delete all but specified number of backups of current working directory."""
     if not rootdir_path:
         rootdir_path = _get_rootdir_path()
+    if not depth:
+        depth = 0
     try:
         depth = abs(int(depth))
     except (ValueError, TypeError):
-        depth = 0
+        raise MklistsError(f"Bad value for depth: {depth}")
     backup_path = Path(rootdir_path) / backupdir_name
     subdirs = []
     for subdir in sorted(Path(backup_path).glob("*")):

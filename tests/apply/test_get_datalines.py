@@ -16,7 +16,7 @@ def test_get_datalines(tmp_path):
 
 
 def test_exit_if_blank_lines_found(tmp_path):
-    """Exit with error message after blank line found."""
+    """Exits if file with blank line found."""
     os.chdir(tmp_path)
     Path("foo").write_text("foo stuff\n\nmore foo stuff\n")
     Path("bar").write_text("bar stuff\n")
@@ -25,8 +25,7 @@ def test_exit_if_blank_lines_found(tmp_path):
 
 
 def test_exit_if_non_utf8_found(tmp_path):
-    """Exit with error message after non-UTF8 material found.
-    Todo: find out how to write non-UTF8 to a file."""
+    """Exits if file with non-UTF8 contents found."""
     import pickle
 
     os.chdir(tmp_path)
@@ -40,9 +39,18 @@ def test_exit_if_non_utf8_found(tmp_path):
 
 
 def test_exit_if_no_data_found(tmp_path):
-    """Exit with error message if there is no data to process."""
+    """Exit if there is no data to process."""
     os.chdir(tmp_path)
     Path("foo").write_text("")
     Path("bar").write_text("")
     with pytest.raises(SystemExit):
         get_datalines()
+
+
+def test_exit_if_swap_file_found(tmp_path):
+    """Exit if swap file (matching bad_filename_patterns) is found."""
+    os.chdir(tmp_path)
+    patterns = ["\.swp$", "\.tmp$"]
+    Path("foo.swp").write_text("some text")
+    with pytest.raises(SystemExit):
+        get_datalines(bad_filename_patterns=patterns)

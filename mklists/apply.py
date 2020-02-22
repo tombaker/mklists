@@ -51,12 +51,12 @@ def apply_rules_to_datalines(rules=None, datalines=None):
 
 def _dsusort_lines(lines=None, sortorder=None):
     """Returns list of datalines sorted by awkfield-numbered sort-order."""
-    if lines is None:
+    if not lines:
         raise DataError("No lines to sort.")
-    elif sortorder is None:
-        return lines
-    elif sortorder == 0:
+    if sortorder == 0:
         return sorted(lines)
+    elif not sortorder:
+        return lines
     elif sortorder > 0:
         zeroeth_sortorder = sortorder - 1
         decorated_lines = []
