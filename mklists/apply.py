@@ -26,9 +26,9 @@ def apply_rules_to_datalines(rules=None, datalines=None):
         raise RulesError("No rules specified.")
     if not datalines:
         raise DataError("No data specified.")
+
     f2l_dict = defaultdict(list)
     is_first_rule = True
-
     for rule in rules:
         pattern = rule.source_matchpattern
         where_int = rule.source_matchfield
@@ -42,9 +42,9 @@ def apply_rules_to_datalines(rules=None, datalines=None):
                 f2l_dict[rule.target].append(line)
                 f2l_dict[rule.source].remove(line)
 
-        lines_to_sort = f2l_dict[rule.target]
+        target_lines = f2l_dict[rule.target]
         sortorder = rule.target_sortorder
-        f2l_dict[rule.target] = _dsusort_lines(lines_to_sort, sortorder)
+        f2l_dict[rule.target] = _dsusort_lines(target_lines, sortorder)
 
     return dict(f2l_dict)
 
@@ -62,11 +62,13 @@ def _dsusort_lines(lines=None, sortorder=None):
         decorated_lines = []
         for line in lines:
             if sortorder > len(line.split()):
-                decorated_line = ("", line)
+                decorated_line = (line, "")
             else:
-                decorated_line = (line.split()[zeroeth_sortorder], line)
+                decorated_line = (line, line.split()[zeroeth_sortorder])
             decorated_lines.append(decorated_line)
-        return sorted([line for (__, line) in decorated_lines])
+
+        decorated_lines.sort(key=lambda item: item[1])
+        return [line for (line, __) in decorated_lines]
     return lines
 
 

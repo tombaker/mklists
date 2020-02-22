@@ -1,6 +1,5 @@
 """@@@Docstring"""
 
-import pytest
 from mklists.apply import _dsusort_lines
 
 
@@ -13,7 +12,6 @@ def test_lines_not_sorted_if_sortorder_is_none():
     assert expected_output == actual_output
 
 
-@pytest.mark.skip
 def test_lines_not_sorted_if_sortorder_greater_than_fields_in_line():
     """Lines left unsorted if sort order greater than number of fields in line."""
     input_lines = ["aiz\n", "aia\n"]
@@ -32,16 +30,16 @@ def test_lines_sorted_on_whole_line_if_sortorder_is_zero():
     assert expected_output == actual_output
 
 
-@pytest.mark.skip
-def test_lines_sorted_on_whole_line_if_target_sortorder_greater_than_zero():
-    """Lines sorted on entire line if target sort order is None."""
-    input_lines = ["aiz zzz\n", "aia acc\n", "aza aaa\n"]
-    expected_output = ["aza aaa\n", "aia acc\n", "aiz zzz\n"]
-    sortorder = 2
+def test_sort_on_field4_where_not_all_lines_have_four_fields():
+    """Lines with less fields than sortorder get sorted first."""
+    input_lines = ["f g h i j\n", "a b c d e\n", "k l m\n"]
+    expected_output = ["k l m\n", "a b c d e\n", "f g h i j\n"]
+    sortorder = 4
     actual_output = _dsusort_lines(input_lines, sortorder)
-    assert expected_output == actual_output
+    assert actual_output == expected_output
 
 
+# ['the tick\n', 'two mites\n']
 # @pytest.mark.skip
 # def test_sort_on_field3():
 #     input_lines = ["a b c d e\n", "f g h i j\n", "k l m\n"]
@@ -52,13 +50,3 @@ def test_lines_sorted_on_whole_line_if_target_sortorder_greater_than_zero():
 #     assert actual_output == expected_output
 #
 #
-# @pytest.mark.skip
-# def test_sort_on_field4_where_not_all_lines_have_four_fields():
-#     """Lines with less fields than sortorder get sorted first."""
-#     input_lines = ["a b c d e\n", "f g h i j\n", "k l m\n"]
-#     # [("", "k l m\n"), ("d", "a b c d e\n"), ("i", "f g h i j\n")]
-#     expected_output = ["k l m\n", "a b c d e\n", "f g h i j\n"]
-#     sortorder = 4
-#     actual_output = _dsusort_lines(input_lines, sortorder)
-#     assert actual_output == expected_output
-# ~

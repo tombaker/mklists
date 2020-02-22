@@ -9,24 +9,22 @@ from mklists.apply import apply_rules_to_datalines
 # Right, because these are tests...
 
 
-@pytest.mark.skip
-def test_return_names2lines_dict_another_correct_result():
-    """Returns correct dictionary from good inputs."""
-    rules = [Rule(2, "i", "a.txt", "b.txt", 1)]
+def test_sorts_on_second_field_given_sortorder_two():
+    """Correctly sorts on second field."""
+    rules = [Rule(2, "i", "a.txt", "b.txt", 2)]
     lines = ["the tick\n", "an ant\n", "two mites\n"]
-    result_dict = {"a.txt": ["an ant\n"], "b.txt": ["two mites\n", "the tick\n"]}
-    actual_dict = apply_rules_to_datalines(rules=rules, datalines=lines)
-    assert actual_dict == result_dict
+    expected_dict = {"a.txt": ["an ant\n"], "b.txt": ["two mites\n", "the tick\n"]}
+    actual_dict = apply_rules_to_datalines(rules, lines)
+    assert actual_dict == expected_dict
 
 
-@pytest.mark.skip
-def test_return_n2l_dict_given_good_inputs():
-    """Returns correct dictionary from good inputs."""
+def test_sorts_on_entire_line_given_sortorder_zero():
+    """Correctly sorts on entire line."""
     rules = [Rule(0, "i", "a.txt", "b.txt", 0)]
     lines = ["two ticks\n", "an ant\n", "the mite\n"]
-    result_dict = {"a.txt": ["an ant\n"], "b.txt": ["two ticks\n", "the mite\n"]}
-    actual_dict = apply_rules_to_datalines(rules=rules, datalines=lines)
-    assert actual_dict == result_dict
+    expected_dict = {"a.txt": ["an ant\n"], "b.txt": ["the mite\n", "two ticks\n"]}
+    actual_dict = apply_rules_to_datalines(rules, lines)
+    assert actual_dict == expected_dict
 
 
 def test_all_lines_moved_to_target():
@@ -34,7 +32,7 @@ def test_all_lines_moved_to_target():
     rules = [Rule(1, ".", "a.txt", "b.txt", None)]
     lines = ["LATER Winter\n", "NOW Summer\n"]
     expected_dict = {"a.txt": [], "b.txt": ["LATER Winter\n", "NOW Summer\n"]}
-    actual_dict = apply_rules_to_datalines(rules=rules, datalines=lines)
+    actual_dict = apply_rules_to_datalines(rules, lines)
     assert actual_dict == expected_dict
 
 
