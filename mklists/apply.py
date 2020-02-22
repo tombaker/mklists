@@ -51,8 +51,6 @@ def _dsusort_lines(lines=None, sortorder=None):
     """Returns list of datalines sorted by awkfield-numbered sort-order."""
     if lines is None:
         raise DataError("No lines to sort.")
-    elif lines == []:
-        return lines
     elif sortorder is None:
         return lines
     elif sortorder == 0:
@@ -61,6 +59,7 @@ def _dsusort_lines(lines=None, sortorder=None):
         ethorder = sortorder - 1
         decorated_lines = sorted([(line.split()[ethorder], line) for line in lines])
         return [line for (__, line) in decorated_lines]
+    return lines
 
 
 def _line_matches_pattern(pattern=None, field_int=None, line=None):
