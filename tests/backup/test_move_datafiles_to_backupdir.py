@@ -9,7 +9,7 @@ from mklists.config import BACKUPDIR_NAME, CONFIGFILE_NAME
 def test_move_files_to_backupsub_no_datadir_specified(tmp_path):
     """Sets default of current directory if datadir directory is specified."""
     os.chdir(tmp_path)
-    Path(CONFIGFILE_NAME).write_text("config stuff")  # for _get_rootdir_path()
+    Path(CONFIGFILE_NAME).write_text("config stuff")  # for _find_rootdir_path()
     timestamp = "2020-02-13_1021_06488910"
     tmp_datadir = Path(tmp_path) / "data"
     tmp_datadir.mkdir()
@@ -28,7 +28,7 @@ def test_move_files_to_backupsub_no_datadir_specified(tmp_path):
 def test_move_files_to_backupsub_with_datadir_specified(tmp_path):
     """Sets default of current directory if datadir directory is specified."""
     os.chdir(tmp_path)
-    Path(CONFIGFILE_NAME).write_text("config stuff")  # for _get_rootdir_path()
+    Path(CONFIGFILE_NAME).write_text("config stuff")  # for _find_rootdir_path()
     timestamp = "2020-02-13_1021_06488910"
     tmp_datadir = Path(tmp_path) / "data"
     tmp_datadir.mkdir()

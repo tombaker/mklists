@@ -2,7 +2,7 @@
 
 import shutil
 from pathlib import Path
-from .apply import _get_visiblefile_paths, _get_rootdir_path
+from .apply import _get_visiblefile_paths, _find_rootdir_path
 from .config import BACKUPDIR_NAME, TIMESTAMP_STR
 from .exceptions import MklistsError
 
@@ -24,7 +24,7 @@ def move_datafiles_to_backupdir(
 
 def _get_backupsub_path(datadir=None, backupdir_name=BACKUPDIR_NAME, now=TIMESTAMP_STR):
     """Return backups Path named for cwd."""
-    rootdir = _get_rootdir_path()
+    rootdir = _find_rootdir_path()
     if not datadir:
         datadir = Path.cwd()
     sub_name = str(Path(datadir).relative_to(rootdir)).strip("/").replace("/", "_")
@@ -37,7 +37,7 @@ def delete_older_backupdirs(
 ):
     """Delete all but specified number of backups of current working directory."""
     if not rootdir_path:
-        rootdir_path = _get_rootdir_path()
+        rootdir_path = _find_rootdir_path()
     if not depth:
         depth = 0
     try:

@@ -4,7 +4,7 @@ import io
 import os
 import re
 from pathlib import Path
-from .apply import _get_visiblefile_paths, _get_rootdir_path
+from .apply import _get_visiblefile_paths, _find_rootdir_path
 from .config import HTMLDIR_NAME, URL_PATTERN_REGEX
 from .exceptions import BadFilenameError
 
@@ -30,7 +30,7 @@ def write_htmlfiles(filenames2lines_dict=None, datadir=None):
 def _get_htmldir_path(datadir=None, rootdir=None, htmldir_name=HTMLDIR_NAME):
     """Return pathname for folder holding htmlified data files."""
     if not rootdir:
-        rootdir = _get_rootdir_path()
+        rootdir = _find_rootdir_path()
     if not datadir:
         datadir = Path.cwd()
     html_subdir = Path(datadir).relative_to(rootdir)

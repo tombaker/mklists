@@ -89,7 +89,7 @@ def _line_matches_pattern(pattern=None, field_int=None, line=None):
 def get_configdict(rootdir_path=None, configfile_name=CONFIGFILE_NAME):
     """Returns configuration dictionary from YAML config file (or exits with errors."""
     if not rootdir_path:
-        rootdir_path = _get_rootdir_path()
+        rootdir_path = _find_rootdir_path()
     configfile = Path(rootdir_path) / configfile_name
     try:
         configfile_contents = Path(configfile).read_text()
@@ -142,7 +142,7 @@ def get_datalines(datadir=None, bad_filename_patterns=None):
     return all_datalines
 
 
-def _get_rootdir_path(datadir=None, configfile=CONFIGFILE_NAME):
+def _find_rootdir_path(datadir=None, configfile=CONFIGFILE_NAME):
     """Return root pathname of mklists repo wherever executed in repo."""
     if not datadir:
         datadir = Path.cwd()
