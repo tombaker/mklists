@@ -4,7 +4,7 @@ import os
 import pytest
 from pathlib import Path
 from mklists.config import HTMLDIR_NAME
-from mklists.linkify import _get_htmldir_path
+from mklists.linkify import _form_htmldir_pathname
 
 
 def test_return_htmldir_pathname():
@@ -13,7 +13,7 @@ def test_return_htmldir_pathname():
     hd = HTMLDIR_NAME
     dd = "/Users/tbaker/tmp/agenda"
     expected = Path("/Users/tbaker/tmp").joinpath(HTMLDIR_NAME, "agenda")
-    assert _get_htmldir_path(datadir=dd, rootdir=rd, htmldir_name=hd) == expected
+    assert _form_htmldir_pathname(datadir=dd, rootdir=rd, htmldir_name=hd) == expected
 
 
 def test_return_htmldir_pathname_html_subdirectories_nested():
@@ -21,7 +21,7 @@ def test_return_htmldir_pathname_html_subdirectories_nested():
     rd = "/Users/tbaker/tmp"
     dd = "/Users/tbaker/tmp/a/b"
     expected = Path("/Users/tbaker/tmp").joinpath(HTMLDIR_NAME, "a/b")
-    real = _get_htmldir_path(rootdir=rd, datadir=dd)
+    real = _form_htmldir_pathname(rootdir=rd, datadir=dd)
     assert real == expected
 
 
@@ -31,7 +31,7 @@ def test_exits_if_rootdir_cannot_be_found(tmp_path):
     dd.mkdir()
     os.chdir(dd)
     with pytest.raises(SystemExit):
-        _get_htmldir_path(rootdir=None, datadir=dd)
+        _form_htmldir_pathname(rootdir=None, datadir=dd)
 
 
 def test_exit_if_htmldir_is_explicitly_given_as_none(tmp_path):
@@ -41,7 +41,7 @@ def test_exit_if_htmldir_is_explicitly_given_as_none(tmp_path):
     dd.mkdir()
     os.chdir(dd)
     with pytest.raises(SystemExit):
-        _get_htmldir_path(rootdir=rd, htmldir_name=None)
+        _form_htmldir_pathname(rootdir=rd, htmldir_name=None)
 
 
 def test_return_htmldir_pathname_datadir_name_not_supplied(tmp_path):
@@ -52,7 +52,7 @@ def test_return_htmldir_pathname_datadir_name_not_supplied(tmp_path):
     os.chdir(ab)
     assert HTMLDIR_NAME == "_html"
     expected = Path(tmp_path) / HTMLDIR_NAME / "a/b"
-    assert _get_htmldir_path() == expected
+    assert _form_htmldir_pathname() == expected
 
 
 def test_return_htmldir_path_specifying_different_html_name(tmp_path):
@@ -63,4 +63,4 @@ def test_return_htmldir_path_specifying_different_html_name(tmp_path):
     os.chdir(ab)
     different_htmldir_name = ".html"
     expected = Path(tmp_path) / different_htmldir_name / "a/b"
-    assert _get_htmldir_path(htmldir_name=".html") == expected
+    assert _form_htmldir_pathname(htmldir_name=".html") == expected

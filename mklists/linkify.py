@@ -13,7 +13,7 @@ def write_htmlfiles(filenames2lines_dict=None, datadir=None):
     """Writes contents of in-memory dictionary, urlified, to disk."""
     if not datadir:
         datadir = Path.cwd()
-    htmldir_subdir_pathname = _get_htmldir_path()
+    htmldir_subdir_pathname = _form_htmldir_pathname()
     if not os.path.exists(htmldir_subdir_pathname):
         Path(htmldir_subdir_pathname).mkdir(parents=True, exist_ok=True)
     os.chdir(htmldir_subdir_pathname)
@@ -27,7 +27,7 @@ def write_htmlfiles(filenames2lines_dict=None, datadir=None):
         io.open(file_to_write, "w", encoding="utf-8").writelines(lines_to_be_written)
 
 
-def _get_htmldir_path(datadir=None, rootdir=None, htmldir_name=HTMLDIR_NAME):
+def _form_htmldir_pathname(datadir=None, rootdir=None, htmldir_name=HTMLDIR_NAME):
     """Return pathname for folder holding htmlified data files."""
     if not rootdir:
         rootdir = _find_rootdir_path()
