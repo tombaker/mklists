@@ -105,7 +105,7 @@ def get_rules(datadir=None):
     for rulefile in rulefile_chain:
         rule_component_lists = _read_components_from_rulefile(rulefile)
         rule_component_lists_aggregated.extend(rule_component_lists)
-    rules = _get_ruleobj_list_from_component_lists(rule_component_lists_aggregated)
+    rules = _get_ruleobjs_from_components(rule_component_lists_aggregated)
     return rules
 
 
@@ -155,7 +155,7 @@ def _read_components_from_rulefile(csvfile=None):
     return rule_component_list
 
 
-def _get_ruleobj_list_from_component_lists(pyobj=None):
+def _get_ruleobjs_from_components(pyobj=None):
     """Return list of Rule objects from list of lists of rule components."""
     if not pyobj:
         raise RulesError("Expecting list of lists of rule components.")

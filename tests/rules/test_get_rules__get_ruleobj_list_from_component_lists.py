@@ -2,7 +2,7 @@
 
 import pytest
 import re
-from mklists.rules import Rule, _get_ruleobj_list_from_component_lists
+from mklists.rules import Rule, _get_ruleobjs_from_components
 
 # pylint: disable=unused-argument
 # In tests, fixture arguments may look like they are unused.
@@ -46,36 +46,36 @@ TEST_RULEOBJ_LIST = [
 ]
 
 
-def test_get_ruleobj_list_from_component_lists(reinitialize_ruleclass_variables):
+def test_get_ruleobjs_from_components(reinitialize_ruleclass_variables):
     """Returns list of Rule objects from Python list of five-item lists."""
     rules_list = TEST_RULES_LIST
     expected = TEST_RULEOBJ_LIST
-    real = _get_ruleobj_list_from_component_lists(rules_list)
+    real = _get_ruleobjs_from_components(rules_list)
     assert real == expected
 
 
 def test_exit_if_none_is_passed_as_argument(reinitialize_ruleclass_variables):
     """Raises NoRulesError if no rules list is specified as argument."""
     with pytest.raises(SystemExit):
-        _get_ruleobj_list_from_component_lists(pyobj=None)
+        _get_ruleobjs_from_components(pyobj=None)
 
 
 def test_exit_if_result_is_empty(reinitialize_ruleclass_variables):
     """Raises NoRulesError if no valid rules are found (ie, empty rule set)."""
     list_of_empty_lists = [[], []]
     with pytest.raises(SystemExit):
-        _get_ruleobj_list_from_component_lists(list_of_empty_lists)
+        _get_ruleobjs_from_components(list_of_empty_lists)
 
 
 def test_exit_if_passed_unexpected_object(reinitialize_ruleclass_variables):
     """Raises NoRulesError if no valid rules are found (ie, empty rule set)."""
     unexpected_object = {1: 2, 2: 3}
     with pytest.raises(SystemExit):
-        _get_ruleobj_list_from_component_lists(unexpected_object)
+        _get_ruleobjs_from_components(unexpected_object)
 
 
 def test_exit_if_passed_empty_list(reinitialize_ruleclass_variables):
     """Raises NoRulesError if no valid rules are found (ie, empty rule set)."""
     empty_list = []
     with pytest.raises(SystemExit):
-        _get_ruleobj_list_from_component_lists(empty_list)
+        _get_ruleobjs_from_components(empty_list)
