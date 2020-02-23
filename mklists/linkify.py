@@ -4,7 +4,7 @@ import io
 import os
 import re
 from pathlib import Path
-from .apply import _find_visiblefile_paths, _find_rootdir_path
+from .apply import _ls_visiblefile_paths, _find_rootdir_path
 from .config import HTMLDIR_NAME, URL_PATTERN_REGEX
 from .exceptions import BadFilenameError
 
@@ -17,7 +17,7 @@ def write_htmlfiles(filenames2lines_dict=None, datadir=None):
     if not os.path.exists(htmldir_subdir_pathname):
         Path(htmldir_subdir_pathname).mkdir(parents=True, exist_ok=True)
     os.chdir(htmldir_subdir_pathname)
-    for file in _find_visiblefile_paths():
+    for file in _ls_visiblefile_paths():
         os.remove(file)
     for key in list(filenames2lines_dict.keys()):
         lines_to_be_written = []
