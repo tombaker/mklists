@@ -61,9 +61,9 @@ def sync(config, dryrun, here_below, here_only, everywhere):
 
     # Scope of sync
     # if here-below: # default
-    #     scope = get_datadir_paths_below(Path.cwd())
+    #     scope = find_data_subdir_paths(Path.cwd())
     # if everywhere:
-    #     scope = get_datadir_paths_below(rootdir)
+    #     scope = find_data_subdir_paths(rootdir)
     # if here-only:
     #     scope = [Path.cwd()]
 

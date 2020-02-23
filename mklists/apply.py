@@ -101,7 +101,7 @@ def get_configdict(rootdir_path=None, configfile_name=CONFIGFILE_NAME):
         raise BadYamlError(f"Badly formatted YAML content.")
 
 
-def get_datadir_paths_below(
+def find_data_subdir_paths(
     datadir=None,
     configfile_name=CONFIGFILE_NAME,
     datadir_rulefile_name=DATADIR_RULEFILE_NAME,
