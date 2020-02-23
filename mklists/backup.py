@@ -14,7 +14,7 @@ def move_datafiles_to_backupdir(
     # backup_depth, rootdir_path
     if not datadir:
         datadir = Path.cwd()
-    backupsub_path = _get_backupsub_path(
+    backupsub_path = _form_backupsub_pathname(
         datadir=datadir, backupdir_name=backupdir_name, now=now
     )
     backupsub_path.mkdir(parents=True, exist_ok=True)
@@ -22,7 +22,9 @@ def move_datafiles_to_backupdir(
         shutil.move(str(visible_file), backupsub_path)
 
 
-def _get_backupsub_path(datadir=None, backupdir_name=BACKUPDIR_NAME, now=TIMESTAMP_STR):
+def _form_backupsub_pathname(
+    datadir=None, backupdir_name=BACKUPDIR_NAME, now=TIMESTAMP_STR
+):
     """Return backups Path named for cwd."""
     rootdir = _find_rootdir_path()
     if not datadir:
