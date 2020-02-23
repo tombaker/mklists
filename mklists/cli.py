@@ -1,6 +1,14 @@
 """CLI - command-line interface module"""
 
+import os
+from pathlib import Path
 import click
+from .config import (
+    write_starter_configfile,
+    write_minimal_rulefiles,
+    write_starter_rulefiles,
+    write_starter_datafile,
+)
 
 # pylint: disable=unused-argument
 #         During development, unused arguments here.
@@ -21,20 +29,24 @@ def cli(config):
 
 
 @cli.command()
+@click.argument("directory", type=click.Path(exists=False), nargs=1, required=False)
 @click.option("--bare", is_flag=True, help="Write minimal rule file.")
-@click.argument("directory", type=click.Path(exists=False), nargs=-1)
 @click.help_option(help="Show help and exit")
 @click.pass_context
-def init(config, directory):
+def init(config, directory, bare):
     """Initialize list repo."""
-    # if directory:
-    #     os.chdir(Path(directory).resolve())
-    # write_starter_configfile()
-    # if bare:
-    #     write_minimal_rulefiles()
-    # else:
-    #     write_starter_rulefiles()
-    #     write_starter_datafile(datadir="lists")
+    print(f"config: {config}")
+    print(f"directory: {directory}")
+    print(f"bare: {bare}")
+    if directory:
+        os.mkdir(Path(directory).resolve())
+        os.chdir(directory)
+    write_starter_configfile()
+    if bare:
+        write_minimal_rulefiles()
+    else:
+        write_starter_rulefiles()
+        write_starter_datafile(datadir="lists")
 
 
 @cli.command()

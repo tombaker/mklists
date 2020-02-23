@@ -1,1 +1,0 @@
-stop commit, should exit with non-zero status after issuing appropriate message.

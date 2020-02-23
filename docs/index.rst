@@ -9,5 +9,8 @@ Getting started
    :caption: Introduction:
 
    intro
+   caution
+   naming
+   glossary
 
 
