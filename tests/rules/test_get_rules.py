@@ -9,7 +9,7 @@ from mklists.rules import (
     Rule,
     get_rules,
     _read_components_from_rulefile,
-    _get_rulefile_chain,
+    _find_rulefile_chain,
 )
 
 # pylint: disable=unused-argument
@@ -63,7 +63,7 @@ def test_get_rules(tmp_path):
     rulefile2 = Path(tmp_path).joinpath("a/b", DATADIR_RULEFILE_NAME)
     rulefile2.write_text(DIRB_RULESTR)
     os.chdir(ab)
-    rulefile_chain = _get_rulefile_chain()
+    rulefile_chain = _find_rulefile_chain()
     assert rulefile_chain == [rulefile0, rulefile1, rulefile2]
     expected = RULEOBJ_LIST
     real = get_rules()

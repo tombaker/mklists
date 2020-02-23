@@ -100,7 +100,7 @@ def get_rules(datadir=None):
     """Return list of Rule objects from one or more rule files."""
     if not datadir:
         datadir = Path.cwd()
-    rulefile_chain = _get_rulefile_chain(datadir)
+    rulefile_chain = _find_rulefile_chain(datadir)
     rule_component_lists_aggregated = []
     for rulefile in rulefile_chain:
         rule_component_lists = _read_components_from_rulefile(rulefile)
@@ -109,7 +109,7 @@ def get_rules(datadir=None):
     return rules
 
 
-def _get_rulefile_chain(
+def _find_rulefile_chain(
     datadir=None,
     rootdir_rulefile=ROOTDIR_RULEFILE_NAME,
     datadir_rulefile=DATADIR_RULEFILE_NAME,
