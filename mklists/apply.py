@@ -122,7 +122,7 @@ def get_datalines(datadir=None, bad_filename_patterns=None):
     """Returns lines from files in current directory (or exits with errors)."""
     if not datadir:
         datadir = Path.cwd()
-    visiblefiles_list = _get_visiblefile_paths(datadir)
+    visiblefiles_list = _find_visiblefile_paths(datadir)
     all_datalines = []
     for datafile in visiblefiles_list:
         try:
@@ -154,7 +154,7 @@ def _find_rootdir_path(datadir=None, configfile=CONFIGFILE_NAME):
     raise MklistsError(f"{repr(configfile)} not found - not a repo.")
 
 
-def _get_visiblefile_paths(datadir=None):
+def _find_visiblefile_paths(datadir=None):
     """Return list of pathnames of visible files (if all filenames are valid)."""
     if not datadir:
         datadir = Path.cwd()

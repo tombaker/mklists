@@ -2,7 +2,7 @@
 
 import shutil
 from pathlib import Path
-from .apply import _get_visiblefile_paths, _find_rootdir_path
+from .apply import _find_visiblefile_paths, _find_rootdir_path
 from .config import BACKUPDIR_NAME, TIMESTAMP_STR
 from .exceptions import MklistsError
 
@@ -18,7 +18,7 @@ def move_datafiles_to_backupdir(
         datadir=datadir, backupdir_name=backupdir_name, now=now
     )
     backupsub_path.mkdir(parents=True, exist_ok=True)
-    for visible_file in _get_visiblefile_paths(datadir):
+    for visible_file in _find_visiblefile_paths(datadir):
         shutil.move(str(visible_file), backupsub_path)
 
 
