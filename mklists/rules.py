@@ -55,12 +55,12 @@ class Rule:
 
     def _coerce_source_as_valid_filename(self):
         """Coerces source filename (or Path object) as valid filename string."""
-        self.source = _get_validated_filename(self.source)
+        self.source = _return_filename_validated(self.source)
         return self
 
     def _coerce_target_as_valid_filename(self):
         """Coerces target filename (or Path object) as valid filename string."""
-        self.target = _get_validated_filename(self.target)
+        self.target = _return_filename_validated(self.target)
         return self
 
     def _coerce_target_sortorder_as_integer(self):
@@ -169,7 +169,9 @@ def _get_ruleobjs_from_components(pyobj=None):
     return ruleobj_list
 
 
-def _get_validated_filename(filename=None, valid_chars=VALID_FILENAME_CHARACTERS_REGEX):
+def _return_filename_validated(
+    filename=None, valid_chars=VALID_FILENAME_CHARACTERS_REGEX
+):
     """Return filename, but only if it passes all sanity tests."""
     if filename is None:
         raise BadFilenameError(f"{repr(filename)} is not a valid filename.")
