@@ -4,7 +4,7 @@ import os
 import pytest
 from pathlib import Path
 from mklists.config import ROOTDIR_RULEFILE_NAME
-from mklists.rules import _get_rules_as_component_lists
+from mklists.rules import _read_components_from_rulefile
 
 # pylint: disable=unused-argument
 # In tests, fixture arguments may look like they are unused.
@@ -64,57 +64,57 @@ PYOBJ = [
 ]
 
 
-def test_get_rules_as_component_lists(tmp_path):
+def test_read_components_from_rulefile(tmp_path):
     """Return True if CSV file has no header line because it will be ignored anyway."""
     os.chdir(tmp_path)
     Path(ROOTDIR_RULEFILE_NAME).write_text(TEST_RULES_CSVSTR)
     expected = PYOBJ
-    real = _get_rules_as_component_lists(csvfile=ROOTDIR_RULEFILE_NAME)
+    real = _read_components_from_rulefile(csvfile=ROOTDIR_RULEFILE_NAME)
     assert real == expected
 
 
-def test_get_rules_as_component_lists_header_ignored(tmp_path):
+def test_read_components_from_rulefile_header_ignored(tmp_path):
     """The CSV file may have a header line, though it will be ignored."""
     os.chdir(tmp_path)
     Path(ROOTDIR_RULEFILE_NAME).write_text(TEST_RULES_CSVSTR)
     expected = PYOBJ
-    real = _get_rules_as_component_lists(csvfile=ROOTDIR_RULEFILE_NAME)
+    real = _read_components_from_rulefile(csvfile=ROOTDIR_RULEFILE_NAME)
     assert real == expected
 
 
-def test_get_rules_as_component_lists_rn(tmp_path):
+def test_read_components_from_rulefile_rn(tmp_path):
     """Fine for CSV file to have MS-Windows line endings (\r\n)."""
     os.chdir(tmp_path)
     Path(ROOTDIR_RULEFILE_NAME).write_text(TEST_RULES_CSVSTR_RN)
     expected = PYOBJ
-    real = _get_rules_as_component_lists(csvfile=ROOTDIR_RULEFILE_NAME)
+    real = _read_components_from_rulefile(csvfile=ROOTDIR_RULEFILE_NAME)
     assert real == expected
 
 
-def test_get_rules_as_component_lists_legacy(tmp_path):
+def test_read_components_from_rulefile_legacy(tmp_path):
     """Fine for CSV line to pad fields with spaces and leave field 5 blank."""
     os.chdir(tmp_path)
     Path(ROOTDIR_RULEFILE_NAME).write_text(TEST_RULES_CSVSTR_LEGACY)
     expected = PYOBJ_LEGACY
-    real = _get_rules_as_component_lists(csvfile=ROOTDIR_RULEFILE_NAME)
+    real = _read_components_from_rulefile(csvfile=ROOTDIR_RULEFILE_NAME)
     assert real == expected
 
 
-def test_get_rules_as_component_lists_rulefile_not_specified(tmp_path):
+def test_read_components_from_rulefile_rulefile_not_specified(tmp_path):
     """Raises NoRulefileError if specified CSV file is "None" (the default)."""
     with pytest.raises(SystemExit):
-        _get_rules_as_component_lists(csvfile=None)
+        _read_components_from_rulefile(csvfile=None)
 
 
-def test_get_rules_as_component_lists_rulefile_not_specified2(tmp_path):
+def test_read_components_from_rulefile_rulefile_not_specified2(tmp_path):
     """Raises NoRulefileError if called specifying no argument at all."""
     with pytest.raises(SystemExit):
-        _get_rules_as_component_lists()
+        _read_components_from_rulefile()
 
 
-def test_get_rules_as_component_lists_not_found(tmp_path):
+def test_read_components_from_rulefile_not_found(tmp_path):
     """Raises NoRulefileError if specified CSV file is not found."""
     os.chdir(tmp_path)
     Path(".rules2").write_text(TEST_RULES_CSVSTR)
     with pytest.raises(SystemExit):
-        _get_rules_as_component_lists(csvfile=".rules3")
+        _read_components_from_rulefile(csvfile=".rules3")

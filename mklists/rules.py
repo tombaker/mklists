@@ -103,7 +103,7 @@ def get_rules(datadir=None):
     rulefile_chain = _get_rulefile_chain(datadir)
     rule_component_lists_aggregated = []
     for rulefile in rulefile_chain:
-        rule_component_lists = _get_rules_as_component_lists(rulefile)
+        rule_component_lists = _read_components_from_rulefile(rulefile)
         rule_component_lists_aggregated.extend(rule_component_lists)
     rules = _get_ruleobj_list_from_component_lists(rule_component_lists_aggregated)
     return rules
@@ -133,7 +133,7 @@ def _get_rulefile_chain(
     return rulefile_chain
 
 
-def _get_rules_as_component_lists(csvfile=None):
+def _read_components_from_rulefile(csvfile=None):
     """Return lists of lists, string items stripped, from pipe-delimited CSV file."""
     csv.register_dialect("rules", delimiter="|", quoting=csv.QUOTE_NONE)
     try:

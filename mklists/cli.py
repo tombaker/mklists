@@ -46,7 +46,7 @@ def init(config, directory, bare):
         write_minimal_rulefiles()
     else:
         write_starter_rulefiles()
-        write_starter_datafile(datadir="lists")
+        write_starter_datafile()
 
 
 @cli.command()

@@ -8,7 +8,7 @@ from mklists.config import CONFIGFILE_NAME, DATADIR_RULEFILE_NAME, ROOTDIR_RULEF
 from mklists.rules import (
     Rule,
     get_rules,
-    _get_rules_as_component_lists,
+    _read_components_from_rulefile,
     _get_rulefile_chain,
 )
 
@@ -70,7 +70,7 @@ def test_get_rules(tmp_path):
     assert real == expected
 
 
-def test_get_rules_as_component_lists_rulefile_not_specified(tmp_path):
+def test_read_components_from_rulefile_rulefile_not_specified(tmp_path):
     """Raises NoRulefileError if @@@."""
     with pytest.raises(SystemExit):
-        _get_rules_as_component_lists(csvfile=None)
+        _read_components_from_rulefile(csvfile=None)
