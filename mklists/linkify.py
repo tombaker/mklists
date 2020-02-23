@@ -22,7 +22,7 @@ def write_htmlfiles(filenames2lines_dict=None, datadir=None):
     for key in list(filenames2lines_dict.keys()):
         lines_to_be_written = []
         for line in filenames2lines_dict[key]:
-            lines_to_be_written.append(_get_linkified_textline(line))
+            lines_to_be_written.append(_return_textline_linkified(line))
         file_to_write = key + ".html"
         io.open(file_to_write, "w", encoding="utf-8").writelines(lines_to_be_written)
 
@@ -41,7 +41,7 @@ def _form_htmldir_pathname(datadir=None, rootdir=None, htmldir_name=HTMLDIR_NAME
     return htmldir_path
 
 
-def _get_linkified_textline(line=None, url_regex=URL_PATTERN_REGEX):
+def _return_textline_linkified(line=None, url_regex=URL_PATTERN_REGEX):
     """Return text lines with URLs wrapped with HREF tags."""
     if "<a href=" in line or "<A HREF=" in line:
         return line
