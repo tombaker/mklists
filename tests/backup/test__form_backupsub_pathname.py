@@ -28,7 +28,7 @@ def test_form_backupsub_pathname_given_datadir(tmp_path):
     """Returns backups Path named for specified working directory."""
     os.chdir(tmp_path)
     Path(CONFIGFILE_NAME).write_text("config stuff")
-    cwd = Path(tmp_path).joinpath("todolists/a")
+    cwd = Path(tmp_path) / "todolists" / "a"
     cwd.mkdir(parents=True, exist_ok=True)
     shortname_expected = "todolists_a"
     backdir = "_backups"

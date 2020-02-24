@@ -54,13 +54,13 @@ def test_get_rules(tmp_path):
     """@@@Docstring."""
     os.chdir(tmp_path)
     Path(tmp_path).joinpath(CONFIGFILE_NAME).write_text("config stuff")
-    rulefile0 = Path(tmp_path).joinpath(ROOTDIR_RULEFILE_NAME)
+    rulefile0 = Path(tmp_path) / ROOTDIR_RULEFILE_NAME
     rulefile0.write_text(ROOTDIR_RULESTR)
-    ab = Path(tmp_path).joinpath("a/b")
+    ab = Path(tmp_path) / "a" / "b"
     ab.mkdir(parents=True, exist_ok=True)
-    rulefile1 = Path(tmp_path).joinpath("a", DATADIR_RULEFILE_NAME)
+    rulefile1 = Path(tmp_path) / "a" / DATADIR_RULEFILE_NAME
     rulefile1.write_text(DIRA_RULESTR)
-    rulefile2 = Path(tmp_path).joinpath("a/b", DATADIR_RULEFILE_NAME)
+    rulefile2 = Path(tmp_path) / "a" / "b" / DATADIR_RULEFILE_NAME
     rulefile2.write_text(DIRB_RULESTR)
     os.chdir(ab)
     rulefile_chain = _find_rulefile_chain()
@@ -70,7 +70,7 @@ def test_get_rules(tmp_path):
     assert real == expected
 
 
-def test_read_components_from_rulefile_rulefile_not_specified(tmp_path):
-    """Raises NoRulefileError if @@@."""
+def test_passed_csvfile_none(tmp_path):
+    """Exits with NoRulefileError if passed 'csvfile' argument of None."""
     with pytest.raises(SystemExit):
         _read_components_from_rulefile(csvfile=None)

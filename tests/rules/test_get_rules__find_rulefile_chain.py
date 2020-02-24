@@ -9,7 +9,7 @@ from mklists.config import CONFIGFILE_NAME, ROOTDIR_RULEFILE_NAME, DATADIR_RULEF
 def test_find_rulefile_chain_typical(tmp_path):
     """Return list of rulefiles from root to (current) working data directory."""
     os.chdir(tmp_path)
-    abc = Path(tmp_path) / "a/b/c"
+    abc = Path(tmp_path) / "a" / "b" / "c"
     abc.mkdir(parents=True, exist_ok=True)
     Path(tmp_path).joinpath(CONFIGFILE_NAME).write_text("config stuff")
     Path(tmp_path).joinpath(ROOTDIR_RULEFILE_NAME).write_text("rule stuff")
@@ -30,7 +30,7 @@ def test_find_rulefile_chain_typical(tmp_path):
 def test_find_rulefile_chain_ends_before_repo_rootdir(tmp_path):
     """Return list of data directory rulefiles only when 'rules.cfg' not reachable)."""
     os.chdir(tmp_path)
-    abc = Path.cwd().joinpath("a/b/c")
+    abc = Path(tmp_path) / "a" / "b" / "c"
     abc.mkdir(parents=True, exist_ok=True)
     Path(tmp_path).joinpath(CONFIGFILE_NAME).write_text("config stuff")
     Path(tmp_path).joinpath("a/b", DATADIR_RULEFILE_NAME).write_text("rule_stuff")
@@ -46,7 +46,7 @@ def test_find_rulefile_chain_ends_before_repo_rootdir(tmp_path):
 def test_find_rulefile_chain_with_specifying_rootdir(tmp_path):
     """Return correct list when starting directory is explicitly specified."""
     os.chdir(tmp_path)
-    abc = Path.cwd().joinpath("a/b/c")
+    abc = Path(tmp_path) / "a" / "b" / "c"
     abc.mkdir(parents=True, exist_ok=True)
     Path(tmp_path).joinpath(CONFIGFILE_NAME).write_text("config stuff")
     Path(tmp_path).joinpath(ROOTDIR_RULEFILE_NAME).write_text("rule stuff")
@@ -66,8 +66,8 @@ def test_find_rulefile_chain_with_specifying_rootdir(tmp_path):
 def test_find_rulefile_chain_empty_list_when_starting_in_non_datadir(tmp_path):
     """Return empty list when starting in a non-data directory."""
     os.chdir(tmp_path)
-    abc = Path.cwd().joinpath("a/b/c")
-    d = Path.cwd().joinpath("d")
+    abc = Path(tmp_path) / "a" / "b" / "c"
+    d = Path.cwd() / "d"
     abc.mkdir(parents=True, exist_ok=True)
     d.mkdir(parents=True, exist_ok=True)
     Path(CONFIGFILE_NAME).write_text("config stuff")
@@ -91,5 +91,5 @@ def test_find_rulefile_chain_empty_list_when_starting_in_rootdir(tmp_path):
     Path(tmp_path).joinpath("a/b", DATADIR_RULEFILE_NAME).write_text("rule_stuff")
     Path(tmp_path).joinpath("a/b/c", DATADIR_RULEFILE_NAME).write_text("rule_stuff")
     os.chdir(tmp_path)
-    expected = [Path(tmp_path).joinpath(ROOTDIR_RULEFILE_NAME)]
+    expected = [Path(tmp_path) / ROOTDIR_RULEFILE_NAME]
     assert _find_rulefile_chain() == expected

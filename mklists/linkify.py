@@ -35,7 +35,7 @@ def _form_htmldir_pathname(datadir=None, rootdir=None, htmldir_name=HTMLDIR_NAME
         datadir = Path.cwd()
     html_subdir = Path(datadir).relative_to(rootdir)
     try:
-        htmldir_path = Path(rootdir).joinpath(htmldir_name, html_subdir)
+        htmldir_path = Path(rootdir) / htmldir_name / html_subdir
     except TypeError:
         raise BadFilenameError(f"'htmldir_name' must be a valid directory name.")
     return htmldir_path

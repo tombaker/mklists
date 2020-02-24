@@ -11,10 +11,10 @@ def test_keep_two_backup_directories_per_datadirectory(tmp_path):
     """Delete all but two subsubdirectories if backup depth is two."""
     to_keep = 2
     Path(tmp_path).joinpath(CONFIGFILE_NAME).write_text("config stuff")
-    datadir = Path(tmp_path).joinpath("datadir")
+    datadir = Path(tmp_path) / "datadir"
     datadir.mkdir()  # create a "data directory"
     os.chdir(datadir)  # starting point would normally be a data directory
-    backups_dir = Path(tmp_path).joinpath(BACKUPDIR_NAME)
+    backups_dir = Path(tmp_path) / BACKUPDIR_NAME
     backups_dir.mkdir()
     Path(backups_dir).joinpath("agenda/2020-01-01").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agenda/2020-01-02").mkdir(parents=True, exist_ok=True)
@@ -39,10 +39,10 @@ def test_keep_all_backup_directories_if_number_less_than_backup_depth(tmp_path):
     """Delete nothing if backup depth greater than number of subdirectories present."""
     to_keep = 7
     Path(tmp_path).joinpath(CONFIGFILE_NAME).write_text("config stuff")
-    datadir = Path(tmp_path).joinpath("datadir")
+    datadir = Path(tmp_path) / "datadir"
     datadir.mkdir()  # create a "data directory"
     os.chdir(datadir)  # starting point would normally be a data directory
-    backups_dir = Path(tmp_path).joinpath(BACKUPDIR_NAME)
+    backups_dir = Path(tmp_path) / BACKUPDIR_NAME
     backups_dir.mkdir()
     Path(backups_dir).joinpath("agenda/2020-01-01").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agenda/2020-01-02").mkdir(parents=True, exist_ok=True)
@@ -69,10 +69,10 @@ def test_delete_all_backup_directories_if_backup_depth_zero(tmp_path):
     """Delete all sub-subdirectories _and_ subdirectories if backup depth is zero."""
     to_keep = 0
     Path(tmp_path).joinpath(CONFIGFILE_NAME).write_text("config stuff")
-    datadir = Path(tmp_path).joinpath("datadir")
+    datadir = Path(tmp_path) / "datadir"
     datadir.mkdir()  # create a "data directory"
     os.chdir(datadir)  # starting point would normally be a data directory
-    backups_dir = Path(tmp_path).joinpath(BACKUPDIR_NAME)
+    backups_dir = Path(tmp_path) / BACKUPDIR_NAME
     backups_dir.mkdir()
     Path(backups_dir).joinpath("agenda/2020-01-01").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agenda/2020-01-02").mkdir(parents=True, exist_ok=True)
@@ -90,10 +90,10 @@ def test_delete_all_if_backup_depth_is_none(tmp_path):
     """Delete all sub-sub- and subdirectories if backup depth not an integer."""
     to_keep = None
     Path(tmp_path).joinpath(CONFIGFILE_NAME).write_text("config stuff")
-    datadir = Path(tmp_path).joinpath("datadir")
+    datadir = Path(tmp_path) / "datadir"
     datadir.mkdir()  # create a "data directory"
     os.chdir(datadir)  # starting point would normally be a data directory
-    backups_dir = Path(tmp_path).joinpath(BACKUPDIR_NAME)
+    backups_dir = Path(tmp_path) / BACKUPDIR_NAME
     backups_dir.mkdir()
     Path(backups_dir).joinpath("agenda/2020-01-01").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agenda/2020-01-02").mkdir(parents=True, exist_ok=True)
