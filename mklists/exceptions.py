@@ -9,6 +9,10 @@ class ConfigError(MklistsError):
     """Exceptions related to configuration."""
 
 
+class ConfigWarning(Warning):
+    """Warning regarding configuration (does not stop execution)."""
+
+
 class RuleError(MklistsError):
     """Exceptions related to a single rule."""
 

@@ -3,7 +3,8 @@
 import datetime
 import os
 from pathlib import Path
-from .exceptions import MklistsError
+from warnings import warn
+from .exceptions import MklistsError, ConfigWarning
 
 # pylint: disable=anomalous-backslash-in-string
 # => the slashes in "invalid filename patterns" are valid in YAML
@@ -86,10 +87,18 @@ def write_minimal_rulefiles(
     # pylint: disable=too-many-arguments
     if not rootdir_path:
         rootdir_path = Path.cwd()
-    Path(root_rulefile).write_text(root_rulefile_contents)
+    rootdir_rules = Path(root_rulefile)
     datadir = Path(rootdir_path) / datadir_name
     datadir.mkdir(parents=True, exist_ok=True)
-    Path(datadir).joinpath(datadir_rulefile).write_text(datadir_rulefile_contents)
+    datadir_rules = Path(datadir) / datadir_rulefile
+    if rootdir_rules.exists():
+        warn(f"Will use existing rule file {str(rootdir_rules)}.", ConfigWarning)
+    else:
+        rootdir_rules.write_text(root_rulefile_contents)
+    if datadir_rules.exists():
+        warn(f"Will use existing rule file {str(datadir_rules)}.", ConfigWarning)
+    else:
+        datadir_rules.write_text(datadir_rulefile_contents)
 
 
 def write_starter_configfile(
