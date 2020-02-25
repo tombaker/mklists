@@ -3,12 +3,23 @@
 import os
 from pathlib import Path
 import click
-from .config import (
+from .apply import (  # noqa: F401
+    apply_rules_to_datalines,
+    find_data_subdir_paths,
+    get_configdict,
+    get_datalines,
+    move_specified_datafiles_elsewhere,
+    write_new_datafiles,
+)
+from .backup import move_datafiles_to_backupdir, delete_older_backupdirs  # noqa: F401
+from .config import (  # noqa: F401
     write_starter_configfile,
     write_minimal_rulefiles,
     write_starter_rulefiles,
     write_starter_datafile,
 )
+from .linkify import write_htmlfiles  # noqa: F401
+from .rules import Rule, get_rules  # noqa: F401
 
 # pylint: disable=unused-argument
 #         During development, unused arguments here.
