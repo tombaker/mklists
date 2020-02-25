@@ -86,21 +86,6 @@ def _line_matches_pattern(pattern=None, field_int=None, line=None):
     return False
 
 
-def get_configdict(rootdir_path=None, configfile_name=CONFIGFILE_NAME):
-    """Returns configuration dictionary from YAML config file (or exits with errors."""
-    if not rootdir_path:
-        rootdir_path = _find_rootdir_path()
-    configfile = Path(rootdir_path) / configfile_name
-    try:
-        configfile_contents = Path(configfile).read_text()
-    except FileNotFoundError:
-        raise MklistsError(f"Config file {repr(configfile)} not found.")
-    try:
-        return ruamel.yaml.safe_load(configfile_contents)
-    except ruamel.yaml.YAMLError:
-        raise BadYamlError(f"Badly formatted YAML content.")
-
-
 def find_data_subdir_paths(
     datadir=None,
     configfile_name=CONFIGFILE_NAME,
@@ -116,6 +101,21 @@ def find_data_subdir_paths(
             if configfile_name not in files:
                 datadir_paths.append(Path(dirpath))
     return datadir_paths
+
+
+def get_configdict(rootdir_path=None, configfile_name=CONFIGFILE_NAME):
+    """Returns configuration dictionary from YAML config file (or exits with errors."""
+    if not rootdir_path:
+        rootdir_path = _find_rootdir_path()
+    configfile = Path(rootdir_path) / configfile_name
+    try:
+        configfile_contents = Path(configfile).read_text()
+    except FileNotFoundError:
+        raise MklistsError(f"Config file {repr(configfile)} not found.")
+    try:
+        return ruamel.yaml.safe_load(configfile_contents)
+    except ruamel.yaml.YAMLError:
+        raise BadYamlError(f"Badly formatted YAML content.")
 
 
 def get_datalines(datadir=None, bad_filename_patterns=None):
