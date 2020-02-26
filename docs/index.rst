@@ -10,6 +10,7 @@ Getting started
 
    intro
    caution
+   backups
    naming
    glossary
 
