@@ -15,7 +15,7 @@ DATADIR_RULEFILE_NAME = ".rules"
 HTMLDIR_NAME = "_html"
 ROOTDIR_RULEFILE_NAME = "rules.cfg"
 TIMESTAMP_STR = datetime.datetime.now().strftime("%Y-%m-%d_%H%M_%S%f")
-URL_PATTERN_REGEX = r"""((?:git://|http://|https://)[^ <>'"{}(),|\\^`[\]]*)"""
+URL_PATTERN_REGEX = r"""((?:git://|http://|https://|file:///)[^ <>'"{}(),|\\^`[\]]*)"""
 VALID_FILENAME_CHARACTERS_REGEX = r"[\-_=.,@:A-Za-z0-9]+$"
 
 CONFIGFILE_CONTENT = (

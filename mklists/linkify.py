@@ -41,8 +41,8 @@ def _form_htmldir_pathname(datadir=None, rootdir=None, htmldir_name=HTMLDIR_NAME
     return htmldir_path
 
 
-def _return_textline_linkified(line=None, url_regex=URL_PATTERN_REGEX):
-    """Return text lines with URLs wrapped with HREF tags."""
+def _return_textline_linkified(line=None, url_regex=URL_PATTERN_REGEX, path_stems=None):
+    """Return text lines with URLs wrapped with A-HREF tags."""
     if "<a href=" in line or "<A HREF=" in line:
         return line
     return re.compile(url_regex).sub(r'<a href="\1">\1</a>', line.rstrip()) + "\n"
