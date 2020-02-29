@@ -1,4 +1,4 @@
-"""Wraps URLs found in text lines with HTML tags to make them clickable."""
+"""Wraps URLs and matching found in text lines with A-HREF tags."""
 
 from mklists.linkify import _return_textline_linkified
 
@@ -6,8 +6,14 @@ URL_REGEX_PATTERN = r"""((?:git://|http://|https://|file:///)[^ <>'"{}(),|\\^`[\
 PATH_STEMS = ["/Users/foobar", "/home/foobar"]
 
 
-def test_linkified_pathname():
+def test_linkified_pathname_prettified():
     """@@@Docstring"""
+    textline = """http://x.org /Users/foobar/y"""
+    htmlline = (
+        """<a href="http://x.org">http://x.org</a> """
+        """<a href="file:///Users/foobar/y">/Users/foobar/y</a>\n"""
+    )
+    assert _return_textline_linkified(textline, path_stems=PATH_STEMS) == htmlline
 
 
 def test_linkified_line():
@@ -27,11 +33,10 @@ def test_linkified_line_already_linkified():
 
 
 def test_linkified_file_colon_filename():
-    """Pathname is already prefixed with 'file:///'; prefix is displayed."""
+    """Pathname is already prefixed with 'file:///', and prefix is dropped."""
     textline = """file:///Users/tbaker/Dropbox"""
     htmlline = (
-        """<a href="file:///Users/tbaker/Dropbox">"""
-        """file:///Users/tbaker/Dropbox</a>\n"""
+        """<a href="file:///Users/tbaker/Dropbox">""" """/Users/tbaker/Dropbox</a>\n"""
     )
     assert _return_textline_linkified(textline, url_regex=URL_REGEX_PATTERN) == htmlline
     assert _return_textline_linkified(textline) == htmlline

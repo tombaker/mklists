@@ -45,4 +45,11 @@ def _return_textline_linkified(line=None, url_regex=URL_PATTERN_REGEX, path_stem
     """Return text lines with URLs wrapped with A-HREF tags."""
     if "<a href=" in line or "<A HREF=" in line:
         return line
-    return re.compile(url_regex).sub(r'<a href="\1">\1</a>', line.rstrip()) + "\n"
+    if path_stems:
+        for item in line.split():
+            for stem in path_stems:
+                if re.match(stem, item):
+                    line = line.replace(item, f"file://{item}")
+    htmlline = re.compile(url_regex).sub(r'<a href="\1">\1</a>', line.rstrip()) + "\n"
+    htmlline = htmlline.replace(">file://", ">")
+    return htmlline
