@@ -32,11 +32,12 @@ from .rules import Rule, get_rules  # noqa: F401
 def cli(config):
     """Sync your lists to evolving rules."""
     # ctx.obj = get_configdict()
-    #     verbose
-    #     backup_depth
-    #     htmlify
-    #     invalid_filename_patterns
-    #     files2dirs_dict
+    #     verbose = ctx.obj["verbose"]
+    #     backups = ctx.obj["backup_depth"]
+    #     will_linkify = ctx.obj["linkify"]
+    #     fname_patterns = ctx.obj["invalid_filename_patterns"]
+    #     files2dirs = ctx.obj["files2dirs_dict"]
+    #     pathstems = ctx.obj["pathstem_list"]
 
 
 @cli.command()
@@ -62,28 +63,29 @@ def init(config, directory, bare):
 
 @cli.command()
 @click.option("--dryrun", is_flag=True, help="Run verbosely in read-only mode")
-@click.option("--here-below", is_flag=True, help="Sync cwd and below (the default)")
-@click.option("--here-only", is_flag=True, help="Sync cwd only")
-@click.option("--everywhere", is_flag=True, help="Sync all data directories in repo")
+@click.option("--here-only", is_flag=True, help="Sync cwd only (the default)")
+@click.option("--here-subdirs", is_flag=True, help="Sync cwd and directories below")
+@click.option("--root-subdirs", is_flag=True, help="Sync all data directories in repo")
 @click.help_option(help="Show help and exit")
 @click.pass_context
-def sync(config, dryrun, here_below, here_only, everywhere):
-    """Rebuild lists, by default in current directory and below"""
+def sync(config, dryrun, here_subdirs, here_only, root_subdirs):
+    """Rebuild lists, by default in current directory and subdirs"""
 
     # Scope of sync
-    # if here-below: # default
-    #     scope = find_data_subdir_paths(Path.cwd())
-    # if everywhere:
-    #     scope = find_data_subdir_paths(rootdir)
-    # if here-only:
+    # if here_only:    # default
     #     scope = [Path.cwd()]
+    # if here_subdirs:
+    #     scope = find_data_subdir_paths(Path.cwd())
+    # if root_subdirs:
+    #     scope = find_data_subdir_paths(rootdir)
 
     # for dir in scope:
+    #     os.chdir(dir)
     #     # Read rule files from current and parent directories
     #     ruleobjs = get_rules()
     #
     #     # Get data lines from visible text files in (by default) current directory
-    #     datalines = get_datalines(bad_filename_patterns)
+    #     datalines = get_datalines(invalid_filename_patterns)
     #     filenames2lines_dict = apply_rules_to_datalines(ruleobjs, datalines)
     #
     #     # Move existing data files to timestamped subdirectory of _backups/
@@ -99,6 +101,6 @@ def sync(config, dryrun, here_below, here_only, everywhere):
     #     if ctx.obj["linkify"]:
     #         write_htmlfiles(filenames2lines_dict)
 
-    #     # Move specified files elsewhere (if desired)
+    #     # Move specified files elsewhere (as specified and if desired)
     #     if ctx.obj["files2dirs_dict"]:
     #         move_specified_datafiles_elsewhere(files2dirs_dict)
