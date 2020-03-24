@@ -27,26 +27,25 @@ def apply_rules_to_datalines(rules=None, datalines=None):
     if not datalines:
         raise DataError("No data specified.")
 
-    f2l_dict = defaultdict(list)
+    f2lines_dict = defaultdict(list)
     is_first_rule = True
     for rule in rules:
         pattern = rule.source_matchpattern
-        where_int = rule.source_matchfield
+        matchfield = rule.source_matchfield
         if is_first_rule:
-            f2l_dict[rule.source] = datalines
+            f2lines_dict[rule.source] = datalines
             is_first_rule = False
 
-        source_lines_copy = f2l_dict[rule.source][:]
-        for line in source_lines_copy:
-            if _line_matches_pattern(pattern, where_int, line):
-                f2l_dict[rule.target].append(line)
-                f2l_dict[rule.source].remove(line)
+        for line in f2lines_dict[rule.source][:]:
+            if _line_matches_pattern(pattern, matchfield, line):
+                f2lines_dict[rule.target].append(line)
+                f2lines_dict[rule.source].remove(line)
 
-        target_lines = f2l_dict[rule.target]
+        target_lines = f2lines_dict[rule.target]
         sortorder = rule.target_sortorder
-        f2l_dict[rule.target] = _dsusort_lines(target_lines, sortorder)
+        f2lines_dict[rule.target] = _dsusort_lines(target_lines, sortorder)
 
-    return dict(f2l_dict)
+    return dict(f2lines_dict)
 
 
 def _dsusort_lines(lines=None, sortorder=None):
