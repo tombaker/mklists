@@ -16,7 +16,7 @@ def test_form_backupsub_pathname(tmp_path):
     cwd = Path("agenda").resolve()
     cwd.mkdir()
     os.chdir(cwd)
-    actual = _form_backupsub_pathname(backupdir_name=backdir, now=datestr)
+    actual = _form_backupsub_pathname(backupdir=backdir, now=datestr)
     expected = Path(tmp_path) / backdir / cwd.name / datestr
     expected_explicit = Path(tmp_path) / "_backups" / "agenda" / "2020-01-03_1646"
     assert Path(cwd).resolve() == Path.cwd()  # directory did not change
@@ -33,7 +33,7 @@ def test_form_backupsub_pathname_given_datadir(tmp_path):
     shortname_expected = "todolists_a"
     backdir = "_backups"
     datestr = "2020-01-03_1646_06488910"
-    actual = _form_backupsub_pathname(datadir=cwd, backupdir_name=backdir, now=datestr)
+    actual = _form_backupsub_pathname(datadir=cwd, backupdir=backdir, now=datestr)
     expected = Path(tmp_path) / backdir / shortname_expected / datestr
     assert actual == expected
 
@@ -47,7 +47,7 @@ def test_form_backupsub_pathname_given_datadir_with_slash(tmp_path):
     shortname_expected = "todolists_a"
     backdir = "_backups"
     datestr = "2020-01-03_1646_06488910"
-    actual = _form_backupsub_pathname(datadir=cwd, backupdir_name=backdir, now=datestr)
+    actual = _form_backupsub_pathname(datadir=cwd, backupdir=backdir, now=datestr)
     expected = Path(tmp_path) / backdir / shortname_expected / datestr
     assert actual == expected
 
@@ -66,8 +66,8 @@ def test_exit_if_passed_datadir_argument_of_wrong_type(tmp_path):
         _form_backupsub_pathname(["asdf"])
 
 
-def test_exit_if_passed_backupdir_name_argument_of_wrong_type(tmp_path):
+def test_exit_if_passed_backupdir_argument_of_wrong_type(tmp_path):
     """Raises exception if an argument of the wrong type is passed."""
     os.chdir(tmp_path)
     with pytest.raises(SystemExit):
-        _form_backupsub_pathname(backupdir_name=123456)
+        _form_backupsub_pathname(backupdir=123456)

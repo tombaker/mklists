@@ -22,7 +22,7 @@ def test_keep_two_backup_directories_per_datadirectory(tmp_path):
     Path(backups_dir).joinpath("agendab/2020-01-01").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agendab/2020-01-02").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agendab/2020-01-03").mkdir(parents=True, exist_ok=True)
-    delete_older_backupdirs(depth=to_keep, backupdir_name=BACKUPDIR_NAME)
+    delete_older_backupdirs(depth=to_keep, backupdir=BACKUPDIR_NAME)
     expected = [
         Path(backups_dir, "agenda"),
         Path(backups_dir, "agenda/2020-01-02"),
@@ -50,7 +50,7 @@ def test_keep_all_backup_directories_if_number_less_than_backup_depth(tmp_path):
     Path(backups_dir).joinpath("agendab/2020-01-01").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agendab/2020-01-02").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agendab/2020-01-03").mkdir(parents=True, exist_ok=True)
-    delete_older_backupdirs(depth=to_keep, backupdir_name=BACKUPDIR_NAME)
+    delete_older_backupdirs(depth=to_keep, backupdir=BACKUPDIR_NAME)
     expected = [
         Path(backups_dir, "agenda"),
         Path(backups_dir, "agenda/2020-01-01"),
@@ -80,7 +80,7 @@ def test_delete_all_backup_directories_if_backup_depth_zero(tmp_path):
     Path(backups_dir).joinpath("agendab/2020-01-01").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agendab/2020-01-02").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agendab/2020-01-03").mkdir(parents=True, exist_ok=True)
-    delete_older_backupdirs(depth=to_keep, backupdir_name=BACKUPDIR_NAME)
+    delete_older_backupdirs(depth=to_keep, backupdir=BACKUPDIR_NAME)
     expected = []
     actual = list(Path(backups_dir).rglob("*"))
     assert sorted(expected) == sorted(actual)
@@ -101,7 +101,7 @@ def test_delete_all_if_backup_depth_is_none(tmp_path):
     Path(backups_dir).joinpath("agendab/2020-01-01").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agendab/2020-01-02").mkdir(parents=True, exist_ok=True)
     Path(backups_dir).joinpath("agendab/2020-01-03").mkdir(parents=True, exist_ok=True)
-    delete_older_backupdirs(depth=to_keep, backupdir_name=BACKUPDIR_NAME)
+    delete_older_backupdirs(depth=to_keep, backupdir=BACKUPDIR_NAME)
     expected = []
     actual = list(Path(backups_dir).rglob("*"))
     assert sorted(expected) == sorted(actual)
@@ -116,7 +116,7 @@ def test_delete_nothing_if_no_backupdirs_found(tmp_path):
     os.chdir(datadir)
     backups_dir = Path(tmp_path) / BACKUPDIR_NAME
     backups_dir.mkdir()
-    delete_older_backupdirs(depth=to_keep, backupdir_name=BACKUPDIR_NAME)
+    delete_older_backupdirs(depth=to_keep, backupdir=BACKUPDIR_NAME)
     expected = []
     actual = list(Path(backups_dir).rglob("*"))
     assert sorted(expected) == sorted(actual)
@@ -133,4 +133,4 @@ def test_exits_if_bad_value_passed_for_depth(tmp_path):
     backups_dir.mkdir()
     Path(backups_dir).joinpath("agenda/2020-01-01").mkdir(parents=True, exist_ok=True)
     with pytest.raises(SystemExit):
-        delete_older_backupdirs(depth=to_keep, backupdir_name=BACKUPDIR_NAME)
+        delete_older_backupdirs(depth=to_keep, backupdir=BACKUPDIR_NAME)

@@ -86,9 +86,7 @@ def _line_matches_pattern(pattern=None, field_int=None, line=None):
 
 
 def find_data_subdir_paths(
-    datadir=None,
-    configfile_name=CONFIGFILE_NAME,
-    datadir_rulefile_name=DATADIR_RULEFILE_NAME,
+    datadir=None, configfile=CONFIGFILE_NAME, rulefile=DATADIR_RULEFILE_NAME
 ):
     """Return list of data directories below given directory."""
     if not datadir:
@@ -96,8 +94,8 @@ def find_data_subdir_paths(
     datadir_paths = []
     for dirpath, dirs, files in os.walk(datadir):
         dirs[:] = [d for d in dirs if not d[0] == "."]
-        if datadir_rulefile_name in files:
-            if configfile_name not in files:
+        if rulefile in files:
+            if configfile not in files:
                 datadir_paths.append(Path(dirpath))
     return datadir_paths
 
