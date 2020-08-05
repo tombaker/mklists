@@ -19,7 +19,7 @@ TEST_RULES_LIST = [
 
 
 def test_rule_source_filename_field_was_properly_initialized_initial_source(
-    reinitialize_ruleclass_variables
+    reinitialize_ruleclass_variables,
 ):
     """The 'source' field in the first rule (here: "a.txt")
     is used to initialize the list of sources."""
@@ -28,7 +28,7 @@ def test_rule_source_filename_field_was_properly_initialized_initial_source(
 
 
 def test_rule_source_filename_field_was_properly_initialized_subsequent_source(
-    reinitialize_ruleclass_variables
+    reinitialize_ruleclass_variables,
 ):
     """Once initialized, the list of sources grows with each additional target."""
     rule_obj = Rule(1, "NOW", "lines", "now.txt", 0)
