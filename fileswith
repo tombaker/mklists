@@ -1,5 +1,0 @@
-#!/bin/bash
-
-to_find=$1
-
-nvim +/$to_find $(grep -rl $to_find mklists/*.py tests/*)
