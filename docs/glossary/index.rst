@@ -1,4 +1,4 @@
-.. _glossary:
+.. _mklists_glossary:
 
 Glossary
 ========

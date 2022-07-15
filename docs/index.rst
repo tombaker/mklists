@@ -8,10 +8,10 @@ Getting started
    :maxdepth: 2
    :caption: Introduction:
 
-   intro
-   caution
-   backups
-   naming
-   glossary
+   intro/index.rst
+   caution/index.rst
+   backups/index.rst
+   naming/index.rst
+   glossary/index.rst
 
 
