@@ -36,7 +36,7 @@ pytest-cov==2.10.0
 pytoml==0.1.21
 pytz==2020.1
 regex==2020.7.14
-requests==2.24.0
+requests==2.31.0
 ruamel.base==1.0.0
 ruamel.yaml==0.16.10
 ruamel.yaml.clib==0.2.0
