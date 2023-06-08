@@ -1,0 +1,50 @@
+apply.py =============================================
+def apply_rules_to_datalines
+def _dsusort_lines
+def _line_matches_pattern
+def find_data_subdir_paths
+def get_configdict
+def get_datalines
+def _find_rootdir_path
+def _ls_visiblefile_paths
+def move_specified_datafiles_elsewhere
+def write_new_datafiles
+
+backup.py =============================================
+def move_datafiles_to_backupdir
+def _form_backupsub_pathname
+def delete_older_backupdirs
+
+cli.py =============================================
+def cli
+def init
+def sync
+
+config.py =============================================
+def write_minimal_rulefiles
+def write_starter_configfile
+def write_starter_datafile
+def write_starter_rulefiles
+
+linkify.py =============================================
+def write_htmlfiles
+def _form_htmldir_pathname
+def _return_textline_linkified
+
+rules.py =============================================
+class Rule:
+    def coerce_types
+    def _coerce_source_matchfield_as_integer
+    def _coerce_source_matchpattern_as_compiled_regex
+    def _coerce_source_as_valid_filename
+    def _coerce_target_as_valid_filename
+    def _coerce_target_sortorder_as_integer
+    def is_valid
+    def _source_filename_field_was_properly_initialized
+    def _source_filename_field_is_not_equal_target
+def get_rules
+def _find_rulefile_chain
+def _read_components_from_rulefile
+def _get_ruleobjs_from_components
+def _return_filename_validated
+
