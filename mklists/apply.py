@@ -5,7 +5,8 @@ import re
 import shutil
 from pathlib import Path
 from collections import defaultdict
-import ruamel.yaml
+import ruamel
+from ruamel.yaml import YAML
 from .config import CONFIGFILE_NAME, DATADIR_RULEFILE_NAME
 from .exceptions import (
     BadFilenameError,
@@ -20,13 +21,20 @@ from .exceptions import (
 # Black disagrees.
 
 
-def apply_rules_to_datalines(rules=None, datalines=None):
-    """Returns filename-to-lines dictionary after applying rules to datalines."""
+def apply_rules_to_datalines(rules: list = None, datalines: list = None) -> dict:
+    """Returns filename-to-lines dictionary after applying rules to datalines.
+
+    Args:
+        rules: List of rules.
+        datalines: List of lines from data files.
+
+    Returns:
+        Dictionary of filename-to-lines.
+    """
     if not rules:
         raise RulesError("No rules specified.")
     if not datalines:
         raise DataError("No data specified.")
-
     f2lines_dict = defaultdict(list)
     is_first_rule = True
     for rule in rules:
@@ -35,16 +43,13 @@ def apply_rules_to_datalines(rules=None, datalines=None):
         if is_first_rule:
             f2lines_dict[rule.source] = datalines
             is_first_rule = False
-
         for line in f2lines_dict[rule.source][:]:
             if _line_matches_pattern(pattern, matchfield, line):
                 f2lines_dict[rule.target].append(line)
                 f2lines_dict[rule.source].remove(line)
-
         target_lines = f2lines_dict[rule.target]
         sortorder = rule.target_sortorder
         f2lines_dict[rule.target] = _dsusort_lines(target_lines, sortorder)
-
     return dict(f2lines_dict)
 
 
@@ -110,7 +115,8 @@ def get_configdict(rootdir_path=None, configfile_name=CONFIGFILE_NAME):
     except FileNotFoundError:
         raise MklistsError(f"Config file {repr(configfile)} not found.")
     try:
-        return ruamel.yaml.safe_load(configfile_contents)
+        yaml=YAML(typ='safe', pure=True)
+        return yaml.load(configfile_contents)
     except ruamel.yaml.YAMLError:
         raise BadYamlError(f"Badly formatted YAML content.")
 

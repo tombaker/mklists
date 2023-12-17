@@ -1,0 +1,12 @@
+{
+    "editor.fontSize": 16,
+    "window.zoomLevel": 2,
+    "python.analysis.typeCheckingMode": "basic",
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "vim.smartRelativeLine": false,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "workbench.colorTheme": "Solarized Dark",
+}
