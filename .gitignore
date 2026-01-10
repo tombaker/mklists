@@ -11,6 +11,7 @@ tests/__pycache__/
 .vimrc
 notes.txt
 tags
+notes/
 
 
 # General, as per https://github.com/tombaker/mklists/pull/4
