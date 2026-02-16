@@ -1,0 +1,13 @@
+[run]
+branch = True
+source =
+    src/mklists
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    raise NotImplementedError
+
+show_missing = True
+skip_empty = True

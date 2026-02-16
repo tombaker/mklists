@@ -1,0 +1,158 @@
+resolve_run_context(startdir) → run_context
+load_config(run_context.configfile_path) → MklistsConfig
+resolve_datadir_contexts(run_context) → datadir_contexts
+resolve_run_plan(datadir_contexts, MklistsConfig) → RunPlan
+run_mklists(plan)
+
+cli.main()
+├── parse args: start_dir, --verbose=True
+├── context_cfg = resolve_run_context(start_dir)
+├── mklists_cfg = load_config(context_cfg.config_file)
+└── run_mklists(context_cfg, mklists_cfg)
+    ├── runs._find_datadirs -> datadirs                         <- REVISIT
+    ├── runs._make_timestamp -> timestamp
+    └── for pass_number in range(2):
+        └── passes.run_pass(mklists_cfg, datadirs, timestamp)   <- REVISIT
+            ├── if mklists_cfg.backups.backups_enabled:
+            │   ├── passes._make_passdir_path([1]) -> passdir 
+            │   ├── passes._init_passdir(passdir, mklists_rootdir) -> [writes]
+            │   └── config_logger.init_logger(passdir, verbose) -> Logger
+            ├── for datadir in datadirs:
+            │   └── datadirs.process_datadir(datadir, passdir, mklists_cfg) -> [reads, writes]
+            │       ├── safety.run_safety_checks([2]) -> None (if passes)
+            │       ├── rules.load_effective_rules(datadir) -> rules
+            │       ├── datadirs._find_datafiles(datadir) -> datafiles
+            │       ├── datadirs._read_datafiles(datafiles) -> datalines
+            │       ├── dispatch.dispatch_datalines_to_targets(datalines_dict) -> datalines_dict
+            │       ├── if passdir is not None:
+            │       │   └── backup_datadir(datadir, passdir) -> passdir
+            │       ├── datadirs._delete_datafiles(datafiles) -> None
+            │       └── datadirs._write_datafiles(datalines_dict) -> None
+            ├── if mklists_cfg.routing.routing_enabled:
+            │   └── routing.redistribute_datafiles([3]) -> None
+            └── if mklists_cfg.urlify.urlify_enabled:
+                └── urlify.urlify_datafiles([4]) -> None
+
+[1] backups_rootdir, timestamp, pass_number
+[2] datadir, mklists_cfg.safety
+[3] datadirs, mklists_cfg.routing.routing_dict
+[4] datadirs, mklists_cfg.urlify.urlify_dir
+
+---------------------------------------------------------
+
+2026-02-01 16:26:32 Use /Users/tbaker/agenda/a/.rules
+2026-02-01 16:26:32 Use /Users/tbaker/agenda/mklists.yaml
+2026-02-01 16:26:32 Backup /Users/tbaker/agenda/backups/2026-02-01_162616893737_pass01/a/
+2026-02-01 16:26:32 Rewrite /Users/tbaker/agenda/a/
+2026-02-01 16:26:33 Use /Users/tbaker/agenda/b/.rules
+2026-02-01 16:26:33 Find /Users/tbaker/agenda/b/.mklists-local
+2026-02-01 16:26:33 Backup /Users/tbaker/agenda/backups/2026-02-01_162616893737_pass01/b/
+2026-02-01 16:26:33 Rewrite /Users/tbaker/agenda/b/
+2026-02-01 16:26:34 Raise ValueError "symlink found /Users/tbaker/agenda/c/symlink"
+
+
+dispatch.py
+    dispatch_datalines_to_targets(rules, datalines) -> dict
+    _dataline_matches_pattern(dataline, pattern, onebased_matchfield) -> bool
+    _sort_datalines(datalines, onebased_sortkey) -> list[str]
+
+backups.py
+    backup_datadir(*, datadir, passdir) -> Path
+    _backup_datadir(datadir, passdir) -> target_dir
+    _delete_backupdir(@@@) -> [delete]
+
+cli.py
+
+config.py
+    load_config(mklists_rootdir) -> MklistsConfig
+    _load_configdict_from_yaml(mklists_rootdir) -> config_dict
+    _merge_config_dicts(defaults, overrides) -> config_dict
+    _make_backup_config(config_dict, mklists_rootdir) -> BackupConfig
+    _make_routing_config(config_dict, mklists_rootdir) -> RoutingConfig
+    _make_safety_config(config_dict) -> SafetyConfig
+    _make_urlify_config(config_dict, mklists_rootdir) -> UrlifyConfig
+    _make_mklists_config(config_dict, mklists_rootdir) -> MklistsConfig
+
+datadirs.py
+    process_datadir(datadir, passdir, cfg_mklists) -> [read, write]
+    _find_datafiles(dirpath) -> datafiles
+    _read_datafiles(datafiles) -> datalines @@@
+    _make_datalines_dict(datalines) -> datalines_dict @@@
+    _delete_datafiles(datafiles) -> [delete]
+    _write_datafiles_from_datalines_dict(datalines_dict) -> [write]
+
+logging.py
+    init_logger(logfile_path, verbose) -> Logger
+    _make_logsink_specs(logfile_path, verbose) -> list[_LogSinkSpec]
+
+passes.py
+    run_pass(datadirs, timestamp, pass_number, cfg_mklists) -> [copy, move]
+    _init_passdir(passdir, mklists_rootdir) -> [mkdir, copy]
+    _make_passdir_path(backups_rootdir, timestamp, pass_number) -> Path
+
+routing.py
+    redistribute_datafiles(@@@)
+
+rules.py
+    load_effective_rules(datadir) -> rules
+    _compile_pattern(text) -> re.Pattern
+    _iter_rulelines(path) -> Iterable[str]
+    _load_rules_from_rulefile(rulefile_path) -> list[Rule]
+    _parse_rule(fields) -> Rule
+    _split_ruleline_into_fields(rule_line) -> fields
+    _validate_filename(filename) -> None (if passes)
+    _validate_rulechain(rules) -> None (if passes)
+
+runs.py
+    run_mklists(@@@)
+    _find_datadirs(mklists_rootdir) -> datadirs
+    _make_timestamp(@@@) -> timestamp
+
+safety.py
+    run_safety_checks(datadir, safety_cfg) -> None (if passes)
+    _check_is_regular_file(pathname) -> None (if passes)
+    _check_is_valid_name(filename, safety_cfg) -> None (if passes)
+    _check_file_contents(filename) -> None (if passes)
+
+utils.py
+    def deepmerge_dicts(base_dict, override_dict) -> [config_dict]
+    def load_yaml_from_file(yamlfile) -> "Any" (config_dict)
+    def load_yaml_from_string(yamltext) -> dict
+
+
+DEFAULT_CONFIG_YAML = """\
+verbose: False
+
+# Backup: Snapshot data directory for each pass to time-stamped backup directory.
+backup:
+  backup_enabled: False
+  backup_dir: backups
+  backup_depth: 3
+
+# Routing: Newly generated files with special names can be moved to given directories.
+routing:
+  routing_enabled: False
+  routing_dict:
+    to_a.txt: a
+    to_b.txt: b
+    to_c.txt: /Users/foo/bar
+
+# Safety: Processing halts if safety criteria are violated.
+safety:
+  invalid_filename_patterns:
+   - \\.swp$
+   - \\.tmp$
+   - \\.vim$
+   - "~$"
+
+# Urlification: After processing, data files can be written in HTML to given directory.
+urlify:
+  urlify_enabled: False
+  urlify_dir: html
+
+
+Back up datadir (given datadir and passdir)
+    Create backup directory.
+    Copy entire datadir to backup directory.
+    Log path of backup directory to console and logfile.
+    Delete backup directories out of depth.
