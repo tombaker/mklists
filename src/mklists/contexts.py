@@ -19,7 +19,6 @@ immediate parent Repo Root unless they contain `.mklistsrc`, which
 makes them self-contained and prevents inheritance.
 """
 
-from collections.abc import Iterable
 from dataclasses import dataclass
 from operator import attrgetter
 from pathlib import Path

@@ -10,7 +10,6 @@ from dataclasses import dataclass
 import datetime
 from pathlib import Path
 from .contexts import resolve_datadir_contexts, DatadirContext, RunContext
-from .utils import make_timestamp
 
 
 @dataclass(slots=True)

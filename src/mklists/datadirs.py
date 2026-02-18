@@ -1,7 +1,6 @@
 """@@@"""
 
 from collections.abc import Iterable
-from dataclasses import dataclass
 from operator import attrgetter
 from pathlib import Path
 from .backup_datadir import backup_datadir
@@ -59,14 +58,14 @@ def _delete_datafiles(datafiles: list[Path]) -> None:
         datafile.unlink()
 
 
-def _find_datafiles(datadir: Path | str) -> Iterable[Path]:
+def _find_datafiles(datadir: Path) -> list[Path]:
     """Yields names of datafiles in given data directory as Path objects.
 
     Args:
         datadir: Path of data directory.
 
     Yields:
-        Absolute paths of datafiles.
+        List of datafiles (absolute pathnames).
 
     Note:
         By definition, a valid "data directory" in mklists:
@@ -80,15 +79,16 @@ def _find_datafiles(datadir: Path | str) -> Iterable[Path]:
         - Yields files in sorted order.
         - Does not recurse into subdirectories.
     """
-    datadir = Path(datadir)
+    datafiles: list[Path] = []
 
-    entries = [
-        entry
-        for entry in datadir.iterdir()
-        if not entry.name.startswith(".") and entry.is_file()
-    ]
+    for entry in datadir.iterdir():
+        is_visible = not entry.name.startswith(".") 
+        is_file = entry.is_file()
 
-    yield from sorted(entries, key=attrgetter("name"))
+        if is_visible and is_file:
+            datafiles.append(entry)
+
+    return sorted(datafiles, key=attrgetter("name"))
 
 
 def _read_datafiles(datafiles: list[Path]) -> list[str]:
