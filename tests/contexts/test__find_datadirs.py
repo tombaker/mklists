@@ -1,4 +1,4 @@
-"""Tests $MKLMKL/contexts.py """
+"""Tests $MKLMKL/contexts.py"""
 
 import pytest
 from mklists.contexts import _find_datadirs

@@ -154,7 +154,7 @@ def resolve_datadir_contexts(run_context: RunContext) -> list[DatadirContext]:
     return datadir_contexts
 
 
-def _find_datadirs(repodir: Path | str) -> Iterable[Path]:
+def _find_datadirs(repodir: Path | str) -> list[Path]:
     """Yields paths of data directories under repository root.
 
     Args:
@@ -163,10 +163,13 @@ def _find_datadirs(repodir: Path | str) -> Iterable[Path]:
     Yields:
         Paths of directories directly under repository root that hold a `.rules` file.
     """
-    datadirs = [
-        entry
-        for entry in repodir.iterdir()
-        if entry.is_dir() and (entry / ".rules").is_file()
-    ]
+    datadirs: list[Path] = []
 
-    yield from sorted(datadirs, key=attrgetter("name"))
+    for entry in repodir.iterdir():
+        is_directory = entry.is_dir()
+        has_rules_file = (entry / ".rules").is_file()
+
+        if is_directory and has_rules_file:
+            datadirs.append(entry)
+
+    return sorted(datadirs, key=attrgetter("name"))
