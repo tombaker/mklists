@@ -31,13 +31,13 @@ def redistribute_datafiles(
                 # Destination directory may be unavailable - eg, USB drive not mounted.
                 continue
 
-            dest_path = _unique_destination_filename(
+            destination = _unique_destination_filename(
                 datadir=datadir,
                 filename=filename,
                 dest_dir=dest_dir,
             )
 
-            shutil.move(source, dest_path)
+            shutil.move(source, destination)
             logger.info(f"Move {filename} -> {dest_dir}")
 
 
