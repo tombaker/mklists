@@ -15,8 +15,6 @@ FIELD_COUNT = 5
 PIPE = "|"
 
 
-
-
 @dataclass(frozen=True)
 class Rule:
     """Immutable data structure for one validated rule."""

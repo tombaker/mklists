@@ -1,6 +1,7 @@
 """Generic utility functions used across the mklists codebase."""
 
 from copy import deepcopy
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 import yaml
@@ -75,4 +76,4 @@ def load_yaml_from_string(yamltext: str) -> Any:
 
 def make_timestamp() -> str:
     """Make timestamp."""
-    return datetime.datetime.now().strftime("%Y-%m-%d_%H%M_%S%f")
+    return datetime.now().strftime("%Y-%m-%d_%H%M_%S%f")

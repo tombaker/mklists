@@ -38,6 +38,7 @@ class DatadirContext:
 @dataclass(slots=True)
 class RunContext:
     """Resolved execution context for a single run."""
+
     rundir: Path
     repo_configfile: Path | None
     repo_rulefile: Path | None

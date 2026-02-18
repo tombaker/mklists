@@ -1,13 +1,12 @@
 """@@@"""
 
-from collections.abc import Iterable
 from operator import attrgetter
 from pathlib import Path
 from .backup_datadir import backup_datadir
 from .config import MklistsConfig
+from .contexts import DatadirContext
 from .dispatch import dispatch_datalines_to_targets
 from .plan import PassPlan
-from .rules import Rule
 from .safety import run_safety_checks
 
 
@@ -38,7 +37,6 @@ def process_datadir(
         backup_datadir(
             datadir=context.datadir,
             passdir=passplan.backupdir,
-            backup_depth=mklists_cfg.backup.backup_depth,
         )
 
     _delete_datafiles(datafiles=datafiles)
@@ -82,7 +80,7 @@ def _find_datafiles(datadir: Path) -> list[Path]:
     datafiles: list[Path] = []
 
     for entry in datadir.iterdir():
-        is_visible = not entry.name.startswith(".") 
+        is_visible = not entry.name.startswith(".")
         is_file = entry.is_file()
 
         if is_visible and is_file:
