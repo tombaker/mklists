@@ -10,7 +10,7 @@ def redistribute_datafiles(
     datadirs: list[Path],
     routing_dict: dict[str, Path],
 ) -> None:
-    """Move new datafiles with special names to given destination directories.
+    """Move new datafiles with special names to directories outside datadir.
 
     Args:
         datadirs:
@@ -18,13 +18,13 @@ def redistribute_datafiles(
         routing_enabled:
 
     Returns:
-        None, after moving files with special names to given destination directories.
+        None, after moving files with special names to directories outside datadir.
     """
     for datadir in datadirs:
         for filename, dest_dir in routing_dict.items():
-            src_path = datadir / filename
+            source = datadir / filename
 
-            if not src_path.exists():
+            if not source.exists():
                 continue
 
             if not dest_dir.exists():
@@ -37,7 +37,7 @@ def redistribute_datafiles(
                 dest_dir=dest_dir,
             )
 
-            shutil.move(src_path, dest_path)
+            shutil.move(source, dest_path)
             logger.info(f"Move {filename} -> {dest_dir}")
 
 
