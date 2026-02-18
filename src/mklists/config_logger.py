@@ -17,13 +17,13 @@ class _LogSinkSpec:
 
 def init_logger(
     *,
-    logfile_path: Path | None,
+    logfile: Path | None,
     verbose: bool,
 ) -> Any:
     """Initialize logger for a mklists run.
 
     Args:
-        logfile_path: Path of logfile, or None if no logfile is written.
+        logfile: Path of logfile, or None if no logfile is written.
         verbose: If True, print run progress to console.
 
     Returns:
@@ -34,7 +34,7 @@ def init_logger(
     """
     logger.remove()
 
-    sink_specs = _make_logsink_specs(logfile_path, verbose)
+    sink_specs = _make_logsink_specs(logfile, verbose)
 
     for spec in sink_specs:
         logger.add(
@@ -51,13 +51,13 @@ def init_logger(
 
 
 def _make_logsink_specs(
-    logfile_path: Path | None,
+    logfile: Path | None,
     verbose: bool,
 ) -> list[_LogSinkSpec]:
     """Return list of logsink-specification objects.
 
     Args:
-        logfile_path: Absolute path of logfile, or None if no logfile is written.
+        logfile: Absolute path of logfile, or None if no logfile is written.
         verbose: If True, print run progress to console.
 
     Returns:
@@ -74,10 +74,10 @@ def _make_logsink_specs(
             )
         )
 
-    if logfile_path is not None:
+    if logfile is not None:
         sink_specs.append(
             _LogSinkSpec(
-                sink=logfile_path,
+                sink=logfile,
                 format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
                 level="INFO",
                 catch=True,

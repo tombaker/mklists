@@ -7,7 +7,7 @@ from mklists.config_logger import _make_logsink_specs
 def test_make_logsink_specs_verbose_only():
     """If verbose is True, logger sink is specified for output to sys.stdout."""
     specs = _make_logsink_specs(
-        logfile_path=None,
+        logfile=None,
         verbose=True,
     )
 
@@ -18,7 +18,7 @@ def test_make_logsink_specs_verbose_only():
 def test_logfile_relative_path(tmp_path):
     """If logfile path is specified, logger sink is specified for output to file."""
     specs = _make_logsink_specs(
-        logfile_path=tmp_path / "logs" / "mklists.log",
+        logfile=tmp_path / "logs" / "mklists.log",
         verbose=False,
     )
 
