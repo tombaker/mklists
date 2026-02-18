@@ -5,17 +5,17 @@ import pytest
 from mklists.rules import _iter_rulelines
 
 
-def write(rulefile_path: Path, text: str) -> Path:
+def write(tmp_ruledir: Path, text: str) -> Path:
     """Helper to write temporary rule file.
 
     Args:
-        rulefile_path: Temporary path used for a specific Pytest test run.
+        tmp_ruledir: Temporary path used for a specific Pytest test run.
         text: Rule file text to be written to a temporary rule file.
         
     Returns:
         Rule file, as Path object, written to temporary test run directory.
     """
-    path = rulefile_path / "rules.conf"
+    path = tmp_ruledir / "rules.conf"
     path.write_text(text)
 
     return path

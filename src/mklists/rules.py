@@ -101,11 +101,11 @@ def _iter_rulelines(rulefile: Path) -> Iterable[str]:
         yield line
 
 
-def _load_rules_from_rulefile(rulefile_path: Path) -> list[Rule]:
+def _load_rules_from_rulefile(rulefile: Path) -> list[Rule]:
     """Load, parse, validate rules from a rule file.
 
     Args:
-        rulefile_path: Path object for rule file.
+        rulefile: Path object for rule file.
 
     Returns:
         List of Rule objects.
@@ -115,7 +115,7 @@ def _load_rules_from_rulefile(rulefile_path: Path) -> list[Rule]:
     """
     rules: list[Rule] = []
 
-    for line in _iter_rulelines(rulefile_path):
+    for line in _iter_rulelines(rulefile):
         ruleline_fields = _split_ruleline_into_fields(line)
         rule = _parse_rule(ruleline_fields)
         rules.append(rule)

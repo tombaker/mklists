@@ -9,33 +9,33 @@ from mklists.rules import (
 )
 
 
-def write_rulefile(rulefile_dir: Path, text_to_write: str) -> Path:
-    """Test helper that writes given text to rulefile_dir/rules.txt.
+def write_rulefile(tmp_ruledir: Path, text_to_write: str) -> Path:
+    """Test helper that writes given text to tmp_ruledir/rules.txt.
 
     Args:
-        rulefile_dir: Path for directory where rules.txt to be written.
+        tmp_ruledir: Path for directory where rules.txt to be written.
         text_to_write: Text to be written to rules.txt.
 
     Returns:
         Path for written rule file.
     """
-    rulefile_path = rulefile_dir / "rules.txt"
-    rulefile_path.write_text(text_to_write)
-    return rulefile_path
+    rulefile = tmp_ruledir / "rules.txt"
+    rulefile.write_text(text_to_write)
+    return rulefile
 
 
 def test_empty_rulefile_returns_empty_list(tmp_path):
     """If rulefile is empty, list returned is also empty."""
-    rulefile_path = write_rulefile(rulefile_dir=tmp_path, text_to_write="")
-    rules = _load_rules_from_rulefile(rulefile_path)
+    rulefile = write_rulefile(tmp_ruledir=tmp_path, text_to_write="")
+    rules = _load_rules_from_rulefile(rulefile)
     # pylint: disable=use-implicit-booleaness-not-comparison
     assert rules == []
 
 
 def test_comments_and_blank_lines_are_ignored(tmp_path):
     """Comments and blank lines are ignored."""
-    rulefile_path = write_rulefile(
-        rulefile_dir=tmp_path,
+    rulefile = write_rulefile(
+        tmp_ruledir=tmp_path,
         text_to_write="""
         # this is a comment
 
@@ -44,7 +44,7 @@ def test_comments_and_blank_lines_are_ignored(tmp_path):
         """,
     )
 
-    rules = _load_rules_from_rulefile(rulefile_path)
+    rules = _load_rules_from_rulefile(rulefile)
 
     # pylint: disable=use-implicit-booleaness-not-comparison
     assert rules == []
@@ -52,14 +52,14 @@ def test_comments_and_blank_lines_are_ignored(tmp_path):
 
 def test_single_valid_rule_is_loaded(tmp_path):
     """Single rule loaded is valid."""
-    rulefile_path = write_rulefile(
-        rulefile_dir=tmp_path,
+    rulefile = write_rulefile(
+        tmp_ruledir=tmp_path,
         text_to_write="""
         1|^abc$|source|target|1
         """,
     )
 
-    rules = _load_rules_from_rulefile(rulefile_path)
+    rules = _load_rules_from_rulefile(rulefile)
 
     assert len(rules) == 1
     assert isinstance(rules[0], Rule)
@@ -69,8 +69,8 @@ def test_single_valid_rule_is_loaded(tmp_path):
 
 def test_valid_rule_chain_is_loaded(tmp_path):
     """Rule chain loaded is valid."""
-    rulefile_path = write_rulefile(
-        rulefile_dir=tmp_path,
+    rulefile = write_rulefile(
+        tmp_ruledir=tmp_path,
         text_to_write="""
         1|.*|A|B|1
         1|.*|B|C|1
@@ -78,7 +78,7 @@ def test_valid_rule_chain_is_loaded(tmp_path):
         """,
     )
 
-    rules = _load_rules_from_rulefile(rulefile_path)
+    rules = _load_rules_from_rulefile(rulefile)
 
     assert [r.source for r in rules] == ["A", "B", "C"]
     assert [r.target for r in rules] == ["B", "C", "D"]
@@ -86,12 +86,12 @@ def test_valid_rule_chain_is_loaded(tmp_path):
 
 def test_invalid_rule_format_raises_error(tmp_path):
     """If rule lacks a required field, raise RuleError."""
-    rulefile_path = write_rulefile(
-        rulefile_dir=tmp_path,
+    rulefile = write_rulefile(
+        tmp_ruledir=tmp_path,
         text_to_write="""
         1|.*|A|B
         """,
     )
 
     with pytest.raises(RuleError):
-        _load_rules_from_rulefile(rulefile_path)
+        _load_rules_from_rulefile(rulefile)
