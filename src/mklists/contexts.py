@@ -127,21 +127,21 @@ def resolve_datadir_contexts(run_context: RunContext) -> list[DatadirContext]:
 
         is_selfcontained = datadir_config.is_file()
 
-        rulefile_paths: list[Path] = []
+        rulefiles: list[Path] = []
 
         if is_selfcontained:
             configfile_used = datadir_config
-            rulefile_paths = [datadir_rules]
+            rulefiles = [datadir_rules]
         else:
             configfile_used = run_context.repo_configfile
 
             if run_context.repo_rulefile:
-                rulefile_paths.append(repo_rulefile)
+                rulefiles.append(repo_rulefile)
 
-            rulefile_paths.append(datadir_rules)
+            rulefiles.append(datadir_rules)
 
         # ---- load rules ---------------------------------------------
-        rules = load_rules_for_datadir(rulefile_paths)
+        rules = load_rules_for_datadir(rulefiles)
 
         contexts.append(
             DatadirContext(

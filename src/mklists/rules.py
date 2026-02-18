@@ -36,7 +36,7 @@ class FilenameError(RuleError):
     """Rule field is not valid as the name of a data file."""
 
 
-def load_rules_for_datadir(rulefile_paths: list[Path]) -> list[Rule]:
+def load_rules_for_datadir(rulefiles: list[Path]) -> list[Rule]:
     """Load effective rules for a data directory.
 
     Args:
@@ -54,11 +54,11 @@ def load_rules_for_datadir(rulefile_paths: list[Path]) -> list[Rule]:
 
     all_rules: list[Rule] = []
 
-    for path in rulefile_paths:
-        if not path.is_file():
-            raise FileNotFoundError(path)
+    for rulefile in rulefiles:
+        if not rulefile.is_file():
+            raise FileNotFoundError(rulefile)
 
-        rules = _load_rules_from_rulefile(path)
+        rules = _load_rules_from_rulefile(rulefile)
         all_rules.extend(rules)
 
     _validate_rulechain(all_rules)
@@ -85,16 +85,16 @@ def _compile_pattern(text: str) -> Pattern[str]:
         raise RuleError(f"Invalid regex {text!r}") from e
 
 
-def _iter_rulelines(path: Path) -> Iterable[str]:
+def _iter_rulelines(rulefile: Path) -> Iterable[str]:
     """Yield non-blank, non-comment lines in rule file with leading whitespace stripped.
 
     Args:
-        path: Pathname of rule file as Path object or string.
+        rulefile: Pathname of rule file.
 
     Yields:
         Non-blank, non-comment lines, with whitespace stripped, from rule file.
     """
-    for raw in path.read_text().splitlines():
+    for raw in rulefile.read_text().splitlines():
         line = raw.lstrip()
         if not line or line.startswith("#"):
             continue
