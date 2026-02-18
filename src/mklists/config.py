@@ -219,17 +219,17 @@ def _make_routing_config(
             )
 
         # --- Validate / normalize dirname (value) ---
-        dirname_path = Path(dirname)
+        dirname = Path(dirname)
 
-        if not dirname_path.is_absolute():
-            if len(dirname_path.parts) != 1:
+        if not dirname.is_absolute():
+            if len(dirname.parts) != 1:
                 raise ValueError(
                     "routing_dict values must be single directory name "
                     "or an absolute pathname."
                 )
-            dirname_path = (mklists_rootdir / dirname_path).resolve()
+            dirname = (mklists_rootdir / dirname).resolve()
 
-        routing_dict[filename] = dirname_path
+        routing_dict[filename] = dirname
 
     return RoutingConfig(
         routing_enabled=routing_enabled,
