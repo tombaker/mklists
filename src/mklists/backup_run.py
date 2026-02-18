@@ -12,7 +12,7 @@ from pathlib import Path
 from loguru import logger
 
 
-def run_backups(*, datadir: Path, backupdir_path: Path) -> Path:
+def run_backups(*, datadir: Path, backupdir: Path) -> Path:
     """Back up ...
 
     No timestamp.
@@ -22,18 +22,18 @@ def run_backups(*, datadir: Path, backupdir_path: Path) -> Path:
 
     Args:
         datadir: Data directory.
-        backupdir_path: Backup directory for this pass.
+        backupdir: Backup directory for this pass.
         backup_depth: Number of backup directories to retain.
 
     Return:
         Path of backup directory for this pass.
     """
-    logger.info(f"Backup {backupdir_path}")
+    logger.info(f"Backup {backupdir}")
     _prune_backupdirs(
-        backupdir_path=backupdir_path,
+        backupdir=backupdir,
         backup_depth=backup_depth,
     )
-    return backupdir_path
+    return backupdir
 
 
 def _prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
@@ -57,12 +57,12 @@ def _prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
 
 
 def _init_passdir(
-    backupdir_path: Path, user_configfile: Path | None, global_rulefile: Path | None = None
+    backupdir: Path, user_configfile: Path | None, global_rulefile: Path | None = None
 ) -> None:
     """Initialize directory for backup of one pass of a mklists run.
 
     Args:
-        backupdir_path: Backup directory to initialize.
+        backupdir: Backup directory to initialize.
         user_configfile: Path of user config file (or None if none exists).
 
     Returns:
@@ -71,10 +71,10 @@ def _init_passdir(
     Raises:
         FileExistsError: If backup root directory already exists.
     """
-    backupdir_path.mkdir(parents=True, exist_ok=False)
+    backupdir.mkdir(parents=True, exist_ok=False)
 
     if user_configfile is not None and user_configfile.is_file():
-        shutil.copy2(user_configfile, backupdir_path)
+        shutil.copy2(user_configfile, backupdir)
 
     if global_rulefile is not None and global_rulefile.is_file():
-        shutil.copy2(global_rulefile, backupdir_path)
+        shutil.copy2(global_rulefile, backupdir)
