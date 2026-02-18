@@ -42,7 +42,7 @@ class RunContext:
     rundir: Path
     repo_configfile: Path | None
     repo_rulefile: Path | None
-    datadirs: list[DatadirContext]
+    datadir_contexts: list[DatadirContext]
 
 
 def resolve_run_context(startdir: Path) -> RunContext:
@@ -78,7 +78,7 @@ def resolve_run_context(startdir: Path) -> RunContext:
         raise RuntimeError(f"{startdir} is neither Repo Root nor Datadir.")
 
     # ================================================================
-    # Case 1 → startdir is repo root → discover datadirs
+    # Case 1 → startdir is repo root → discover datadir_contexts
     # ================================================================
     if is_repo_root:
         datadirs = _find_datadirs(repodir=startdir)
@@ -114,7 +114,7 @@ def resolve_datadir_contexts(run_context: RunContext) -> list[DatadirContext]:
     OR
     rundir == datadir
     """
-    contexts: list[DatadirContext] = []
+    datadir_contexts: list[DatadirContext] = []
 
     rundir = run_context.rundir
 
@@ -143,7 +143,7 @@ def resolve_datadir_contexts(run_context: RunContext) -> list[DatadirContext]:
         # ---- load rules ---------------------------------------------
         rules = load_rules_for_datadir(rulefiles)
 
-        contexts.append(
+        datadir_contexts.append(
             DatadirContext(
                 datadir=datadir,
                 configfile_used=configfile_used,
@@ -151,7 +151,7 @@ def resolve_datadir_contexts(run_context: RunContext) -> list[DatadirContext]:
             )
         )
 
-    return contexts
+    return datadir_contexts
 
 
 def _find_datadirs(repodir: Path | str) -> Iterable[Path]:
