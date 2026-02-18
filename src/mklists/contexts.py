@@ -31,7 +31,7 @@ from .rules import REPO_RULEFILE_NAME, DATADIR_RULEFILE_NAME, load_rules_for_dat
 class DatadirContext:
     """Resolved execution context for a single Datadir."""
 
-    datadir_path: Path
+    datadir: Path
     configfile_used: Path | None
     rules: list[Rule]
 
@@ -145,7 +145,7 @@ def resolve_datadir_contexts(run_context: RunContext) -> list[DatadirContext]:
 
         contexts.append(
             DatadirContext(
-                datadir_path=datadir,
+                datadir=datadir,
                 configfile_used=configfile_used,
                 rules=rules,
             )

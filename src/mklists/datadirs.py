@@ -27,23 +27,23 @@ def process_datadir(
     Returns:
         None, after safety check, reading data, applying rules, backup, re-writing.
     """
-    run_safety_checks(context.datadir_path, mklists_cfg.safety)
+    run_safety_checks(context.datadir, mklists_cfg.safety)
 
     rules = context.rules
 
-    datafiles: list[Path] = list(_find_datafiles(context.datadir_path))
+    datafiles: list[Path] = list(_find_datafiles(context.datadir))
     datalines: list[str] = _read_datafiles(datafiles)
     datalines_dict = dispatch_datalines_to_targets(rules, datalines)
 
     if passplan.backupdir is not None:
         backup_datadir(
-            datadir=context.datadir_path,
+            datadir=context.datadir,
             passdir=passplan.backupdir,
             backup_depth=mklists_cfg.backup.backup_depth,
         )
 
     _delete_datafiles(datafiles=datafiles)
-    _write_datafiles(datadir=context.datadir_path, datalines_dict=datalines_dict)
+    _write_datafiles(datadir=context.datadir, datalines_dict=datalines_dict)
 
 
 def _delete_datafiles(datafiles: list[Path]) -> None:

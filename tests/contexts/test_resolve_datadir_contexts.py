@@ -55,18 +55,18 @@ def test_repo_root_discovers_datadirs(tmp_path, fake_rule_loader):
 
     assert result == [
         DatadirContext(
-            datadir_path=d1,
+            datadir=d1,
             configfile_used=repo / "mklists.yaml",
             rules=[".rules"],  # fake placeholder output
         ),
         DatadirContext(
-            datadir_path=d2,
+            datadir=d2,
             configfile_used=repo / "mklists.yaml",
             rules=[".rules"],  # fake placeholder output
         ),
     ]
 
-    assert {c.datadir_path for c in result} == {d1, d2}
+    assert {c.datadir for c in result} == {d1, d2}
 
 
 @pytest.mark.skip
@@ -81,7 +81,7 @@ def test_startdir_is_single_datadir(tmp_path, fake_rule_loader):
 
     assert result == [
         DatadirContext(
-            datadir_path=d,
+            datadir=d,
             configfile_used=None,
             rules=[".rules"],  # fake placeholder output
         ),
@@ -104,7 +104,7 @@ def test_datadir_inherits_repo_rules(tmp_path, fake_rule_loader):
 
     assert result == [
         DatadirContext(
-            datadir_path=d,
+            datadir=d,
             configfile_used=repo / "mklists.yaml",
             rules=["mklists.rules", ".rules"],  # fake placeholder output
         ),
@@ -128,7 +128,7 @@ def test_selfcontained_datadir_no_inherit(tmp_path, fake_rule_loader):
 
     assert result == [
         DatadirContext(
-            datadir_path=d,
+            datadir=d,
             configfile_used=repo / "data" / ".mklistsrc",
             rules=[".rules"],  # fake placeholder output
         ),
