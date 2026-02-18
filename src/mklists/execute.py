@@ -22,5 +22,5 @@ def run_mklists(run_plan: RunPlan) -> None:
     if run_plan.routing_dict:
         redistribute_datafiles(run_plan.datadirs, run_plan.routing_dict)
 
-    if run_plan.htmldir_path:
-        write_html(run_plan.datadirs, run_plan.htmldir_path)
+    if run_plan.htmldir:
+        write_html(run_plan.datadirs, run_plan.htmldir)

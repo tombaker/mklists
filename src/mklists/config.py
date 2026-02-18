@@ -211,9 +211,9 @@ def _make_routing_config(
 
     for filename, dirname in files2dirs_raw.items():
         # --- Validate filename (key) ---
-        filename_path = Path(filename)
+        filename = Path(filename)
 
-        if filename_path.is_absolute() or len(filename_path.parts) != 1:
+        if filename.is_absolute() or len(filename.parts) != 1:
             raise ValueError(
                 f"routing_dict must be single filename, not a path: {filename!r} ."
             )

@@ -27,7 +27,7 @@ class RunPlan:
     datadirs: list[DatadirContext]
     passes: list[PassPlan]
     routing_dict: dict
-    htmldir_path: Path
+    htmldir: Path
 
 
 def resolve_run_plan(
@@ -77,7 +77,7 @@ def resolve_run_plan(
         datadirs=datadir_contexts,
         passes=passes,
         routing_dict=routing_dict,
-        htmldir_path=htmldir,
+        htmldir=htmldir,
     )
 
 
