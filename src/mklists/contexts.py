@@ -32,7 +32,7 @@ class DatadirContext:
     """Resolved execution context for a single Datadir."""
 
     datadir_path: Path
-    configfile_path: Path | None
+    configfile_used: Path | None
     rules: list[Rule]
 
 
@@ -130,10 +130,10 @@ def resolve_datadir_contexts(run_context: RunContext) -> list[DatadirContext]:
         rulefile_paths: list[Path] = []
 
         if is_selfcontained:
-            config_file = datadir_config
+            configfile_used = datadir_config
             rulefile_paths = [datadir_rules]
         else:
-            config_file = run_context.repo_configfile
+            configfile_used = run_context.repo_configfile
 
             if run_context.repo_rulefile:
                 rulefile_paths.append(repo_rulefile)
@@ -146,7 +146,7 @@ def resolve_datadir_contexts(run_context: RunContext) -> list[DatadirContext]:
         contexts.append(
             DatadirContext(
                 datadir_path=datadir,
-                configfile_path=config_file,
+                configfile_used=configfile_used,
                 rules=rules,
             )
         )

@@ -92,11 +92,11 @@ class MklistsConfig:
     urlify: UrlifyConfig
 
 
-def load_config(configfile_path: Path | None) -> MklistsConfig:
+def load_config(configfile_used: Path | None) -> MklistsConfig:
     """Derive settings from built-in defaults and optional user-defined config file.
 
     Args:
-        configfile_path: Path of user-defined config file to use, if available.
+        configfile_used: Path of user-defined config file to use, if available.
 
     Returns:
         Instance of configuration object MklistsConfig.
@@ -104,9 +104,8 @@ def load_config(configfile_path: Path | None) -> MklistsConfig:
     Note:
         Is no user-defined config file is found, uses only built-in defaults.
     """
-    user_configfile = configfile_path
-    config_dict = _load_configdict_from_yaml(user_configfile=user_configfile)
-    mklists_cfg = _make_mklists_config(config_dict, configfile_path)
+    config_dict = _load_configdict_from_yaml(user_configfile=configfile_used)
+    mklists_cfg = _make_mklists_config(config_dict, configfile_used)
 
     return mklists_cfg
 
