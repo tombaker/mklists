@@ -53,6 +53,11 @@ def test_find_datadirs_sorted(tmp_path):
     assert result == [d2, d1]
 
 
+def test_find_datadirs_empty(tmp_path):
+    """Returns empty list if none found."""
+    assert _find_datadirs(tmp_path) == []
+
+
 def test_finds_datadirs_with_rules_file_not_directory(tmp_path):
     """For datadir to be found, `.rules` must be a file, not a directory."""
     d = tmp_path / "a" / ".rules"
