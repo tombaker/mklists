@@ -6,41 +6,31 @@ from .backup_datadir import backup_datadir
 from .config import MklistsConfig
 from .contexts_datadir import DatadirContext
 from .dispatch import dispatch_datalines_to_targets
-from .plan import PassPlan
 from .safety import run_safety_checks
 
 
 def process_datadir(
     *,
-    context: DatadirContext,
-    passplan: PassPlan,
+    datadir_ctx: DatadirContext,
     mklists_cfg: MklistsConfig,
 ) -> None:
     """
     Args:
         datadir:
-        passdir:
         mklists_cfg:
 
     Returns:
         None, after safety check, reading data, applying rules, backup, re-writing.
     """
-    run_safety_checks(context.datadir, mklists_cfg.safety)
+    run_safety_checks(datadir_ctx.datadir, mklists_cfg.safety)
 
-    rules = context.rules
+    rules = datadir_ctx.rules
 
-    datafiles: list[Path] = list(_find_datafiles(context.datadir))
+    datafiles: list[Path] = list(_find_datafiles(datadir_ctx.datadir))
     datalines: list[str] = _read_datafiles(datafiles)
     datalines_dict = dispatch_datalines_to_targets(rules, datalines)
-
-    if passplan.backupdir is not None:
-        backup_datadir(
-            datadir=context.datadir,
-            passdir=passplan.backupdir,
-        )
-
     _delete_datafiles(datafiles=datafiles)
-    _write_datafiles(datadir=context.datadir, datalines_dict=datalines_dict)
+    _write_datafiles(datadir=datadir_ctx.datadir, datalines_dict=datalines_dict)
 
 
 def _delete_datafiles(datafiles: list[Path]) -> None:

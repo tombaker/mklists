@@ -46,6 +46,7 @@ urlify:
 
 _CONFIG_DEFAULTS = load_yaml_from_string(DEFAULT_CONFIG_YAML)
 
+
 @dataclass(slots=True, frozen=True)
 class BackupConfig:
     """Policy for backing up data files before processing."""
