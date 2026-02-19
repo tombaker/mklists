@@ -1,27 +1,25 @@
-
+"""Exception classes for types of failure of Mklists semantics."""
 
 
 class MklistsError(Exception):
-    """Base exception for all Mklists errors."""
+    """Base class for all Mklists exceptions."""
 
 
 class StructureError(MklistsError):
-    """Raised when repository or datadir structure is invalid."""
-
-
-class DataNotFoundError(ValueError):
-    """Base class for errors with lists of data lines."""
-
-
-class RulesNotFoundError(ValueError):
-    """No rules were found."""
+    """Invalid repository or datadir structure."""
 
 
 class RuleError(ValueError):
-    """Rule does not parse or validate."""
+    """Invalid rule syntax or semantics."""
 
 
 class FilenameError(RuleError):
-    """Rule field is not valid as the name of a data file."""
+    """Invalid filename in rule."""
 
 
+class DataNotFoundError(MklistsError):
+    """Expected data not found."""
+
+
+class RulesNotFoundError(MklistsError):
+    """Expected rules not found."""
