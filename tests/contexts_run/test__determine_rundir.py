@@ -33,12 +33,15 @@ def test_determine_rundir_datadir_mode(tmp_path):
     assert result == startdir
 
 
-def test_determine_rundir_neither_raises(tmp_path):
+def test_determine_rundir_both_markers_raises(tmp_path):
     """Sees both mklists.yaml and .rules: raises exception."""
+    startdir = tmp_path
+    (startdir / DATADIR_RULEFILE_NAME).touch()
+
     with pytest.raises(RuntimeError):
         _determine_rundir(
-            startdir=tmp_path,
-            repo_configfile=None,
+            startdir=startdir,
+            repo_configfile=startdir / "mklists.yaml",
             repo_rulefile=None,
         )
 
