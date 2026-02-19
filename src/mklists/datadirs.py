@@ -2,7 +2,6 @@
 
 from operator import attrgetter
 from pathlib import Path
-from .backup_datadir import backup_datadir
 from .config import MklistsConfig
 from .contexts_datadir import DatadirContext
 from .dispatch import dispatch_datalines_to_targets
