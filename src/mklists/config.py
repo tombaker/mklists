@@ -45,9 +45,6 @@ urlify:
 """
 
 _CONFIG_DEFAULTS = load_yaml_from_string(DEFAULT_CONFIG_YAML)
-REPO_CONFIGFILE_NAME = "mklists.yaml"
-DATADIR_CONFIGFILE_NAME = ".mklistsrc"
-
 
 @dataclass(slots=True, frozen=True)
 class BackupConfig:

@@ -1,7 +1,7 @@
 """Tests $MKLMKL/contexts.py"""
 
 import pytest
-from mklists.contexts import _find_datadirs
+from mklists.contexts_run import _find_datadirs
 
 
 def test_find_datadirs_finds_directories_with_rules(tmp_path):

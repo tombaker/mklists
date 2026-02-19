@@ -6,11 +6,6 @@ from pathlib import Path
 from typing import Iterable, Pattern
 
 
-DATADIR_CONFIGFILE_NAME = ".mklistsrc"  # @@@ SHOULD NOT BE NECESSARY
-
-
-REPO_RULEFILE_NAME = "mklists.rules"
-DATADIR_RULEFILE_NAME = ".rules"
 FIELD_COUNT = 5
 PIPE = "|"
 
