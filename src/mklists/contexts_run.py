@@ -7,6 +7,14 @@ from .contexts_datadir import DatadirContext, resolve_datadir_context
 from .structure import DATADIR_RULEFILE_NAME, REPO_CONFIGFILE_NAME, REPO_RULEFILE_NAME
 
 
+class MklistsError(Exception):
+    """Base exception for all Mklists errors."""
+
+
+class StructureError(MklistsError):
+    """Raised when repository or datadir structure is invalid."""
+
+
 @dataclass(slots=True)
 class RunContext:
     """Resolved execution context for a single run."""
@@ -33,7 +41,6 @@ def resolve_run_context(startdir: Path | str) -> RunContext:
         └── resolve_datadir_context(...) for each
                 ↓
             produce list[DatadirContext]
-    contexts_run.py
     """
     startdir = Path(startdir).resolve()
 
@@ -56,7 +63,7 @@ def resolve_run_context(startdir: Path | str) -> RunContext:
     datadir_paths = _find_datadirs(rundir)
 
     if not datadir_paths:
-        raise RuntimeError("No datadirs found under repository root.")
+        raise StructureError("No datadirs found under repository root.")
 
     # ------------------------------------------------------------
     # 3. Resolve each DatadirContext
@@ -128,7 +135,7 @@ def _determine_rundir(
         Path to repository root (even in single-datadir mode).
 
     Raises:
-        RuntimeError if structure is invalid.
+        StructureError if structure is invalid.
     """
 
     datadir_rulefile = startdir / DATADIR_RULEFILE_NAME
@@ -137,7 +144,7 @@ def _determine_rundir(
 
     # Structural invariant: cannot be both
     if is_datadir and is_repo_root:
-        raise RuntimeError("Directory cannot be both repository root and datadir.")
+        raise StructureError("Directory cannot be both repository root and datadir.")
 
     # Repo mode
     if is_repo_root:
@@ -147,4 +154,4 @@ def _determine_rundir(
     if is_datadir:
         return startdir
 
-    raise RuntimeError("Directory is neither repository root nor datadir.")
+    raise StructureError("Directory is neither repository root nor datadir.")

@@ -38,7 +38,7 @@ def test_determine_rundir_both_markers_raises(tmp_path):
     startdir = tmp_path
     (startdir / DATADIR_RULEFILE_NAME).touch()
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(StructureError):
         _determine_rundir(
             startdir=startdir,
             repo_configfile=startdir / "mklists.yaml",
@@ -48,7 +48,7 @@ def test_determine_rundir_both_markers_raises(tmp_path):
 
 def test_determine_rundir_neither_raises(tmp_path):
     """Sees neither mklists.yaml nor .rules: raises exception."""
-    with pytest.raises(RuntimeError):
+    with pytest.raises(StructureError):
         _determine_rundir(
             startdir=tmp_path,
             repo_configfile=None,

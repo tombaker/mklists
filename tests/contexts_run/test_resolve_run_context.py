@@ -37,10 +37,6 @@ def test_resolve_run_context_repo_mode(tmp_path, monkeypatch):
 
     result = contexts_run.resolve_run_context(tmp_path)
 
-    assert result.rundir == tmp_path
-    assert result.repo_configfile == configfile
-    assert len(result.datadir_contexts) == 2
-
     assert result == RunContext(
         rundir=tmp_path,
         repo_configfile=tmp_path / "mklists.yaml",
@@ -56,5 +52,5 @@ def test_resolve_run_context_no_datadirs_raises(tmp_path):
     """If no datadirs found, raises exception."""
     (tmp_path / "mklists.yaml").touch()
 
-    with pytest.raises(RuntimeError):
+    with pytest.raises(StructureError):
         contexts_run.resolve_run_context(tmp_path)
