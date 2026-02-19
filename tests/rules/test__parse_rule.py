@@ -2,11 +2,8 @@
 
 import re
 import pytest
-from mklists.rules import (
-    _parse_rule,
-    Rule,
-    RuleError,
-)
+from mklists.errors import RuleError
+from mklists.rules import _parse_rule, Rule
 
 
 def test_valid_rule_is_parsed_correctly():

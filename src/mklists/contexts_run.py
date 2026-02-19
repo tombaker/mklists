@@ -4,15 +4,8 @@ from dataclasses import dataclass
 from operator import attrgetter
 from pathlib import Path
 from .contexts_datadir import DatadirContext, resolve_datadir_context
+from .errors import StructureError
 from .structure import DATADIR_RULEFILE_NAME, REPO_CONFIGFILE_NAME, REPO_RULEFILE_NAME
-
-
-class MklistsError(Exception):
-    """Base exception for all Mklists errors."""
-
-
-class StructureError(MklistsError):
-    """Raised when repository or datadir structure is invalid."""
 
 
 @dataclass(slots=True)

@@ -8,6 +8,7 @@ import pytest
 from mklists import contexts_run
 from mklists.contexts_datadir import DatadirContext
 from mklists.contexts_run import RunContext
+from mklists.errors import StructureError
 
 
 def test_resolve_run_context_repo_mode(tmp_path, monkeypatch):

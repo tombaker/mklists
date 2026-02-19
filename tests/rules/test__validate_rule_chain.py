@@ -1,7 +1,8 @@
 """Tests ~/github/tombaker/mklists/src/mklists/rules.py"""
 
 import pytest
-from mklists.rules import Rule, RuleError, _validate_rulechain
+from mklists.errors import RuleError
+from mklists.rules import Rule, _validate_rulechain
 
 
 def minimal_rule(source, target):

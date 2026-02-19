@@ -8,7 +8,8 @@ Documentation should make this clear.
 
 import re
 import pytest
-from mklists.rules import _compile_pattern, Rule, RuleError
+from mklists.errors import RuleError
+from mklists.rules import _compile_pattern, Rule
 
 
 def test_valid_regex_returns_compiled_pattern():

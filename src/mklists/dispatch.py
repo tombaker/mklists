@@ -10,15 +10,8 @@ with fan-out behavior and routing semantics.
 
 import re
 from typing import Pattern
+from .errors import RulesNotFoundError, DataNotFoundError
 from .rules import Rule
-
-
-class DataNotFoundError(ValueError):
-    """Base class for errors with lists of data lines."""
-
-
-class RulesNotFoundError(ValueError):
-    """No rules were found."""
 
 
 def dispatch_datalines_to_targets(

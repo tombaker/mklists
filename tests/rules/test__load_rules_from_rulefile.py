@@ -2,11 +2,8 @@
 
 from pathlib import Path
 import pytest
-from mklists.rules import (
-    _load_rules_from_rulefile,
-    Rule,
-    RuleError,
-)
+from mklists.errors import RuleError
+from mklists.rules import _load_rules_from_rulefile, Rule
 
 
 def write_rulefile(tmp_ruledir: Path, text_to_write: str) -> Path:

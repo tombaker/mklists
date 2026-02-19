@@ -3,7 +3,8 @@
 import os
 import pytest
 from pathlib import Path
-from mklists.rules import _validate_filename, FilenameError
+from mklists.errors import FilenameError
+from mklists.rules import _validate_filename
 
 
 def test_valid_filename():

@@ -3,6 +3,7 @@
 from pathlib import Path
 import pytest
 from mklists.contexts_run import _determine_rundir
+from mklists.errors import StructureError
 from mklists.structure import DATADIR_RULEFILE_NAME
 
 

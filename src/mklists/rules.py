@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Pattern
+from .errors import RuleError, FilenameError
 
 
 FIELD_COUNT = 5
@@ -19,14 +20,6 @@ class Rule:
     source: str
     target: str
     target_sortkey: int | None
-
-
-class RuleError(ValueError):
-    """Rule does not parse or validate."""
-
-
-class FilenameError(RuleError):
-    """Rule field is not valid as the name of a data file."""
 
 
 def load_rules_for_datadir(rulefiles: list[Path]) -> list[Rule]:

@@ -3,11 +3,8 @@
 from dataclasses import dataclass
 import re
 import pytest
-from mklists.dispatch import (
-    dispatch_datalines_to_targets,
-    DataNotFoundError,
-    RulesNotFoundError,
-)
+from mklists.dispatch import dispatch_datalines_to_targets
+from mklists.errors import DataNotFoundError, RulesNotFoundError
 from mklists.rules import Rule
 
 

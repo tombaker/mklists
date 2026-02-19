@@ -1,7 +1,8 @@
 """Tests ~/github/tombaker/mklists/src/mklists/rules.py"""
 
 import pytest
-from mklists.rules import _split_ruleline_into_fields, RuleError, PIPE, FIELD_COUNT
+from mklists.errors import RuleError
+from mklists.rules import _split_ruleline_into_fields, PIPE, FIELD_COUNT
 
 
 def test_valid_ruleline_is_split_into_fields():
