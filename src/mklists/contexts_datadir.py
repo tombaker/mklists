@@ -71,6 +71,5 @@ def _resolve_effective_rulefiles(
     configfile_used: Path | None,
 ) -> list[Path]:
     """@@@"""
-    # pylint: disable=unused-argument
     effective_rulefiles: list[Path] = []
     return effective_rulefiles
