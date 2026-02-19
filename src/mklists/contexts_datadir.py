@@ -1,8 +1,6 @@
 """Resolve execution context for a single datadir."""
 
-
 from dataclasses import dataclass
-from operator import attrgetter
 from pathlib import Path
 from .rules import Rule, load_rules_for_datadir
 from .structure import DATADIR_CONFIGFILE_NAME, DATADIR_RULEFILE_NAME
@@ -35,9 +33,7 @@ def resolve_datadir_context(
 
     # 2. Determine effective configfile
     configfile_used = (
-        datadir_configfile
-        if datadir_configfile is not None
-        else repo_configfile
+        datadir_configfile if datadir_configfile is not None else repo_configfile
     )
 
     # 3. Determine effective rulefiles
@@ -48,7 +44,7 @@ def resolve_datadir_context(
     )
 
     # 4. Parse rules
-    rules = load_rules_from_files(rulefile_paths)
+    rules = load_rules_for_datadir(rulefile_paths)
 
     return DatadirContext(
         datadir=datadir,
@@ -68,3 +64,13 @@ def _find_datadir_rulefile(dirpath: Path) -> Path | None:
     candidate = dirpath / DATADIR_RULEFILE_NAME
     return candidate if candidate.is_file() else None
 
+
+def _resolve_effective_rulefiles(
+    datadir_rulefile: Path | None,
+    repo_rulefile: Path | None,
+    configfile_used: Path | None,
+) -> list[Path]:
+    """@@@"""
+    # pylint: disable=unused-argument
+    effective_rulefiles: list[Path] = []
+    return effective_rulefiles
