@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from operator import attrgetter
 from pathlib import Path
-from .rules import Rule, load_rules_for_datadir
+from .contexts_datadir import DatadirContext, resolve_datadir_context
 from .structure import DATADIR_RULEFILE_NAME, REPO_CONFIGFILE_NAME, REPO_RULEFILE_NAME
 
 
@@ -82,8 +82,6 @@ def resolve_run_context(startdir: Path | str) -> RunContext:
     )
 
 
-
-
 def _find_datadirs(repodir: Path | str) -> list[Path]:
     """Yields paths of data directories under repository root.
 
@@ -135,13 +133,11 @@ def _determine_rundir(
 
     datadir_rulefile = startdir / DATADIR_RULEFILE_NAME
     is_datadir = datadir_rulefile.is_file()
-    is_repo_root = repo_configfile is not None
+    is_repo_root = repo_configfile is not None or repo_rulefile is not None
 
     # Structural invariant: cannot be both
     if is_datadir and is_repo_root:
-        raise RuntimeError(
-            "Directory cannot be both repository root and datadir."
-        )
+        raise RuntimeError("Directory cannot be both repository root and datadir.")
 
     # Repo mode
     if is_repo_root:
@@ -151,7 +147,4 @@ def _determine_rundir(
     if is_datadir:
         return startdir
 
-    raise RuntimeError(
-        "Directory is neither repository root nor datadir."
-    )
-
+    raise RuntimeError("Directory is neither repository root nor datadir.")
