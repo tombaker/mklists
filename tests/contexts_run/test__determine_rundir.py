@@ -2,30 +2,30 @@
 
 from pathlib import Path
 import pytest
-from mklists.contexts_run import _determine_rundir
+from mklists.contexts_run import _determine_config_rootdir
 from mklists.errors import StructureError
 from mklists.structure import DATADIR_RULEFILE_NAME
 
 
 def test_determine_rundir_repo_mode(tmp_path):
-    """Sees startdir/mklists.yaml (from function call): startdir is also rundir."""
+    """Sees mklists.yaml (passed as argument): startdir is also config_rootdir."""
     startdir = tmp_path
 
-    resulting_rundir = _determine_rundir(
+    resulting_config_rootdir = _determine_config_rootdir(
         startdir=startdir,
         repo_configfile=startdir / "mklists.yaml",
         repo_rulefile=None,
     )
 
-    assert resulting_rundir == startdir
+    assert resulting_config_rootdir == startdir
 
 
 def test_determine_rundir_datadir_mode(tmp_path):
-    """Sees startdir/.rules (by checking filesystem): startdir is also rundir."""
+    """Sees .rules (by checking filesystem): startdir is also config_rootdir."""
     startdir = tmp_path
     (startdir / DATADIR_RULEFILE_NAME).touch()
 
-    result = _determine_rundir(
+    result = _determine_config_rootdir(
         startdir=startdir,
         repo_configfile=None,
         repo_rulefile=None,
@@ -40,7 +40,7 @@ def test_determine_rundir_both_markers_raises(tmp_path):
     (startdir / DATADIR_RULEFILE_NAME).touch()
 
     with pytest.raises(StructureError):
-        _determine_rundir(
+        _determine_config_rootdir(
             startdir=startdir,
             repo_configfile=startdir / "mklists.yaml",
             repo_rulefile=None,
@@ -50,7 +50,7 @@ def test_determine_rundir_both_markers_raises(tmp_path):
 def test_determine_rundir_neither_raises(tmp_path):
     """Sees neither mklists.yaml nor .rules: raises exception."""
     with pytest.raises(StructureError):
-        _determine_rundir(
+        _determine_config_rootdir(
             startdir=tmp_path,
             repo_configfile=None,
             repo_rulefile=None,

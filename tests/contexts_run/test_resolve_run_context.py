@@ -40,7 +40,7 @@ def test_resolve_run_context_repo_mode(tmp_path, monkeypatch):
     result = contexts_run.resolve_run_context(tmp_path)
 
     assert result == RunContext(
-        rundir=tmp_path,
+        config_rootdir=tmp_path,
         repo_configfile=tmp_path / "mklists.yaml",
         repo_rulefile=None,
         datadir_contexts=[

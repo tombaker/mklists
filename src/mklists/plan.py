@@ -47,7 +47,7 @@ def resolve_run_plan(
     Returns:
         RunPlan object, holding info needed for execution.
     """
-    rundir = run_context.rundir
+    config_rootdir = run_context.config_rootdir
 
     # ----- passes ----------------------------------------------------
     pass_plans: list[PassPlan] = []
@@ -60,7 +60,9 @@ def resolve_run_plan(
             pass_count = 2
 
         for i in range(pass_count):
-            backupdir = rundir / mklists_cfg.backup.directory / f"{run_id}_{i+1:02d}"
+            backupdir = (
+                config_rootdir / mklists_cfg.backup.directory / f"{run_id}_{i+1:02d}"
+            )
             pass_plans.append(PassPlan(backupdir=backupdir))
 
     # ----- routing ---------------------------------------------------
@@ -71,7 +73,7 @@ def resolve_run_plan(
     # ----- html ------------------------------------------------------
     htmldir = None
     if mklists_cfg.urlify.enabled:
-        htmldir = rundir / mklists_cfg.urlify.directory
+        htmldir = config_rootdir / mklists_cfg.urlify.directory
 
     return RunPlan(
         datadir_contexts=datadir_contexts,

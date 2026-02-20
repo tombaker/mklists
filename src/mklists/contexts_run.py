@@ -12,7 +12,7 @@ from .structure import DATADIR_RULEFILE_NAME, REPO_CONFIGFILE_NAME, REPO_RULEFIL
 class RunContext:
     """Resolved execution context for a single run."""
 
-    rundir: Path
+    config_rootdir: Path
     repo_configfile: Path | None
     repo_rulefile: Path | None
     datadir_contexts: list[DatadirContext]
@@ -28,7 +28,7 @@ def resolve_run_context(startdir: Path | str) -> RunContext:
         Execution context for one run as RunContext object.
 
     resolve_run_context
-        ├── determine rundir
+        ├── determine config_rootdir
         ├── detect repo-level config + rulefile
         ├── discover datadirs
         └── resolve_datadir_context(...) for each
@@ -41,15 +41,15 @@ def resolve_run_context(startdir: Path | str) -> RunContext:
     repo_configfile = _find_repo_configfile(startdir)
     repo_rulefile = _find_repo_rulefile(startdir)
 
-    # Decide effective rundir (repo root or single datadir)
-    rundir = _determine_rundir(
+    # Decide effective config_rootdir (repo root or single datadir)
+    config_rootdir = _determine_config_rootdir(
         startdir=startdir,
         repo_configfile=repo_configfile,
         repo_rulefile=repo_rulefile,
     )
 
     # 2. Discover datadirs
-    datadirs = _find_datadirs(rundir)
+    datadirs = _find_datadirs(config_rootdir)
 
     if not datadirs:
         raise StructureError("No datadirs found under repository root.")
@@ -69,7 +69,7 @@ def resolve_run_context(startdir: Path | str) -> RunContext:
     # 4. Emit fully resolved RunContext
     # ------------------------------------------------------------
     return RunContext(
-        rundir=rundir,
+        config_rootdir=config_rootdir,
         repo_configfile=repo_configfile,
         repo_rulefile=repo_rulefile,
         datadir_contexts=datadir_contexts,
@@ -110,7 +110,7 @@ def _find_repo_rulefile(dirpath: Path) -> Path | None:
     return candidate if candidate.is_file() else None
 
 
-def _determine_rundir(
+def _determine_config_rootdir(
     *,
     startdir: Path,
     repo_configfile: Path | None,
