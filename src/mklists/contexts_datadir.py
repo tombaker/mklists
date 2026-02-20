@@ -122,4 +122,3 @@ def _resolve_effective_rulefiles(
     effective_rulefiles.append(datadir_rulefile)
 
     return effective_rulefiles
-
