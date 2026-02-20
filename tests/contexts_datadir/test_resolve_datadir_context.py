@@ -1,10 +1,8 @@
 """Tests $MKLMKL/contexts.py"""
 
-import pytest
+from pathlib import Path
 from mklists import contexts_datadir
 from mklists.contexts_datadir import DatadirContext
-from mklists.errors import StructureError
-from mklists.rules import Rule
 
 
 def test_resolve_datadir_context_local_config_and_rules(tmp_path, monkeypatch):
@@ -16,13 +14,17 @@ def test_resolve_datadir_context_local_config_and_rules(tmp_path, monkeypatch):
     local_cfg.touch()
     local_rule.touch()
 
-    def fake_loader(rulefiles: list[Path]):
+    def fake_loader(_rulefiles: list[Path]):
         """Test double for load_rules_for_datadir.
 
-        Ignores provided rulefiles and returns fixed list to isolate 
-        resolve_datadir_context from rule parsing logic.
+        Returns fixed value to isolate resolve_datadir_context 
+        from rule parsing logic.
 
-        Real function returns list of rule objects (list[Rule]).
+        The real function returns list[Rule].
+
+        The parameter `rulefiles` is retained to match the real 
+        signature, but it is prefixed with `_` to signal that it
+        is intentionally unused in this test.
         """
         return ["R1"]
 
@@ -80,14 +82,14 @@ def test_resolve_datadir_context_inherits_repo_config(tmp_path, monkeypatch):
 
 
 def test_resolve_datadir_context_passes_rulefiles_to_loader(tmp_path, monkeypatch):
-    """No @@@"""
+    """Resolved rulefile list is passed to rule loader."""
     datadir = tmp_path
-    local_rule = datadir / ".rules"
-    local_rule.touch()
+    datadir_rulefile = datadir / ".rules"
+    datadir_rulefile.touch()
 
-    captured = {}
+    captured: dict[str, list[Path]] = {}
 
-    def fake_loader(rulefiles):
+    def fake_loader(rulefiles: list[Path]) -> list:
         captured["rulefiles"] = rulefiles
         return []
 
@@ -104,4 +106,4 @@ def test_resolve_datadir_context_passes_rulefiles_to_loader(tmp_path, monkeypatc
         repo_rulefile=None,
     )
 
-    assert captured["rulefiles"] == []  # until _resolve_effective_rulefiles implemented
+    assert captured["rulefiles"] == [datadir_rulefile]

@@ -48,7 +48,6 @@ def resolve_datadir_context(
     rulefile_paths = _resolve_effective_rulefiles(
         datadir_rulefile=datadir_rulefile,
         repo_rulefile=repo_rulefile,
-        configfile_used=configfile_used,
     )
 
     # 4. Parse rules
