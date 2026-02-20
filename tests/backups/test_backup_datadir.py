@@ -32,10 +32,10 @@ def test_backup_datadir_creates_backup(tmp_path):
 @pytest.mark.skip
 def test_backup_datadir_raises_if_target_backupdir_exists(tmp_path):
     """Raise FileExistsError if backup subdirectory for datadir already exists."""
-    mklists_rootdir = tmp_path / "repo"
-    mklists_rootdir.mkdir()
+    config_rootdir = tmp_path / "repo"
+    config_rootdir.mkdir()
 
-    datadir = mklists_rootdir / "data"
+    datadir = config_rootdir / "data"
     datadir.mkdir()
     (datadir / "a.txt").write_text("hello\n")
 

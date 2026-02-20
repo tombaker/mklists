@@ -105,7 +105,7 @@ def load_config(configfile_used: Path | None) -> MklistsConfig:
     config_dict = _load_configdict_from_yaml(configfile_used=configfile_used)
     mklists_cfg = _make_mklists_config(
         config_dict=config_dict,
-        mklists_rootdir=mklists_rootdir,
+        config_rootdir=config_rootdir,
     )
 
     return mklists_cfg
@@ -158,13 +158,13 @@ def _merge_config_dicts(
 
 def _make_backup_config(
     config_dict: dict[str, Any],
-    mklists_rootdir: Path,
+    config_rootdir: Path,
 ) -> BackupConfig:
     """Initialize instance of BackupConfig.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        mklists_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists repo.
 
     Returns:
         Instance of BackupConfig initialized from config dictionary.
@@ -180,7 +180,7 @@ def _make_backup_config(
             raise ValueError(
                 "backup_dir must be single directory name or absolute pathname."
             )
-        backup_dir = (mklists_rootdir / backup_dir).resolve()
+        backup_dir = (config_rootdir / backup_dir).resolve()
 
     return BackupConfig(
         backup_enabled=bool(backup_raw["backup_enabled"]),
@@ -190,13 +190,13 @@ def _make_backup_config(
 
 
 def _make_routing_config(
-    config_dict: dict[str, Any], mklists_rootdir: Path
+    config_dict: dict[str, Any], config_rootdir: Path
 ) -> RoutingConfig:
     """Initialize instance of RoutingConfig with validated routing rules.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        mklists_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists repo.
 
     Returns:
         Instance of RoutingConfig initialized from config dictionary.
@@ -228,7 +228,7 @@ def _make_routing_config(
                     "routing_dict values must be single directory name "
                     "or an absolute pathname."
                 )
-            dirname = (mklists_rootdir / dirname).resolve()
+            dirname = (config_rootdir / dirname).resolve()
 
         routing_dict[filename] = dirname
 
@@ -243,7 +243,7 @@ def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        mklists_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists repo.
 
     Returns:
         Instance of SafetyConfig initialized from config dictionary.
@@ -265,13 +265,13 @@ def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
 
 def _make_urlify_config(
     config_dict: dict[str, Any],
-    mklists_rootdir: Path,
+    config_rootdir: Path,
 ) -> UrlifyConfig:
     """Initialize instance of UrlifyConfig.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        mklists_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists repo.
 
     Returns:
         Instance of UrlifyConfig initialized from config dictionary.
@@ -283,19 +283,19 @@ def _make_urlify_config(
 
     return UrlifyConfig(
         urlify_enabled=bool(urlify_raw["urlify_enabled"]),
-        urlify_dir=(mklists_rootdir / urlify_raw["urlify_dir"]).resolve(),
+        urlify_dir=(config_rootdir / urlify_raw["urlify_dir"]).resolve(),
     )
 
 
 def _make_mklists_config(
     config_dict: dict[str, Any],
-    mklists_rootdir: Path,
+    config_rootdir: Path,
 ) -> MklistsConfig:
     """Normalize and validate merged config dict into MklistsConfig.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        mklists_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists repo.
 
     Returns:
         Instance of MklistsConfig initialized from config dictionary.
@@ -305,8 +305,8 @@ def _make_mklists_config(
     """
     return MklistsConfig(
         verbose=config_dict["verbose"],
-        backup=_make_backup_config(config_dict, mklists_rootdir),
-        routing=_make_routing_config(config_dict, mklists_rootdir),
+        backup=_make_backup_config(config_dict, config_rootdir),
+        routing=_make_routing_config(config_dict, config_rootdir),
         safety=_make_safety_config(config_dict),
-        urlify=_make_urlify_config(config_dict, mklists_rootdir),
+        urlify=_make_urlify_config(config_dict, config_rootdir),
     )

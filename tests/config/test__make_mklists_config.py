@@ -42,7 +42,7 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
     """Happy path."""
     mklists_cfg = _make_mklists_config(
         minimal_valid_configdict,
-        mklists_rootdir=tmp_path,
+        config_rootdir=tmp_path,
     )
 
     assert isinstance(mklists_cfg, MklistsConfig)
@@ -61,8 +61,8 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
 
 
 def test_make_mklists_config_resolves_paths(minimal_valid_configdict, tmp_path):
-    """Dictionary values of type Path are made absolute under mklists_rootdir."""
-    mklists_cfg = _make_mklists_config(minimal_valid_configdict, mklists_rootdir=tmp_path)
+    """Dictionary values of type Path are made absolute under config_rootdir."""
+    mklists_cfg = _make_mklists_config(minimal_valid_configdict, config_rootdir=tmp_path)
 
     assert mklists_cfg.backup.backup_dir == (tmp_path / "backups").resolve()
     assert mklists_cfg.urlify.urlify_dir == (tmp_path / "html").resolve()
@@ -72,7 +72,7 @@ def test_make_mklists_config_compiles_regexes(minimal_valid_configdict, tmp_path
     """Spot-check that one regex value is an instance of re.Pattern."""
     mklists_cfg = _make_mklists_config(
         minimal_valid_configdict,
-        mklists_rootdir=tmp_path,
+        config_rootdir=tmp_path,
     )
 
     assert isinstance(mklists_cfg.safety.invalid_filename_patterns, list)
@@ -83,7 +83,7 @@ def test_make_mklists_config_invalid_regex_raises(minimal_valid_configdict, tmp_
     minimal_valid_configdict["safety"]["invalid_filename_patterns"] = ["["]
 
     with pytest.raises(ValueError):
-        _make_mklists_config(minimal_valid_configdict, mklists_rootdir=tmp_path)
+        _make_mklists_config(minimal_valid_configdict, config_rootdir=tmp_path)
 
 
 def test_make_mklists_config_missing_required_key_raises_keyerror(
@@ -95,5 +95,5 @@ def test_make_mklists_config_missing_required_key_raises_keyerror(
     with pytest.raises(KeyError):
         _make_mklists_config(
             minimal_valid_configdict,
-            mklists_rootdir=tmp_path,
+            config_rootdir=tmp_path,
         )

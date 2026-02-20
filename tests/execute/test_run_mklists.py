@@ -11,7 +11,7 @@ No need to test:
 
 Test only whether it coordinates its collaborators correctly:
 - what it calls, with what arguments, how often:
-  - 1 x load_config(mklists_rootdir)
+  - 1 x load_config(config_rootdir)
   - 1 x _find_datadirs
   - 1 x _make_timestamp
   - 2 x run_pass
@@ -59,6 +59,6 @@ def test_run_mklists_shallow(tmp_path, capsys):
         (datadir / "input.txt").write_text("dummy data file")
         (datadir / ".rules").write_text("0|.|input|output|")
 
-    run_mklists(mklists_rootdir=repo_dir)
+    run_mklists(config_rootdir=repo_dir)
 
     assert (repo_dir / "backups").exists()

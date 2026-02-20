@@ -7,7 +7,7 @@ from mklists.config import _make_backup_config
 
 def test_make_backup_config_given_relative_return_relative():
     """Given relative directory name, return absolute pathname."""
-    mklists_rootdir = Path("/repo/root")
+    config_rootdir = Path("/repo/root")
 
     config_dict = {
         "backup": {
@@ -19,18 +19,18 @@ def test_make_backup_config_given_relative_return_relative():
 
     backup_cfg = _make_backup_config(
         config_dict=config_dict,
-        mklists_rootdir=mklists_rootdir,
+        config_rootdir=config_rootdir,
     )
 
     assert backup_cfg.backup_enabled is True
     assert backup_cfg.backup_depth == 3
-    assert backup_cfg.backup_dir == (mklists_rootdir / "backups").resolve()
+    assert backup_cfg.backup_dir == (config_rootdir / "backups").resolve()
     assert backup_cfg.backup_dir.is_absolute()
 
 
 def test_make_backup_config_type_coercion():
     """Tests type coercion."""
-    mklists_rootdir = Path("/repo/root")
+    config_rootdir = Path("/repo/root")
 
     config_dict = {
         "backup": {
@@ -40,7 +40,7 @@ def test_make_backup_config_type_coercion():
         }
     }
 
-    backup_cfg = _make_backup_config(config_dict, mklists_rootdir)
+    backup_cfg = _make_backup_config(config_dict, config_rootdir)
 
     assert backup_cfg.backup_enabled is True
     assert backup_cfg.backup_depth == 5
@@ -62,5 +62,5 @@ def test_make_backup_config_rejects_nested_relative_backup_dir(tmp_path):
     ):
         _make_backup_config(
             config_dict=config_dict,
-            mklists_rootdir=tmp_path,
+            config_rootdir=tmp_path,
         )

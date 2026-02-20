@@ -14,13 +14,13 @@ def test_create_directory_outside_repo(tmp_path):
     The file "mklists.rules" is therefore deliberately misspelled here to make
     this point.
     """
-    mklists_rootdir = tmp_path / "repo"
-    mklists_rootdir.mkdir()
+    config_rootdir = tmp_path / "repo"
+    config_rootdir.mkdir()
 
-    user_configfile = mklists_rootdir / "mklists.yaml"
+    user_configfile = config_rootdir / "mklists.yaml"
     user_configfile.write_text("config")
 
-    global_rulefile = mklists_rootdir / "mlksits.ruels"  # deliberately misspelled
+    global_rulefile = config_rootdir / "mlksits.ruels"  # deliberately misspelled
     global_rulefile.write_text("rules")
 
     passdir = tmp_path / "backups" / "2026-02-01_162616893737_pass01"
@@ -39,10 +39,10 @@ def test_create_directory_outside_repo(tmp_path):
 @pytest.mark.skip
 def test_create_directory_even_if_no_config_files_found(tmp_path):
     """If mklists.yaml and mklists.rules not found, create backup directory anyway."""
-    mklists_rootdir = tmp_path / "repo"
-    mklists_rootdir.mkdir()
+    config_rootdir = tmp_path / "repo"
+    config_rootdir.mkdir()
 
-    passdir = mklists_rootdir / "backups" / "2026-02-01_162616893737_pass01"
+    passdir = config_rootdir / "backups" / "2026-02-01_162616893737_pass01"
 
     _init_passdir(
         passdir=passdir,
