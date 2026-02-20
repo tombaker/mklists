@@ -1,7 +1,7 @@
 """Tests $MKLMKL/contexts_run.py
 
 Tests function as orchestration only.
-Instead of relying on actual rule parsing, monkeypatch `resolve_datadir_context`.
+Monkeypatch `resolve_datadir_context` instead of relying on actual rule parsing.
 """
 
 import pytest
@@ -31,9 +31,10 @@ def test_resolve_run_context_repo_mode(tmp_path, monkeypatch):
         )
 
     monkeypatch.setattr(
-        contexts_run,
-        "resolve_datadir_context",
-        fake_resolve_datadir_context,
+        target=contexts_run,
+        name="resolve_datadir_context",
+        value=fake_resolve_datadir_context,
+        raising=True,
     )
 
     result = contexts_run.resolve_run_context(tmp_path)

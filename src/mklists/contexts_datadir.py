@@ -22,7 +22,14 @@ def resolve_datadir_context(
     repo_rulefile: Path | None,
 ) -> DatadirContext:
     """Resolve execution context for a single datadir.
-    contexts_datadir.py
+
+    Args:
+        datadir:
+        repo_configfile:
+        repo_rulefile:
+
+    Returns:
+        DatadirContext object holding execution context for a single datadir.
     """
 
     datadir = Path(datadir)

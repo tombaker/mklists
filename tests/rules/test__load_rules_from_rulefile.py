@@ -1,6 +1,7 @@
 """Tests $MKLMKL/rules.py"""
 
 from pathlib import Path
+import re
 import pytest
 from mklists.errors import RuleError
 from mklists.rules import _load_rules_from_rulefile, Rule
@@ -56,12 +57,19 @@ def test_single_valid_rule_is_loaded(tmp_path):
         """,
     )
 
-    rules = _load_rules_from_rulefile(rulefile)
+    actual_rules_list = _load_rules_from_rulefile(rulefile)
 
-    assert len(rules) == 1
-    assert isinstance(rules[0], Rule)
-    assert rules[0].source == "source"
-    assert rules[0].target == "target"
+    expected_rules_list = [
+        Rule(
+            source_matchfield=1,
+            source_matchpattern=re.compile("^abc$"),
+            source="source",
+            target="target",
+            target_sortkey=1,
+        )
+    ]
+
+    assert expected_rules_list == actual_rules_list
 
 
 def test_valid_rule_chain_is_loaded(tmp_path):
