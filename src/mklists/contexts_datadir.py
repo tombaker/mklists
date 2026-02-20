@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
+from .errors import StructureError
 from .rules import Rule, load_rules_for_datadir
 from .structure import DATADIR_CONFIGFILE_NAME, DATADIR_RULEFILE_NAME
 
@@ -60,23 +61,66 @@ def resolve_datadir_context(
     )
 
 
-def _find_datadir_configfile(dirpath: Path) -> Path | None:
-    """Return datadir config file if present in dirpath."""
-    candidate = dirpath / DATADIR_CONFIGFILE_NAME
+def _find_datadir_configfile(datadir: Path) -> Path | None:
+    """Return datadir config file if present in datadir.
+
+    Args:
+        datadir: Path of datadir.
+
+    Return:
+        Path of datadir configfile, if present.
+    """
+    candidate = datadir / DATADIR_CONFIGFILE_NAME
+
     return candidate if candidate.is_file() else None
 
 
-def _find_datadir_rulefile(dirpath: Path) -> Path | None:
-    """Return repo rulefile if present in dirpath."""
-    candidate = dirpath / DATADIR_RULEFILE_NAME
+def _find_datadir_rulefile(datadir: Path) -> Path | None:
+    """Return datadir rulefile if present in datadir.
+
+    Args:
+        datadir: Path of datadir.
+
+    Return:
+        Path of datadir rootfile, if present.
+    """
+    candidate = datadir / DATADIR_RULEFILE_NAME
+
     return candidate if candidate.is_file() else None
 
 
 def _resolve_effective_rulefiles(
+    *,
     datadir_rulefile: Path | None,
     repo_rulefile: Path | None,
-    configfile_used: Path | None,
 ) -> list[Path]:
-    """@@@"""
+    """Determine ordered list of rulefiles for a datadir.
+
+    Args:
+        datadir_rulefile: Path to datadir-level rule file.
+        repo_rulefile: Path repo-level rule file, if present.
+
+    Returns:
+        List of rulefile paths in application order:
+            1. Repo-level rulefile `mklists.rules` (if present)
+            2. Datadir-level rulefile `.rules` (required)
+
+    Raises:
+        StructureError: If datadir_rulefile is None.
+
+    Note:
+        This function only determines rulefile order.
+        Validation of concatenated chain is performed by rules module.
+    """
+    if datadir_rulefile is None:
+        raise StructureError("Datadir must contain a rulefile.")
+
     effective_rulefiles: list[Path] = []
+
+    if repo_rulefile is not None:
+        effective_rulefiles.append(repo_rulefile)
+
+    effective_rulefiles.append(datadir_rulefile)
+
     return effective_rulefiles
+
