@@ -37,33 +37,27 @@ def resolve_run_context(startdir: Path | str) -> RunContext:
     """
     startdir = Path(startdir).resolve()
 
-    # ------------------------------------------------------------
     # 1. Determine repo-level markers
-    # ------------------------------------------------------------
     repo_configfile = _find_repo_configfile(startdir)
     repo_rulefile = _find_repo_rulefile(startdir)
 
-    # Decide effective rundir (repo root or single datadir mode)
+    # Decide effective rundir (repo root or single datadir)
     rundir = _determine_rundir(
         startdir=startdir,
         repo_configfile=repo_configfile,
         repo_rulefile=repo_rulefile,
     )
 
-    # ------------------------------------------------------------
     # 2. Discover datadirs
-    # ------------------------------------------------------------
-    datadir_paths = _find_datadirs(rundir)
+    datadirs = _find_datadirs(rundir)
 
-    if not datadir_paths:
+    if not datadirs:
         raise StructureError("No datadirs found under repository root.")
 
-    # ------------------------------------------------------------
     # 3. Resolve each DatadirContext
-    # ------------------------------------------------------------
     datadir_contexts: list[DatadirContext] = []
 
-    for datadir in datadir_paths:
+    for datadir in datadirs:
         context = resolve_datadir_context(
             datadir=datadir,
             repo_configfile=repo_configfile,
@@ -122,15 +116,28 @@ def _determine_rundir(
     repo_configfile: Path | None,
     repo_rulefile: Path | None,
 ) -> Path:
-    """Determine effective run directory.
+    """Determine directory that serves as configuration root for the run.
+
+    Args:
+        startdir: Path of starting directory.
+        repo_configfile: Path of `mklists.yaml` (if it exists).
+        repo_rulefile: Path of `mklists.rules` (if it exists).
 
     Returns:
-        Path to repository root (even in single-datadir mode).
+        Path to directory that anchors config and execution for this run.
 
     Raises:
         StructureError if structure is invalid.
-    """
 
+    Note:
+        Effective config root directory is either:
+        - a repository root (contains `mklists.yaml` or `mklists.rules`), or
+        - a self-contained datadir (contains `.mklistsrc`)
+
+        Config root directory may be used as:
+        - base for backup directories
+        - base for urlify directories
+    """
     datadir_rulefile = startdir / DATADIR_RULEFILE_NAME
     is_datadir = datadir_rulefile.is_file()
     is_repo_root = repo_configfile is not None or repo_rulefile is not None

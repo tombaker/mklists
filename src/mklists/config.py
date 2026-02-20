@@ -102,24 +102,27 @@ def load_config(configfile_used: Path | None) -> MklistsConfig:
     Note:
         Is no user-defined config file is found, uses only built-in defaults.
     """
-    config_dict = _load_configdict_from_yaml(user_configfile=configfile_used)
-    mklists_cfg = _make_mklists_config(config_dict, configfile_used)
+    config_dict = _load_configdict_from_yaml(configfile_used=configfile_used)
+    mklists_cfg = _make_mklists_config(
+        config_dict=config_dict,
+        mklists_rootdir=mklists_rootdir,
+    )
 
     return mklists_cfg
 
 
-def _load_configdict_from_yaml(user_configfile: Path | None) -> dict[str, Any]:
+def _load_configdict_from_yaml(configfile_used: Path | None) -> dict[str, Any]:
     """Load config dictionary from YAML.
 
     Args:
-        user_configfile: Path of user config file (or None if none exists).
+        configfile_used: Path of user config file (or None if none exists).
 
     Returns:
         Merged configuration dictionary.
     """
-    if user_configfile is not None:
+    if configfile_used is not None:
         try:
-            config_user = load_yaml_from_file(user_configfile)
+            config_user = load_yaml_from_file(configfile_used)
         except yaml.YAMLError as e:
             raise yaml.YAMLError("Invalid user-defined YAML.") from e
 

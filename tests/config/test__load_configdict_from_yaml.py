@@ -19,7 +19,7 @@ def test_empty_user_config_results_in_defaults(tmp_path):
 def test_no_user_config_found_uses_defaults():
     """With no user config file, loads defaults only."""
     config = _load_configdict_from_yaml(
-        user_configfile=None,
+        configfile_used=None,
     )
 
     assert isinstance(config, dict)
