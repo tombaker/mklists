@@ -2,7 +2,7 @@
 
 import re
 import pytest
-from mklists.dispatch import _dataline_matches_pattern
+from mklists.process_datalines import _dataline_matches_pattern
 
 
 def test_dataline_matches_pattern_returns_false_when_field_exists_but_no_match():

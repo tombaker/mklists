@@ -1,7 +1,7 @@
 """@@@"""
 
 import pytest
-from mklists.dispatch import _sort_datalines
+from mklists.process_datalines import _sort_datalines
 
 
 def test_sort_datalines_none_sortkey_returns_input_unchanged():

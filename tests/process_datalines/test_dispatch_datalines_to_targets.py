@@ -3,9 +3,9 @@
 from dataclasses import dataclass
 import re
 import pytest
-from mklists.dispatch import dispatch_datalines_to_targets
 from mklists.errors import DataNotFoundError, RulesNotFoundError
 from mklists.rules import Rule
+from mklists.process_datalines import dispatch_datalines_to_targets
 
 
 def test_apply_rules_moves_matching_lines():
