@@ -9,6 +9,7 @@ from mklists import contexts_run
 from mklists.contexts_datadir import DatadirContext
 from mklists.contexts_run import RunContext
 from mklists.errors import StructureError
+from mklists.plan import RunPlan, PassPlan
 
 
 def test_resolve_run_context_repo_mode(tmp_path, monkeypatch):
@@ -56,3 +57,34 @@ def test_resolve_run_context_no_datadirs_raises(tmp_path):
 
     with pytest.raises(StructureError):
         contexts_run.resolve_run_context(tmp_path)
+
+
+def test_runcontext_mixed_repo_and_local_configs(tmp_path):
+    """Repo root has config, but one datadir overrides with .mklistsrc."""
+
+    # Repo root config
+    repo_cfg = tmp_path / "mklists.yaml"
+    repo_cfg.touch()
+
+    # Datadir A inherits repo config
+    a = tmp_path / "a"
+    a.mkdir()
+    (a / ".rules").touch()
+
+    # Datadir B overrides config
+    b = tmp_path / "b"
+    b.mkdir()
+    (b / ".rules").touch()
+    local_cfg = b / ".mklistsrc"
+    local_cfg.touch()
+
+    run_ctx = contexts_run.resolve_run_context(tmp_path)
+
+    assert run_ctx.repo_configfile == repo_cfg
+
+    # find contexts
+    ctx_a = next(d for d in run_ctx.datadir_contexts if d.datadir == a)
+    ctx_b = next(d for d in run_ctx.datadir_contexts if d.datadir == b)
+
+    assert ctx_a.configfile_used == repo_cfg
+    assert ctx_b.configfile_used == local_cfg

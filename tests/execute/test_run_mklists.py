@@ -27,6 +27,10 @@ How:
 - provide minimal real config
 - create dummy datadirs
 - let run_pass run against harmless fixtures
+
+A run processes all discovered datadirs.
+Each datadir has an effective configfile.
+Config objects are loaded per unique configfile and applied per datadir.
 """
 
 import pytest
@@ -62,3 +66,48 @@ def test_run_mklists_shallow(tmp_path, capsys):
     run_mklists(config_rootdir=repo_dir)
 
     assert (repo_dir / "backups").exists()
+
+
+@pytest.mark.skip
+def test_run_mklists_loads_config_per_unique_configfile(tmp_path, monkeypatch):
+    """Function `load_config` is called once per unique `configfile_used`."""
+    repo_cfg = tmp_path / "mklists.yaml"
+    repo_cfg.touch()
+
+    a = tmp_path / "a"
+    b = tmp_path / "b"
+    a.mkdir()
+    b.mkdir()
+    (a / ".rules").touch()
+    (b / ".rules").touch()
+
+    run_ctx = contexts_run.resolve_run_context(tmp_path)
+
+    run_plan = RunPlan(
+        datadir_contexts=run_ctx.datadir_contexts,
+        pass_plans=[PassPlan(backupdir=None)],
+        routing_dict={},
+        htmldir=None,
+    )
+
+    calls: list[Path | None] = []
+
+    def fake_load_config(configfile: Path | None):
+        calls.append(configfile)
+        return MklistsConfig(...)  # minimal stub
+
+    # monkeypatch module where `load_config` is looked up at runtime
+    # replaces attribute where used, not where originally defined
+    import mklists.execute as execute_module
+
+    monkeypatch.setattr(
+        target=execute_module, 
+        name="load_config", 
+        value=fake_load_config,
+        raising=True,
+    )
+
+    execute_module.run_mklists(run_plan)
+
+    # both datadirs share repo config
+    assert calls == [repo_cfg]
