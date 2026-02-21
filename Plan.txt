@@ -55,6 +55,11 @@ Architectural Invariants
             PassPlan:
                 backupdir: Path | None
 
+            DatadirContext
+                datadir: Path
+                configfile_used: Path | None
+                rules: list[Rule]
+
     Invariants:
     - Planning is deterministic.
     - Planning causes no side effects (eg, filesystem mutations).

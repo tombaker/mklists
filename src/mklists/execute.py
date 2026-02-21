@@ -1,8 +1,11 @@
 """Orchestration of a Mklists execution run."""
 
+from pathlib import Path
+import shutil
+from typing import Iterable
 from .datadirs import process_datadir
 from .plan import RunPlan, PassPlan
-from .config import load_config
+from .config import load_config, MklistsConfig
 
 
 def run_mklists(run_plan: RunPlan) -> None:
@@ -14,9 +17,14 @@ def run_mklists(run_plan: RunPlan) -> None:
     Returns:
         None, after executing the run plan.
     """
+    datadirs = [ctx.datadir for ctx in run_plan.datadir_contexts]
+
     for passplan in run_plan.pass_plans:
         if passplan.backupdir is not None:
-            write_backup(passplan.backupdir)
+            _backup_datadirs(
+                datadirs=datadirs,
+                pass_backup_root=passplan.backupdir,
+            )
 
         configs_by_path: dict[Path | None, MklistsConfig] = {}
 
@@ -33,8 +41,17 @@ def run_mklists(run_plan: RunPlan) -> None:
                 mklists_cfg=mklists_cfg,
             )
 
-    if run_plan.routing_dict:
-        redistribute_datafiles(run_plan.datadir_contexts, run_plan.routing_dict)
+            if run_plan.routing_dict:
+                _redistribute_datafiles(run_plan.routing_dict)
 
     if run_plan.htmldir:
-        write_html(run_plan.datadir_contexts, run_plan.htmldir)
+        _urlify_datadirs(
+            datadirs=datadirs,
+            htmldir=run_plan.htmldir
+        )
+
+def _urlify_datadirs():
+    pass
+
+def _redistribute_datafiles(routing_dict):
+    pass

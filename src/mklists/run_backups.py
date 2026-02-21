@@ -11,6 +11,30 @@ import shutil
 from pathlib import Path
 from loguru import logger
 
+def backup_datadirs(
+    *,
+    datadirs: Iterable[Path],
+    pass_backup_root: Path,
+) -> None:
+    """Create backup snapshot for one execution pass.
+
+    Args:
+        datadirs: Iterable of datadir paths to snapshot.
+        pass_backup_root: Directory for this pass (must not exist).
+
+    Raises:
+        FileExistsError: If pass_backup_root already exists.
+    """
+    if pass_backup_root.exists():
+        raise FileExistsError(
+            f"Pass backup directory already exists: {pass_backup_root}"
+        )
+
+    pass_backup_root.mkdir(parents=True)
+
+    for datadir in datadirs:
+        target = pass_backup_root / datadir.name
+        shutil.copytree(datadir, target)
 
 def run_backups(*, datadir: Path, backupdir: Path) -> Path:
     """Back up ...

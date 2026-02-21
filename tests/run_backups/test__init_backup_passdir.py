@@ -1,7 +1,7 @@
-"""Tests $MKLMKL/backup_run.py"""
+"""Tests $MKLMKL/run_backups.py"""
 
 import pytest
-from mklists.backup_run import _init_passdir
+from mklists.run_backups import _init_passdir
 
 
 @pytest.mark.skip
