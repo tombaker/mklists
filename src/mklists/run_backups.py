@@ -9,7 +9,9 @@ Run layer:
 
 import shutil
 from pathlib import Path
+from typing import Iterable
 from loguru import logger
+
 
 def backup_datadirs(
     *,
@@ -35,6 +37,7 @@ def backup_datadirs(
     for datadir in datadirs:
         target = pass_backup_root / datadir.name
         shutil.copytree(datadir, target)
+
 
 def run_backups(*, datadir: Path, backupdir: Path) -> Path:
     """Back up ...
