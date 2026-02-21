@@ -10,11 +10,7 @@ No need to test:
 - real passes
 
 Test only whether it coordinates its collaborators correctly:
-- what it calls, with what arguments, how often:
-  - 1 x load_config(config_rootdir)
-  - 1 x _find_datadirs
-  - 1 x _make_timestamp
-  - 2 x run_pass
+- what it calls, with what arguments, how often
 - not an integration test: testing control flow
 
 Assert:
@@ -23,68 +19,37 @@ Assert:
 - both passes ran
 
 How:
-- use temporary directory
-- provide minimal real config
-- create dummy datadirs
-- let run_pass run against harmless fixtures
+- do not use filesystem
+- do not use real configs
+- use minimal stub RunPlan
+- monkeypatch collaborators
+- assert calls and call counts
 
-A run processes all discovered datadirs.
-Each datadir has an effective configfile.
-Config objects are loaded per unique configfile and applied per datadir.
+Principles:
+- A run processes all discovered datadirs.
+- Each datadir has an effective configfile.
+- Config objects are loaded per unique configfile and applied per datadir.
 """
 
+from pathlib import Path
 import pytest
+from mklists.config import MklistsConfig
 from mklists.execute import run_mklists
+from mklists.contexts_datadir import DatadirContext
+from mklists.plan import RunPlan, PassPlan
 
 
-@pytest.mark.skip
-def test_run_mklists_shallow(tmp_path, capsys):
-    """Shallow integration test:
-    - real filesystem
-    - real config
-    - real datadirs
-    - no deep assertions
-    """
-    repo_dir = tmp_path / "mklists"
-    repo_dir.mkdir()
-    (repo_dir / "mklists.yaml").write_text(
-        """
-        backup:
-          backup_enabled: True
-          backup_dir: backups
-          backup_depth: 3
-        """
-    )
-
-    datadir1 = repo_dir / "datadir1"
-    datadir2 = repo_dir / "datadir2"
-    for datadir in (datadir1, datadir2):
-        datadir.mkdir()
-        (datadir / "input.txt").write_text("dummy data file")
-        (datadir / ".rules").write_text("0|.|input|output|")
-
-    run_mklists(config_rootdir=repo_dir)
-
-    assert (repo_dir / "backups").exists()
-
-
-@pytest.mark.skip
-def test_run_mklists_loads_config_per_unique_configfile(tmp_path, monkeypatch):
+def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
     """Function `load_config` is called once per unique `configfile_used`."""
-    repo_cfg = tmp_path / "mklists.yaml"
-    repo_cfg.touch()
+    repo_cfg = Path("/repo/mklists.yaml")
 
-    a = tmp_path / "a"
-    b = tmp_path / "b"
-    a.mkdir()
-    b.mkdir()
-    (a / ".rules").touch()
-    (b / ".rules").touch()
-
-    run_ctx = contexts_run.resolve_run_context(tmp_path)
+    datadir_contexts = [
+        DatadirContext(datadir=Path("/repo/a"), configfile_used=repo_cfg, rules=[]),
+        DatadirContext(datadir=Path("/repo/b"), configfile_used=repo_cfg, rules=[]),
+    ]
 
     run_plan = RunPlan(
-        datadir_contexts=run_ctx.datadir_contexts,
+        datadir_contexts=datadir_contexts,
         pass_plans=[PassPlan(backupdir=None)],
         routing_dict={},
         htmldir=None,
@@ -92,12 +57,14 @@ def test_run_mklists_loads_config_per_unique_configfile(tmp_path, monkeypatch):
 
     calls: list[Path | None] = []
 
-    def fake_load_config(configfile: Path | None):
-        calls.append(configfile)
-        return MklistsConfig(...)  # minimal stub
+    # The real `load_config` returns a MklistsConfig object that can be passed
+    # to `process_datadir`.
+    # But we are not testing MklistsConfig here: `fake_load_config` can return a
+    # trivial, fake object because that object is never inspected (see below).
+    def fake_load_config(configfile_used: Path | None):
+        calls.append(configfile_used)
+        return object()
 
-    # monkeypatch module where `load_config` is looked up at runtime
-    # replaces attribute where used, not where originally defined
     import mklists.execute as execute_module
 
     monkeypatch.setattr(
@@ -107,7 +74,15 @@ def test_run_mklists_loads_config_per_unique_configfile(tmp_path, monkeypatch):
         raising=True,
     )
 
+    # `lambda **kwargs: None` ensures that `mklists_cfg` is never inspected.
+    monkeypatch.setattr(
+        target=execute_module, 
+        name="process_datadir", 
+        value=lambda **kwargs: None,
+        raising=True,
+    )
+
     execute_module.run_mklists(run_plan)
 
-    # both datadirs share repo config
+    # This will pass if caching logic is implemented:
     assert calls == [repo_cfg]
