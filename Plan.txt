@@ -1,3 +1,73 @@
+Architectural Invariants
+1.  Structural Resolution Layer
+    Derive fully defined structural Execution Universe from filesystem.
+
+    Input from CLI or CWD:
+
+        startdir: Path
+
+    Output resolved execution context for a single run:
+
+        RunContext
+            config_rootdir: Path
+            repo_configfile: Path | None
+            repo_rulefile: Path | None
+            datadir_contexts: list[DatadirContext]
+
+            DatadirContext
+                datadir: Path
+                configfile_used: Path | None
+                rules: list[Rule]
+
+2.  Configuration Resolution Layer
+    Load config for processing one or more datadirs and normalize into typed config.
+
+    Input:
+
+        RunContext.config_rootdir, which includes:
+        - DatadirContext.configfile_used
+
+    Output configuration to be applied in processing one or more datadirs:
+
+        MklistsConfig
+            verbose: bool
+            backup: BackupConfig
+            routing: RoutingConfig
+            safety: SafetyConfig
+            urlify: UrlifyConfig
+
+3.  Planning Layer
+    Determine datadirs to process, passes, routing dictionary, backup/html directories.
+
+    Input:
+
+        RunContext
+        MklistsConfig
+
+    Output:
+
+        RunPlan:
+            datadir_contexts: list[DatadirContext]
+            pass_plans: list[PassPlan]
+            routing_dict: dict
+            htmldir: Path
+
+            PassPlan:
+                backupdir: Path | None
+
+    Invariants:
+    - Planning is deterministic.
+    - Planning causes no side effects (eg, filesystem mutations).
+    - If only one datadir: one pass. 
+    - If multiple datadirs and routing enabled: two passes.
+    - Backup directory paths are computed but not yet created.
+
+    Planning guarantees:
+    - All paths are absolute.
+    - All passes are enumerated.
+    - No structural ambiguity remains.
+
+
 resolve_run_context(startdir) → run_context
 load_config(run_context.configfile_path) → MklistsConfig
 resolve_datadir_contexts(run_context) → datadir_contexts

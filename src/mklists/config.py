@@ -81,7 +81,12 @@ class UrlifyConfig:
 
 @dataclass(slots=True)
 class MklistsConfig:
-    """Normalized, validated configuration for an mklists repository."""
+    """Normalized, validated configuration used for processing one or more datadirs.
+
+    A single config instance is derived from built-in defaults plus an optional
+    config file. Multiple datadirs may share the same config instance when they
+    share the same effective config file.
+    """
 
     verbose: bool
     backup: BackupConfig
