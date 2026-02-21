@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from .config import load_config, MklistsConfig
-from .datadirs import process_datadir
+from .process_datadirs import process_datadir
 from .plan import RunPlan
 from .run_backups import backup_datadirs
 from .run_routing import redistribute_datafiles

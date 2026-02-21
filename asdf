@@ -1,0 +1,17 @@
+Okay, would this work any better?
+
+```
+datadirs.py -> renaming to process_datadirs.py
+dispatch.py -> renaming to process_datalines.py
+execute.py -> renaming to run.py
+backups_run -> renaming to run_backups.py
+routing.py -> renaming to run_routing.py
+urlify.py -> renaming to run_urlify.py
+```
+You point out that `from mklists.run_dispatch import ...` is somewhat wordier.
+However, the upside is that in the only (non-test) module that imports them, they read like this:
+```
+from .run_backups import backup_datadirs
+from .run_routing import redistribute_datafiles
+from .run_urlify import urlify_datadirs
+```
