@@ -9,7 +9,7 @@ No need to test logging for now:
 
 from pathlib import Path
 import pytest
-from mklists.routing import redistribute_datafiles
+from mklists.run_routing import redistribute_datafiles
 
 
 @pytest.fixture

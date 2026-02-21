@@ -5,6 +5,7 @@ from .config import load_config, MklistsConfig
 from .datadirs import process_datadir
 from .plan import RunPlan
 from .run_backups import backup_datadirs
+from .run_routing import redistribute_datafiles
 from .run_urlify import urlify_datadirs
 
 
@@ -42,11 +43,10 @@ def run_mklists(run_plan: RunPlan) -> None:
             )
 
             if run_plan.routing_dict:
-                _redistribute_datafiles(run_plan.routing_dict)
+                redistribute_datafiles(
+                    datadirs=datadirs,
+                    routing_dict=run_plan.routing_dict,
+                )
 
     if run_plan.htmldir:
         urlify_datadirs(datadirs=datadirs, htmldir=run_plan.htmldir)
-
-
-def _redistribute_datafiles(routing_dict):
-    print(routing_dict)
