@@ -34,7 +34,7 @@ Principles:
 from pathlib import Path
 import pytest
 from mklists.config import MklistsConfig
-from mklists.run import run_mklists
+from mklists.run.run import run_mklists
 from mklists.contexts_datadir import DatadirContext
 from mklists.plan import RunPlan, PassPlan
 
@@ -65,7 +65,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
         calls.append(configfile_used)
         return object()
 
-    import mklists.run as execute_module
+    import mklists.run.run as execute_module
 
     monkeypatch.setattr(
         target=execute_module, 
