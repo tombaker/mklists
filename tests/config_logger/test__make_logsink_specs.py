@@ -1,7 +1,7 @@
-"""Tests $MKLMKL/config_logger.py"""
+"""Tests $MKLMKL/logging.py"""
 
 import sys
-from mklists.config_logger import _make_logsink_specs
+from mklists.logging import _make_logsink_specs
 
 
 def test_make_logsink_specs_verbose_only():

@@ -1,6 +1,6 @@
-"""Tests for ~/github/tombaker/mklists/src/mklists/config_logger.py"""
+"""Tests for $MKLMKL/logging.py"""
 
-from mklists.config_logger import init_logger
+from mklists.logging import init_logger
 
 
 def test_no_outputs_no_logging(capsys):
