@@ -1,8 +1,8 @@
-"""@@@"""
+"""Tests $MKLMKL/config.py"""
 
 import yaml
 import pytest
-from mklists.config import _load_configdict_from_yaml
+from mklists.config import _load_merged_configdict
 
 
 def test_empty_user_config_results_in_defaults(tmp_path):
@@ -10,7 +10,7 @@ def test_empty_user_config_results_in_defaults(tmp_path):
     mklists_yamlfile = tmp_path / "mklists.yaml"
     mklists_yamlfile.write_text("# comment only\n")
 
-    config = _load_configdict_from_yaml(mklists_yamlfile)
+    config = _load_merged_configdict(mklists_yamlfile)
 
     assert isinstance(config, dict)
     assert config
@@ -18,7 +18,7 @@ def test_empty_user_config_results_in_defaults(tmp_path):
 
 def test_no_user_config_found_uses_defaults():
     """With no user config file, loads defaults only."""
-    config = _load_configdict_from_yaml(
+    config = _load_merged_configdict(
         configfile_used=None,
     )
 
@@ -31,7 +31,7 @@ def test_user_config_overrides_default(tmp_path):
     mklists_yamlfile = tmp_path / "mklists.yaml"
     mklists_yamlfile.write_text("verbose: true\n")
 
-    config = _load_configdict_from_yaml(mklists_yamlfile)
+    config = _load_merged_configdict(mklists_yamlfile)
 
     assert config["verbose"] is True
 
@@ -42,7 +42,7 @@ def test_invalid_user_yaml_raises(tmp_path):
     mklists_yamlfile.write_text("foo: [")
 
     with pytest.raises(yaml.YAMLError):
-        _load_configdict_from_yaml(mklists_yamlfile)
+        _load_merged_configdict(mklists_yamlfile)
 
 
 def test_user_yaml_must_be_mapping(tmp_path):
@@ -51,4 +51,4 @@ def test_user_yaml_must_be_mapping(tmp_path):
     mklists_yamlfile.write_text("- a\n- b\n")
 
     with pytest.raises(TypeError):
-        _load_configdict_from_yaml(mklists_yamlfile)
+        _load_merged_configdict(mklists_yamlfile)

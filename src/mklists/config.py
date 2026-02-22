@@ -7,7 +7,6 @@ import re
 from typing import Any, Pattern
 import yaml
 from .rules import Rule
-from .utils import deepmerge_dicts, load_yaml_from_file, load_yaml_from_string
 
 
 # The complete default config schema in YAML; all required keys must appear here.
@@ -43,8 +42,6 @@ urlify:
   urlify_enabled: False
   urlify_dir: html
 """
-
-_CONFIG_DEFAULTS = load_yaml_from_string(DEFAULT_CONFIG_YAML)
 
 
 @dataclass(slots=True, frozen=True)
@@ -107,7 +104,7 @@ def load_config(configfile_used: Path | None) -> MklistsConfig:
     Note:
         Is no user-defined config file is found, uses only built-in defaults.
     """
-    config_dict = _load_configdict_from_yaml(configfile_used=configfile_used)
+    config_dict = _load_merged_configdict(configfile_used=configfile_used)
     mklists_cfg = _make_mklists_config(
         config_dict=config_dict,
         config_rootdir=config_rootdir,
@@ -116,8 +113,37 @@ def load_config(configfile_used: Path | None) -> MklistsConfig:
     return mklists_cfg
 
 
-def _load_configdict_from_yaml(configfile_used: Path | None) -> dict[str, Any]:
-    """Load config dictionary from YAML.
+def _deepmerge_dicts(
+    base_dict: dict[str, Any],
+    override_dict: dict[str, Any],
+) -> dict[str, Any]:
+    """Recursively merge override dict into base dict.
+
+    Args:
+        base_dict: Base dictionary.
+        override_dict: Dictionary with items that override items in base dictionary.
+
+    Note:
+    - dicts are merged
+    - all other values (including lists) are replaced
+    """
+    result = deepcopy(base_dict)
+
+    for key, override_value in override_dict.items():
+        if (
+            key in result
+            and isinstance(result[key], dict)
+            and isinstance(override_value, dict)
+        ):
+            result[key] = _deepmerge_dicts(result[key], override_value)
+        else:
+            result[key] = override_value
+
+    return result
+
+
+def _load_merged_configdict(configfile_used: Path | None) -> dict[str, Any]:
+    """Load default YAML config and merge optional user YAML config.
 
     Args:
         configfile_used: Path of user config file (or None if none exists).
@@ -125,21 +151,56 @@ def _load_configdict_from_yaml(configfile_used: Path | None) -> dict[str, Any]:
     Returns:
         Merged configuration dictionary.
     """
-    if configfile_used is not None:
-        try:
-            config_user = load_yaml_from_file(configfile_used)
-        except yaml.YAMLError as e:
-            raise yaml.YAMLError("Invalid user-defined YAML.") from e
+    config_defaults = _load_yaml_from_string(DEFAULT_CONFIG_YAML) or {}
+    if not isinstance(config_defaults, dict):
+        raise TypeError("DEFAULT_CONFIG_YAML must decode to a mapping.")
 
-        if config_user is None:
-            config_user = {}
+    if configfile_used is not None:
+        config_user = _load_yaml_from_file(configfile_used) or {}
+        if not isinstance(config_user, dict):
+            raise TypeError("User config YAML must decode to a mapping.")
     else:
         config_user = {}
 
-    if not isinstance(config_user, dict):
-        raise TypeError("User config YAML must decode to a mapping.")
+    return _merge_config_dicts(config_defaults, config_user)
 
-    return _merge_config_dicts(_CONFIG_DEFAULTS, config_user)
+
+def _load_yaml_from_file(yamlfile: Path | str) -> Any:
+    """Load YAML from file.
+
+    Args:
+        yamlfile: Path to YAML file.
+
+    Returns:
+        Python object decoded from YAML.
+
+    Raises:
+        FileNotFoundError: If file does not exist.
+        yaml.YAMLError: If YAML is invalid.
+    """
+    yamlfile = Path(yamlfile)
+
+    if not yamlfile.exists():
+        raise FileNotFoundError(f"YAML file not found: {yamlfile}")
+
+    with yamlfile.open("r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def _load_yaml_from_string(yamltext: str) -> Any:
+    """Load YAML string, returning dict.
+
+    Args:
+        yamltext: YAML string.
+
+    Returns:
+        Python dictionary from YAML string.
+
+    Raises:
+        yaml.YAMLError: If YAML is invalid.
+    """
+    # yaml.safe_load raises YAMLError if YAML is invalid.
+    return yaml.safe_load(yamltext)
 
 
 def _merge_config_dicts(
@@ -158,7 +219,7 @@ def _merge_config_dicts(
     if not overrides:
         return deepcopy(defaults)
 
-    return deepmerge_dicts(defaults, overrides)
+    return _deepmerge_dicts(defaults, overrides)
 
 
 def _make_backup_config(

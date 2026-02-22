@@ -1,10 +1,10 @@
-"""Tests for ~/github/tombaker/mklists/src/mklists/utils.py """
+"""Tests for $MKLMKL/config.py"""
 
 import re
 import yaml
 from pathlib import Path
 import pytest
-from mklists.utils import load_yaml_from_string, load_yaml_from_file
+from mklists.config import _load_yaml_from_string, _load_yaml_from_file
 
 
 @pytest.fixture(params=["string", "file"])
@@ -47,10 +47,10 @@ def yaml_load_fn(request, tmp_path):
     def _load_from_file(yaml_text: str):
         path = tmp_path / "mklists.yaml"
         path.write_text(yaml_text, encoding="utf-8")
-        return load_yaml_from_file(path)
+        return _load_yaml_from_file(path)
 
     if request.param == "string":
-        return load_yaml_from_string
+        return _load_yaml_from_string
     elif request.param == "file":
         return _load_from_file
     else:
@@ -181,6 +181,6 @@ def test_load_yaml_from_string_does_not_mutate_input():
     yaml_text = "backup:\n  enabled: true\n"
     original = yaml_text[:]
 
-    load_yaml_from_string(yaml_text)
+    _load_yaml_from_string(yaml_text)
 
     assert yaml_text == original
