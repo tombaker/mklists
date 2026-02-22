@@ -61,19 +61,19 @@ def resolve_run_plan(
 
         for i in range(pass_count):
             backupdir = (
-                config_rootdir / mklists_cfg.backup.directory / f"{run_id}_{i+1:02d}"
+                config_rootdir / mklists_cfg.backup.backup_dir / f"{run_id}_{i+1:02d}"
             )
             pass_plans.append(PassPlan(backupdir=backupdir))
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}
     if mklists_cfg.routing.routing_enabled:
-        routing_dict = mklists_cfg.routing.map
+        routing_dict = mklists_cfg.routing.routing_dict
 
     # ----- html ------------------------------------------------------
     htmldir = None
     if mklists_cfg.urlify.urlify_enabled:
-        htmldir = config_rootdir / mklists_cfg.urlify.directory
+        htmldir = config_rootdir / mklists_cfg.urlify.urlify_dir
 
     return RunPlan(
         datadir_contexts=datadir_contexts,
