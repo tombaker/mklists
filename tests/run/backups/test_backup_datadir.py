@@ -6,7 +6,7 @@ from mklists.run.backups import backup_datadirs
 
 def test_write_backup_copies_all_datadirs(tmp_path):
     """Create files to back up, back them up, read backup files to confirm."""
-    pass_backup_root = tmp_path / "backups" / "2026-02-01_162616893737_pass01"
+    backup_snapshot_dir = tmp_path / "backups" / "2026-02-01_162616893737_pass01"
 
     datadir_a = tmp_path / "repo" / "a"
     datadir_b = tmp_path / "repo" / "b"
@@ -18,17 +18,17 @@ def test_write_backup_copies_all_datadirs(tmp_path):
 
     backup_datadirs(
         datadirs=[datadir_a, datadir_b],
-        pass_backup_root=pass_backup_root,
+        backup_snapshot_dir=backup_snapshot_dir,
     )
 
-    assert (pass_backup_root / "a" / "a.txt").read_text() == "A"
-    assert (pass_backup_root / "b" / "b.txt").read_text() == "B"
+    assert (backup_snapshot_dir / "a" / "a.txt").read_text() == "A"
+    assert (backup_snapshot_dir / "b" / "b.txt").read_text() == "B"
 
 
 
 def test_write_backup_raises_if_pass_root_exists(tmp_path):
-    pass_backup_root = tmp_path / "backups" / "pass01"
-    pass_backup_root.mkdir(parents=True)
+    backup_snapshot_dir = tmp_path / "backups" / "pass01"
+    backup_snapshot_dir.mkdir(parents=True)
 
     datadir = tmp_path / "repo" / "a"
     datadir.mkdir(parents=True)
@@ -36,5 +36,5 @@ def test_write_backup_raises_if_pass_root_exists(tmp_path):
     with pytest.raises(FileExistsError):
         backup_datadirs(
             datadirs=[datadir],
-            pass_backup_root=pass_backup_root,
+            backup_snapshot_dir=backup_snapshot_dir,
         )

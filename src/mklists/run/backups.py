@@ -16,26 +16,26 @@ from loguru import logger
 def backup_datadirs(
     *,
     datadirs: Iterable[Path],
-    pass_backup_root: Path,
+    backup_snapshot_dir: Path,
 ) -> None:
     """Create backup snapshot for one execution pass.
 
     Args:
         datadirs: Iterable of datadir paths to snapshot.
-        pass_backup_root: Directory for this pass (must not exist).
+        backup_snapshot_dir: Directory for backup snapshot.
 
     Raises:
-        FileExistsError: If pass_backup_root already exists.
+        FileExistsError: If backup_snapshot_dir already exists.
     """
-    if pass_backup_root.exists():
+    if backup_snapshot_dir.exists():
         raise FileExistsError(
-            f"Pass backup directory already exists: {pass_backup_root}"
+            f"Pass backup directory already exists: {backup_snapshot_dir}"
         )
 
-    pass_backup_root.mkdir(parents=True)
+    backup_snapshot_dir.mkdir(parents=True)
 
     for datadir in datadirs:
-        target = pass_backup_root / datadir.name
+        target = backup_snapshot_dir / datadir.name
         shutil.copytree(src=datadir, dst=target)
 
 
