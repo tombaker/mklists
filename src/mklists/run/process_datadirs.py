@@ -1,11 +1,11 @@
-"""@@@"""
+"""Process Datadirs."""
 
 from operator import attrgetter
 from pathlib import Path
-from .config import MklistsConfig
-from .contexts_datadir import DatadirContext
+from ..config import MklistsConfig
+from ..contexts_datadir import DatadirContext
+from ..safety import run_safety_checks
 from .process_datalines import dispatch_datalines_to_targets
-from .safety import run_safety_checks
 
 
 def process_datadir(

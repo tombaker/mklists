@@ -1,7 +1,7 @@
-"""Tests $MKLMKL/process_datadirs"""
+"""Tests $MKLRUN/process_datadirs"""
 
 
-from mklists.process_datadirs import _find_datafiles
+from mklists.run.process_datadirs import _find_datafiles
 
 
 def test_find_datafiles_basic(tmp_path):

@@ -1,6 +1,6 @@
-"""Tests $MKLMKL/process_datadirs.py """
+"""Tests $MKLRUN/process_datadirs.py """
 
-from mklists.process_datadirs import _read_datafiles
+from mklists.run.process_datadirs import _read_datafiles
 
 
 def test_read_datafiles_single_file(tmp_path):
