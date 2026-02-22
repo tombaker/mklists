@@ -1,8 +1,8 @@
-"""Tests $MKLMKL/contexts.py"""
+"""Tests $MKLSTRUCTURE/contexts.py"""
 
 from pathlib import Path
-from mklists import contexts_datadir
-from mklists.contexts_datadir import DatadirContext
+from mklists.structure import contexts_datadir
+from mklists.structure.contexts_datadir import DatadirContext
 
 
 def test_resolve_datadir_context_local_config_and_rules(tmp_path, monkeypatch):

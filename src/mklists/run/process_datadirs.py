@@ -3,8 +3,8 @@
 from operator import attrgetter
 from pathlib import Path
 from ..config import MklistsConfig
-from ..contexts_datadir import DatadirContext
 from ..safety import run_safety_checks
+from ..structure.contexts_datadir import DatadirContext
 from .process_datalines import dispatch_datalines_to_targets
 
 

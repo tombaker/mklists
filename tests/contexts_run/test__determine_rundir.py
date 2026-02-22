@@ -2,9 +2,9 @@
 
 from pathlib import Path
 import pytest
-from mklists.contexts_run import _determine_config_rootdir
 from mklists.errors import StructureError
-from mklists.structure import DATADIR_RULEFILE_NAME
+from mklists.structure.contexts_run import _determine_config_rootdir
+from mklists.structure.structure import DATADIR_RULEFILE_NAME
 
 
 def test_determine_rundir_repo_mode(tmp_path):

@@ -2,8 +2,8 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from .errors import StructureError
-from .rules import Rule, load_rules_for_datadir
+from ..rules import Rule, load_rules_for_datadir
+from ..errors import StructureError
 from .structure import DATADIR_CONFIGFILE_NAME, DATADIR_RULEFILE_NAME
 
 

@@ -1,7 +1,7 @@
-"""Tests $MKLMKL/contexts_datadir.py"""
+"""Tests $MKLSTRUCTURE/contexts_datadir.py"""
 
-from mklists.contexts_datadir import _find_datadir_rulefile
-from mklists.structure import DATADIR_RULEFILE_NAME
+from mklists.structure.contexts_datadir import _find_datadir_rulefile
+from mklists.structure.structure import DATADIR_RULEFILE_NAME
 
 
 def test_find_datadir_rulefile(tmp_path):

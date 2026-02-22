@@ -9,8 +9,8 @@ resolve_run_plan
 from dataclasses import dataclass
 from pathlib import Path
 from .config import MklistsConfig
-from .contexts_datadir import DatadirContext
-from .contexts_run import RunContext
+from .structure.contexts_datadir import DatadirContext
+from .structure.contexts_run import RunContext
 
 
 @dataclass(slots=True)

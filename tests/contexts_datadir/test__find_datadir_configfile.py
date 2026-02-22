@@ -1,7 +1,7 @@
-"""Tests $MKLMKL/contexts_datadir.py"""
+"""Tests $MKLSTRUCTURE/contexts_datadir.py"""
 
-from mklists.contexts_datadir import _find_datadir_configfile
-from mklists.structure import DATADIR_CONFIGFILE_NAME
+from mklists.structure.contexts_datadir import _find_datadir_configfile
+from mklists.structure.structure import DATADIR_CONFIGFILE_NAME
 
 
 def test_find_datadir_configfile(tmp_path):

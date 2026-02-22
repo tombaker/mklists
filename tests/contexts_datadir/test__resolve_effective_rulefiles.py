@@ -1,7 +1,7 @@
-"""Tests $MKLMKL/contexts_datadir.py"""
+"""Tests $MKLSTRUCTURE/contexts_datadir.py"""
 
 import pytest
-from mklists.contexts_datadir import _resolve_effective_rulefiles
+from mklists.structure.contexts_datadir import _resolve_effective_rulefiles
 from mklists.errors import StructureError
 
 

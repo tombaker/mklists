@@ -5,9 +5,9 @@ Monkeypatch `resolve_datadir_context` instead of relying on actual rule parsing.
 """
 
 import pytest
-from mklists import contexts_run
-from mklists.contexts_datadir import DatadirContext
-from mklists.contexts_run import RunContext
+from mklists.structure import contexts_run
+from mklists.structure.contexts_datadir import DatadirContext
+from mklists.structure.contexts_run import RunContext
 from mklists.errors import StructureError
 from mklists.plan import RunPlan, PassPlan
 

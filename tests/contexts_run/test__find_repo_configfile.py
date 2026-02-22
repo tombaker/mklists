@@ -1,7 +1,7 @@
 """Tests $MKLMKL/contexts_run.py"""
 
-from mklists.contexts_run import _find_repo_configfile
-from mklists.structure import REPO_CONFIGFILE_NAME
+from mklists.structure.contexts_run import _find_repo_configfile
+from mklists.structure.structure import REPO_CONFIGFILE_NAME
 
 
 def test_find_repo_configfile(tmp_path):
