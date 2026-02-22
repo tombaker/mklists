@@ -1,5 +1,7 @@
 """Tests $MKLMKL/plan.py
 
+2. Backups enabled, routing, disabled
+
 3. Backups enabled, routing enabled, ONE datadir
    Expect:
         1 pass
@@ -65,7 +67,7 @@ def make_cfg(
     )
 
 
-def test_plan_backups_disabled(tmp_path):
+def test_plan_backups_disabled_one_pass(tmp_path):
     """Backups disabled - expect:
 
         len(pass_plans) == 1
@@ -98,7 +100,9 @@ def test_plan_backups_disabled(tmp_path):
         run_id="2026-02-22_12341234",
     )
 
-    expected_run_plan = RunPlan(
+    assert len(actual_run_plan.pass_plans) == 1
+    assert actual_run_plan.pass_plans[0].backupdir is None
+    assert actual_run_plan == RunPlan(
         datadir_contexts=[
             DatadirContext(
                 datadir=Path('/path/to/a'),
@@ -111,9 +115,55 @@ def test_plan_backups_disabled(tmp_path):
         htmldir=None,
     )
 
-    assert actual_run_plan == expected_run_plan
+def test_plan_backups_enabled_one_pass(tmp_path):
+    """Backups enabled, routing disabled, one datadir - expect:
+
+        len(pass_plans) == 1
+        pass_plans[0].backupdir is None
+    """
+    run_context = RunContext(
+        config_rootdir=tmp_path,
+        repo_configfile=None,
+        repo_rulefile=None,
+        datadir_contexts=[
+            DatadirContext(
+                datadir=Path("/path/to/a"),
+                configfile_used=None,
+                rules=[],
+            ),
+        ],
+    )
+
+    cfg = make_cfg(
+        backup_enabled=True,
+        routing_enabled=False,
+        urlify_enabled=False,
+        tmp_path=tmp_path,
+    )
+
+    actual_run_plan = resolve_run_plan(
+        run_context=run_context,
+        mklists_cfg=cfg,
+        datadir_contexts=run_context.datadir_contexts,
+        run_id="2026-02-22_12341234",
+    )
+
+    expected_backupdir = tmp_path / cfg.backup.backup_dir / "2026-02-22_12341234_01"
+
     assert len(actual_run_plan.pass_plans) == 1
-    assert actual_run_plan.pass_plans[0].backupdir is None
+    assert actual_run_plan.pass_plans[0].backupdir == expected_backupdir
+    assert actual_run_plan == RunPlan(
+        datadir_contexts=[
+            DatadirContext(
+                datadir=Path('/path/to/a'),
+                configfile_used=None, 
+                rules=[]
+            ),
+        ],
+        pass_plans=[PassPlan(backupdir=expected_backupdir)], 
+        routing_dict={}, 
+        htmldir=None,
+    )
 
 
 def test_two_passes_when_routing_multiple(tmp_path):
