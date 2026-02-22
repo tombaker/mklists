@@ -1,6 +1,6 @@
 """Tests $MKLRUN/backups.py"""
 
-from mklists.run.backups import _prune_backupdirs
+from mklists.run.backups import prune_backupdirs
 
 
 def _mk_backupdirs(backup_snapshot_dir, names):
@@ -17,7 +17,7 @@ def test_delete_backupdirs_under_depth(tmp_path):
     ]
     _mk_backupdirs(tmp_path, names)
 
-    _prune_backupdirs(
+    prune_backupdirs(
         backups_rootdir=tmp_path,
         backup_depth=4,
     )
@@ -35,7 +35,7 @@ def test_delete_backupdirs_exact_depth(tmp_path):
     ]
     _mk_backupdirs(tmp_path, names)
 
-    _prune_backupdirs(
+    prune_backupdirs(
         backups_rootdir=tmp_path,
         backup_depth=4,
     )
@@ -56,7 +56,7 @@ def test_delete_backupdirs_over_depth(tmp_path):
     ]
     _mk_backupdirs(tmp_path, names)
 
-    _prune_backupdirs(
+    prune_backupdirs(
         backups_rootdir=tmp_path,
         backup_depth=4,
     )
@@ -73,7 +73,7 @@ def test_delete_backupdirs_zero_depth(tmp_path):
     ]
     _mk_backupdirs(tmp_path, names)
 
-    _prune_backupdirs(
+    prune_backupdirs(
         backups_rootdir=tmp_path,
         backup_depth=0,
     )

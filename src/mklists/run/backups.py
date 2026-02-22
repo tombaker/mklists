@@ -33,28 +33,24 @@ def backup_datadirs(
         )
 
     backup_snapshot_dir.mkdir(parents=True)
-
     logger.info(f"Backup {backup_snapshot_dir}")
-    _prune_backupdirs(
-        backup_snapshot_dir=backup_snapshot_dir,
-        backup_depth=backup_depth,
-    )
 
     for datadir in datadirs:
         target = backup_snapshot_dir / datadir.name
         shutil.copytree(src=datadir, dst=target)
 
 
-def _init_backup_snapshot_dir(
+def init_backup_snapshot_dir(
     backup_snapshot_dir: Path,
-    user_configfile: Path | None,
-    global_rulefile: Path | None = None,
+    repo_configfile: Path | None,
+    repo_rulefile: Path | None = None,
 ) -> None:
     """Initialize directory for backup of one pass of a mklists run.
 
     Args:
         backup_snapshot_dir: Backup directory to initialize.
-        user_configfile: Path of user config file (or None if none exists).
+        repo_configfile: Path of repo-level config file (or None if none exists).
+        repo_rulefile: Path of repo-level rule file (or None if none exists).
 
     Returns:
         None, after creating and initializing the backup root directory.
@@ -64,14 +60,14 @@ def _init_backup_snapshot_dir(
     """
     backup_snapshot_dir.mkdir(parents=True, exist_ok=False)
 
-    if user_configfile is not None and user_configfile.is_file():
-        shutil.copy2(src=user_configfile, dst=backup_snapshot_dir)
+    if repo_configfile is not None and repo_configfile.is_file():
+        shutil.copy2(src=repo_configfile, dst=backup_snapshot_dir)
 
-    if global_rulefile is not None and global_rulefile.is_file():
-        shutil.copy2(src=global_rulefile, dst=backup_snapshot_dir)
+    if repo_rulefile is not None and repo_rulefile.is_file():
+        shutil.copy2(src=repo_rulefile, dst=backup_snapshot_dir)
 
 
-def _prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
+def prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
     """Delete oldest backup directories exceeding backup_depth.
 
     Args:
