@@ -83,7 +83,7 @@ def _prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
         shutil.rmtree(path=olddir)
 
 
-def _init_passdir(
+def _init_backup_snapshot_dir(
     backup_snapshot_dir: Path, user_configfile: Path | None, global_rulefile: Path | None = None
 ) -> None:
     """Initialize directory for backup of one pass of a mklists run.
