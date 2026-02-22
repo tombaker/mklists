@@ -43,7 +43,7 @@ def make_cfg(
         verbose=False,
         backup=BackupConfig(
             backup_enabled=backup_enabled,
-            backup_dir=tmp_path / "backups",
+            backup_rootdir=tmp_path / "backups",
             backup_depth=2,
         ),
         routing=RoutingConfig(
@@ -141,7 +141,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         run_id="2026-02-22_12341234",
     )
 
-    expected_backupdir = tmp_path / cfg.backup.backup_dir / "2026-02-22_12341234_01"
+    expected_backupdir = tmp_path / cfg.backup.backup_rootdir / "2026-02-22_12341234_01"
 
     assert len(actual_run_plan.pass_plans) == 1
     assert actual_run_plan.pass_plans[0].backupdir == expected_backupdir
@@ -199,8 +199,8 @@ def test_two_passes_when_routing_multiple(tmp_path):
     # Expected two passes
     assert len(plan.pass_plans) == 2
     # Expected backupdirs
-    assert plan.pass_plans[0].backupdir == tmp_path / cfg.backup.backup_dir / "T_01"
-    assert plan.pass_plans[1].backupdir == tmp_path / cfg.backup.backup_dir / "T_02"
+    assert plan.pass_plans[0].backupdir == tmp_path / cfg.backup.backup_rootdir / "T_01"
+    assert plan.pass_plans[1].backupdir == tmp_path / cfg.backup.backup_rootdir / "T_02"
 
 
 def test_plan_urlify_enabled(tmp_path):

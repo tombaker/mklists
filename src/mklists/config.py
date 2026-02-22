@@ -16,7 +16,7 @@ verbose: False
 # Backup: Snapshot data directory for each pass to a time-stamped backup directory.
 backup:
   backup_enabled: False
-  backup_dir: backups
+  backup_rootdir: backups
   backup_depth: 3
 
 # Routing: Newly generated files with special names can be moved to given directories.
@@ -49,7 +49,7 @@ class BackupConfig:
     """Policy for backing up data files before processing."""
 
     backup_enabled: bool
-    backup_dir: Path
+    backup_rootdir: Path
     backup_depth: int
 
 
@@ -239,18 +239,18 @@ def _make_backup_config(
         Assumes all required keys are present.
     """
     backup_raw = config_dict["backup"]
-    backup_dir = Path(backup_raw["backup_dir"])
+    backup_rootdir = Path(backup_raw["backup_rootdir"])
 
-    if not backup_dir.is_absolute():
-        if len(backup_dir.parts) != 1:
+    if not backup_rootdir.is_absolute():
+        if len(backup_rootdir.parts) != 1:
             raise ValueError(
-                "backup_dir must be single directory name or absolute pathname."
+                "backup_rootdir must be single directory name or absolute pathname."
             )
-        backup_dir = (config_rootdir / backup_dir).resolve()
+        backup_rootdir = (config_rootdir / backup_rootdir).resolve()
 
     return BackupConfig(
         backup_enabled=bool(backup_raw["backup_enabled"]),
-        backup_dir=backup_dir,
+        backup_rootdir=backup_rootdir,
         backup_depth=int(backup_raw["backup_depth"]),
     )
 

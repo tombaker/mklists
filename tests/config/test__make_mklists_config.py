@@ -21,7 +21,7 @@ def minimal_valid_configdict():
         "verbose": False,
         "backup": {
             "backup_enabled": False,
-            "backup_dir": "backups",
+            "backup_rootdir": "backups",
             "backup_depth": 0,
         },
         "routing": {
@@ -53,7 +53,7 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
         verbose=False,
         backup=BackupConfig(
             backup_enabled=False,
-            backup_dir=tmp_path / "backups",
+            backup_rootdir=tmp_path / "backups",
             backup_depth=0,
         ),
         routing=RoutingConfig(
@@ -76,7 +76,7 @@ def test_make_mklists_config_resolves_paths(minimal_valid_configdict, tmp_path):
         minimal_valid_configdict, config_rootdir=tmp_path
     )
 
-    assert mklists_cfg.backup.backup_dir == (tmp_path / "backups").resolve()
+    assert mklists_cfg.backup.backup_rootdir == (tmp_path / "backups").resolve()
     assert mklists_cfg.urlify.urlify_dir == (tmp_path / "html").resolve()
 
 
@@ -102,7 +102,7 @@ def test_make_mklists_config_missing_required_key_raises_keyerror(
     minimal_valid_configdict, tmp_path
 ):
     """If config dict has missing key, raises KeyError."""
-    del minimal_valid_configdict["backup"]["backup_dir"]
+    del minimal_valid_configdict["backup"]["backup_rootdir"]
 
     with pytest.raises(KeyError):
         _make_mklists_config(
