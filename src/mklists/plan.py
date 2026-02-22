@@ -17,7 +17,7 @@ from .structure.contexts_run import RunContext
 class PassPlan:
     """Execution plan for one pass of a Mklists run."""
 
-    backupdir: Path | None
+    backup_snapshot_dir: Path | None
 
 
 @dataclass(slots=True)
@@ -53,19 +53,19 @@ def resolve_run_plan(
     pass_plans: list[PassPlan] = []
 
     if not mklists_cfg.backup.backup_enabled:
-        pass_plans.append(PassPlan(backupdir=None))
+        pass_plans.append(PassPlan(backup_snapshot_dir=None))
     else:
         pass_count = 1
         if mklists_cfg.routing.routing_enabled and len(datadir_contexts) > 1:
             pass_count = 2
 
         for i in range(pass_count):
-            backupdir = (
+            backup_snapshot_dir = (
                 config_rootdir
                 / mklists_cfg.backup.backup_rootdir
                 / f"{run_id}_{i+1:02d}"
             )
-            pass_plans.append(PassPlan(backupdir=backupdir))
+            pass_plans.append(PassPlan(backup_snapshot_dir=backup_snapshot_dir))
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}

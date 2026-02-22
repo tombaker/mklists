@@ -21,10 +21,10 @@ def run_mklists(run_plan: RunPlan) -> None:
     datadirs = [ctx.datadir for ctx in run_plan.datadir_contexts]
 
     for passplan in run_plan.pass_plans:
-        if passplan.backupdir is not None:
+        if passplan.backup_snapshot_dir is not None:
             backup_datadirs(
                 datadirs=datadirs,
-                pass_backup_root=passplan.backupdir,
+                pass_backup_root=passplan.backup_snapshot_dir,
             )
 
         configs_by_path: dict[Path | None, MklistsConfig] = {}

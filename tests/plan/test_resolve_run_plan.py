@@ -64,7 +64,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
     """Backups disabled - expect:
 
     len(pass_plans) == 1
-    pass_plans[0].backupdir is None
+    pass_plans[0].backup_snapshot_dir is None
     """
     run_context = RunContext(
         config_rootdir=tmp_path,
@@ -94,12 +94,12 @@ def test_plan_backups_disabled_one_pass(tmp_path):
     )
 
     assert len(actual_run_plan.pass_plans) == 1
-    assert actual_run_plan.pass_plans[0].backupdir is None
+    assert actual_run_plan.pass_plans[0].backup_snapshot_dir is None
     assert actual_run_plan == RunPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[PassPlan(backupdir=None)],
+        pass_plans=[PassPlan(backup_snapshot_dir=None)],
         routing_dict={},
         htmldir=None,
     )
@@ -109,7 +109,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
     """Backups enabled, routing disabled, one datadir - expect:
 
     len(pass_plans) == 1
-    pass_plans[0].backupdir is None
+    pass_plans[0].backup_snapshot_dir is None
     """
     run_context = RunContext(
         config_rootdir=tmp_path,
@@ -141,12 +141,12 @@ def test_plan_backups_enabled_one_pass(tmp_path):
     expected_backupdir = tmp_path / cfg.backup.backup_rootdir / "2026-02-22_12341234_01"
 
     assert len(actual_run_plan.pass_plans) == 1
-    assert actual_run_plan.pass_plans[0].backupdir == expected_backupdir
+    assert actual_run_plan.pass_plans[0].backup_snapshot_dir == expected_backupdir
     assert actual_run_plan == RunPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[PassPlan(backupdir=expected_backupdir)],
+        pass_plans=[PassPlan(backup_snapshot_dir=expected_backupdir)],
         routing_dict={},
         htmldir=None,
     )
@@ -192,8 +192,8 @@ def test_two_passes_when_routing_multiple(tmp_path):
     # Expected two passes
     assert len(plan.pass_plans) == 2
     # Expected backupdirs
-    assert plan.pass_plans[0].backupdir == tmp_path / cfg.backup.backup_rootdir / "T_01"
-    assert plan.pass_plans[1].backupdir == tmp_path / cfg.backup.backup_rootdir / "T_02"
+    assert plan.pass_plans[0].backup_snapshot_dir == tmp_path / cfg.backup.backup_rootdir / "T_01"
+    assert plan.pass_plans[1].backup_snapshot_dir == tmp_path / cfg.backup.backup_rootdir / "T_02"
 
 
 def test_plan_urlify_enabled(tmp_path):
@@ -234,7 +234,7 @@ def test_plan_urlify_enabled(tmp_path):
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[PassPlan(backupdir=None)],
+        pass_plans=[PassPlan(backup_snapshot_dir=None)],
         routing_dict={},
         htmldir=expected_htmldir,  # expected htmldir
     )

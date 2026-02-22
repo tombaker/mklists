@@ -39,7 +39,7 @@ def backup_datadirs(
         shutil.copytree(datadir, target)
 
 
-def run_backups(*, datadir: Path, backupdir: Path) -> Path:
+def run_backups(*, datadir: Path, backup_snapshot_dir: Path) -> Path:
     """Back up ...
 
     No timestamp.
@@ -49,18 +49,18 @@ def run_backups(*, datadir: Path, backupdir: Path) -> Path:
 
     Args:
         datadir: Data directory.
-        backupdir: Backup directory for this pass.
+        backup_snapshot_dir: Backup directory for this pass.
         backup_depth: Number of backup directories to retain.
 
     Return:
         Path of backup directory for this pass.
     """
-    logger.info(f"Backup {backupdir}")
+    logger.info(f"Backup {backup_snapshot_dir}")
     _prune_backupdirs(
-        backupdir=backupdir,
+        backup_snapshot_dir=backup_snapshot_dir,
         backup_depth=backup_depth,
     )
-    return backupdir
+    return backup_snapshot_dir
 
 
 def _prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
@@ -84,12 +84,12 @@ def _prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
 
 
 def _init_passdir(
-    backupdir: Path, user_configfile: Path | None, global_rulefile: Path | None = None
+    backup_snapshot_dir: Path, user_configfile: Path | None, global_rulefile: Path | None = None
 ) -> None:
     """Initialize directory for backup of one pass of a mklists run.
 
     Args:
-        backupdir: Backup directory to initialize.
+        backup_snapshot_dir: Backup directory to initialize.
         user_configfile: Path of user config file (or None if none exists).
 
     Returns:
@@ -98,10 +98,10 @@ def _init_passdir(
     Raises:
         FileExistsError: If backup root directory already exists.
     """
-    backupdir.mkdir(parents=True, exist_ok=False)
+    backup_snapshot_dir.mkdir(parents=True, exist_ok=False)
 
     if user_configfile is not None and user_configfile.is_file():
-        shutil.copy2(user_configfile, backupdir)
+        shutil.copy2(user_configfile, backup_snapshot_dir)
 
     if global_rulefile is not None and global_rulefile.is_file():
-        shutil.copy2(global_rulefile, backupdir)
+        shutil.copy2(global_rulefile, backup_snapshot_dir)
