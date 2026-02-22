@@ -52,17 +52,29 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
     assert mklists_cfg == MklistsConfig(
         verbose=False,
         backup=BackupConfig(
-            backup_enabled=False, backup_dir=tmp_path / "backups", backup_depth=0
+            backup_enabled=False,
+            backup_dir=tmp_path / "backups",
+            backup_depth=0,
         ),
-        routing=RoutingConfig(routing_enabled=False, routing_dict={}),
-        safety=SafetyConfig(invalid_filename_patterns=[]),
-        urlify=UrlifyConfig(urlify_enabled=False, urlify_dir=tmp_path / "html"),
+        routing=RoutingConfig(
+            routing_enabled=False,
+            routing_dict={},
+        ),
+        safety=SafetyConfig(
+            invalid_filename_patterns=[],
+        ),
+        urlify=UrlifyConfig(
+            urlify_enabled=False,
+            urlify_dir=tmp_path / "html",
+        ),
     )
 
 
 def test_make_mklists_config_resolves_paths(minimal_valid_configdict, tmp_path):
     """Dictionary values of type Path are made absolute under config_rootdir."""
-    mklists_cfg = _make_mklists_config(minimal_valid_configdict, config_rootdir=tmp_path)
+    mklists_cfg = _make_mklists_config(
+        minimal_valid_configdict, config_rootdir=tmp_path
+    )
 
     assert mklists_cfg.backup.backup_dir == (tmp_path / "backups").resolve()
     assert mklists_cfg.urlify.urlify_dir == (tmp_path / "html").resolve()

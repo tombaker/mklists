@@ -52,11 +52,11 @@ def resolve_run_plan(
     # ----- passes ----------------------------------------------------
     pass_plans: list[PassPlan] = []
 
-    if not mklists_cfg.backup.enabled:
+    if not mklists_cfg.backup.backup_enabled:
         pass_plans.append(PassPlan(backupdir=None))
     else:
         pass_count = 1
-        if mklists_cfg.routing.enabled and len(datadir_contexts) > 1:
+        if mklists_cfg.routing.routing_enabled and len(datadir_contexts) > 1:
             pass_count = 2
 
         for i in range(pass_count):
@@ -67,12 +67,12 @@ def resolve_run_plan(
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}
-    if mklists_cfg.routing.enabled:
+    if mklists_cfg.routing.routing_enabled:
         routing_dict = mklists_cfg.routing.map
 
     # ----- html ------------------------------------------------------
     htmldir = None
-    if mklists_cfg.urlify.enabled:
+    if mklists_cfg.urlify.urlify_enabled:
         htmldir = config_rootdir / mklists_cfg.urlify.directory
 
     return RunPlan(
