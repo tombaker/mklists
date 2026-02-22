@@ -17,7 +17,7 @@ def yaml_load_fn(request, tmp_path):
 
     Returns:
         - For "string": returns `load_yamlstr`.
-        - For "file": returns a wrapper function which writes a YAML string 
+        - For "file": returns a wrapper function which writes a YAML string
           to tmp_path / mklists.yaml and calls `load_yamlstr_from_file`.
 
     Note:
@@ -44,6 +44,7 @@ def yaml_load_fn(request, tmp_path):
           - fixture scope
           - dependent fixtures
     """
+
     def _load_from_file(yaml_text: str):
         path = tmp_path / "mklists.yaml"
         path.write_text(yaml_text, encoding="utf-8")
@@ -60,7 +61,6 @@ def yaml_load_fn(request, tmp_path):
 @pytest.mark.parametrize(
     "yaml_text, expected",
     [
-
         (
             """
             safety:
@@ -135,6 +135,7 @@ def test_load_yamlstr_comment_only(yaml_load_fn):
     """
 
     assert yaml_load_fn(yaml_text) is None
+
 
 def test_load_yamlstr_preserves_nested_dicts_and_lists(yaml_load_fn):
     """Loading YAML preserves nested structure exactly, without normalization."""

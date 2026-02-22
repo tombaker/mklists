@@ -61,7 +61,9 @@ def resolve_run_plan(
 
         for i in range(pass_count):
             backupdir = (
-                config_rootdir / mklists_cfg.backup.backup_rootdir / f"{run_id}_{i+1:02d}"
+                config_rootdir
+                / mklists_cfg.backup.backup_rootdir
+                / f"{run_id}_{i+1:02d}"
             )
             pass_plans.append(PassPlan(backupdir=backupdir))
 

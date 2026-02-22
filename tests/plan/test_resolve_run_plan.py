@@ -63,8 +63,8 @@ def make_cfg(
 def test_plan_backups_disabled_one_pass(tmp_path):
     """Backups disabled - expect:
 
-        len(pass_plans) == 1
-        pass_plans[0].backupdir is None
+    len(pass_plans) == 1
+    pass_plans[0].backupdir is None
     """
     run_context = RunContext(
         config_rootdir=tmp_path,
@@ -97,22 +97,19 @@ def test_plan_backups_disabled_one_pass(tmp_path):
     assert actual_run_plan.pass_plans[0].backupdir is None
     assert actual_run_plan == RunPlan(
         datadir_contexts=[
-            DatadirContext(
-                datadir=Path('/path/to/a'),
-                configfile_used=None, 
-                rules=[]
-            ),
+            DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[PassPlan(backupdir=None)], 
-        routing_dict={}, 
+        pass_plans=[PassPlan(backupdir=None)],
+        routing_dict={},
         htmldir=None,
     )
+
 
 def test_plan_backups_enabled_one_pass(tmp_path):
     """Backups enabled, routing disabled, one datadir - expect:
 
-        len(pass_plans) == 1
-        pass_plans[0].backupdir is None
+    len(pass_plans) == 1
+    pass_plans[0].backupdir is None
     """
     run_context = RunContext(
         config_rootdir=tmp_path,
@@ -147,22 +144,18 @@ def test_plan_backups_enabled_one_pass(tmp_path):
     assert actual_run_plan.pass_plans[0].backupdir == expected_backupdir
     assert actual_run_plan == RunPlan(
         datadir_contexts=[
-            DatadirContext(
-                datadir=Path('/path/to/a'),
-                configfile_used=None, 
-                rules=[]
-            ),
+            DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[PassPlan(backupdir=expected_backupdir)], 
-        routing_dict={}, 
+        pass_plans=[PassPlan(backupdir=expected_backupdir)],
+        routing_dict={},
         htmldir=None,
     )
 
 
 def test_two_passes_when_routing_multiple(tmp_path):
     """Backups enabled, routing enabled, MULTIPLE datadirs - expect:
-        2 passes
-        directory created from timestamp
+    2 passes
+    directory created from timestamp
     """
     run_context = RunContext(
         config_rootdir=tmp_path,
@@ -239,13 +232,9 @@ def test_plan_urlify_enabled(tmp_path):
     assert len(actual_run_plan.pass_plans) == 1
     assert actual_run_plan == RunPlan(
         datadir_contexts=[
-            DatadirContext(
-                datadir=Path('/path/to/a'),
-                configfile_used=None, 
-                rules=[]
-            ),
+            DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[PassPlan(backupdir=None)], 
-        routing_dict={}, 
+        pass_plans=[PassPlan(backupdir=None)],
+        routing_dict={},
         htmldir=expected_htmldir,  # expected htmldir
     )

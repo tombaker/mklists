@@ -1,6 +1,5 @@
 """Tests $MKLMKL/config.py"""
 
-
 import pytest
 from mklists.config import DEFAULT_CONFIG_YAML, _deepmerge_dicts
 
@@ -28,6 +27,7 @@ def test_deep_merge_does_not_mutate_base():
 
     assert base == {"a": {"b": 1}}
     assert result == {"a": {"b": 2}}
+
 
 def test_deep_merge_adds_new_keys():
     """Items only in override dictionary are added."""
@@ -96,9 +96,7 @@ def test_deep_merge_multiple_levels():
     base = {"a": {"b": {"c": 1, "d": 2}}}
     override = {"a": {"b": {"d": 99}}}
 
-    assert _deepmerge_dicts(base, override) == {
-        "a": {"b": {"c": 1, "d": 99}}
-    }
+    assert _deepmerge_dicts(base, override) == {"a": {"b": {"c": 1, "d": 99}}}
 
 
 def test_deep_merge_nested_list_replaced():
