@@ -4,9 +4,9 @@ from pathlib import Path
 from ..config import load_config, MklistsConfig
 from ..process_datadirs import process_datadir
 from ..plan import RunPlan
-from ..run_routing import redistribute_datafiles
 from ..run_urlify import urlify_datadirs
 from .backups import backup_datadirs
+from .routing import redistribute_datafiles
 
 
 def run_mklists(run_plan: RunPlan) -> None:
