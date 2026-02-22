@@ -36,7 +36,7 @@ def backup_datadirs(
 
     for datadir in datadirs:
         target = pass_backup_root / datadir.name
-        shutil.copytree(datadir, target)
+        shutil.copytree(src=datadir, dst=target)
 
 
 def run_backups(*, datadir: Path, backup_snapshot_dir: Path) -> Path:
@@ -80,7 +80,7 @@ def _prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
         return
 
     for olddir in run_backupdirs[:excess]:
-        shutil.rmtree(olddir)
+        shutil.rmtree(path=olddir)
 
 
 def _init_passdir(
@@ -101,7 +101,7 @@ def _init_passdir(
     backup_snapshot_dir.mkdir(parents=True, exist_ok=False)
 
     if user_configfile is not None and user_configfile.is_file():
-        shutil.copy2(user_configfile, backup_snapshot_dir)
+        shutil.copy2(src=user_configfile, dst=backup_snapshot_dir)
 
     if global_rulefile is not None and global_rulefile.is_file():
-        shutil.copy2(global_rulefile, backup_snapshot_dir)
+        shutil.copy2(src=global_rulefile, dst=backup_snapshot_dir)
