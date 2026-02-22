@@ -3,10 +3,10 @@
 from pathlib import Path
 from ..config import load_config, MklistsConfig
 from ..plan import RunPlan
-from ..run_urlify import urlify_datadirs
 from .backups import backup_datadirs
 from .process_datadirs import process_datadir
 from .routing import redistribute_datafiles
+from .urlify import urlify_datadirs
 
 
 def run_mklists(run_plan: RunPlan) -> None:
