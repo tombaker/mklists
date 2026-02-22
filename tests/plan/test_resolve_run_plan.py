@@ -192,8 +192,14 @@ def test_two_passes_when_routing_multiple(tmp_path):
     # Expected two passes
     assert len(plan.pass_plans) == 2
     # Expected backupdirs
-    assert plan.pass_plans[0].backup_snapshot_dir == tmp_path / cfg.backup.backup_rootdir / "T_01"
-    assert plan.pass_plans[1].backup_snapshot_dir == tmp_path / cfg.backup.backup_rootdir / "T_02"
+    assert (
+        plan.pass_plans[0].backup_snapshot_dir
+        == tmp_path / cfg.backup.backup_rootdir / "T_01"
+    )
+    assert (
+        plan.pass_plans[1].backup_snapshot_dir
+        == tmp_path / cfg.backup.backup_rootdir / "T_02"
+    )
 
 
 def test_plan_urlify_enabled(tmp_path):
