@@ -5,7 +5,7 @@ from operator import attrgetter
 from pathlib import Path
 from ..errors import StructureError
 from .contexts_datadir import DatadirContext, resolve_datadir_context
-from .structure import DATADIR_RULEFILE_NAME, REPO_CONFIGFILE_NAME, REPO_RULEFILE_NAME
+from .markers import DATADIR_RULEFILE_NAME, REPO_CONFIGFILE_NAME, REPO_RULEFILE_NAME
 
 
 @dataclass(slots=True)
