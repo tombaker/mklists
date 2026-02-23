@@ -63,7 +63,12 @@ def make_cfg(
 
 
 def test_plan_backups_disabled_one_pass(tmp_path):
-    """Backups disabled.
+    """One Datadir.
+
+    Variables in fake MklistsConfig:
+        Backups disabled.
+        Routing disabled.
+        Urlify disabled.
 
     Expect:
         len(pass_plans) == 1
@@ -82,7 +87,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         ],
     )
 
-    cfg = make_cfg(
+    fake_mklists_cfg = make_cfg(
         backup_enabled=False,
         routing_enabled=False,
         urlify_enabled=False,
@@ -90,7 +95,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 
     actual_run_plan = resolve_run_plan(
         run_context=run_context,
-        mklists_cfg=cfg,
+        mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,
         run_id="2026-02-22_12341234",
     )
@@ -111,13 +116,24 @@ def test_plan_backups_disabled_one_pass(tmp_path):
     )
 
 
-@pytest.mark.skip
 def test_plan_backups_enabled_one_pass(tmp_path):
-    """Backups enabled, routing disabled, one datadir - expect:
+    """One Datadir.
 
-    len(pass_plans) == 1
-    pass_plans[0].backup_snapshot_dir is None
+    Variables in fake MklistsConfig:
+        Backup ENABLED.
+        Routing disabled.
+        Urlify disabled.
+
+    Expect:
+        len(pass_plans) == 1
+        pass_plans[0].backup_snapshot_dir is None
     """
+    fake_cfg = make_cfg(
+        backup_enabled=True,
+        routing_enabled=False,
+        urlify_enabled=False,
+    )
+
     run_context = RunContext(
         config_rootdir=tmp_path,
         repo_configfile=None,
@@ -131,41 +147,57 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         ],
     )
 
-    cfg = make_cfg(
-        backup_enabled=True,
-        routing_enabled=False,
-        urlify_enabled=False,
-        tmp_path=tmp_path,
-    )
-
+    # resolve_run_plan should make backup_root absolute.
     actual_run_plan = resolve_run_plan(
         run_context=run_context,
-        mklists_cfg=cfg,
+        mklists_cfg=fake_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
         run_id="2026-02-22_12341234",
     )
 
-    expected_backupdir = tmp_path / cfg.backup.backup_rootdir / "2026-02-22_12341234_01"
-
     assert len(actual_run_plan.pass_plans) == 1
-    assert actual_run_plan.pass_plans[0].backup_snapshot_dir == expected_backupdir
+
+    expected_backup_rootdir = tmp_path / fake_cfg.backup.backup_rootdir
+    assert actual_run_plan.backup_rootdir == expected_backup_rootdir
+
+    expected_backup_snapshot_dir = expected_backup_rootdir / "2026-02-22_12341234_01"
+    assert (
+        actual_run_plan.pass_plans[0].backup_snapshot_dir
+        == expected_backup_snapshot_dir
+    )
+
     assert actual_run_plan == RunPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[PassPlan(backup_snapshot_dir=expected_backupdir)],
+        repo_configfile=None,
+        repo_rulefile=None,
+        backup_rootdir=expected_backup_rootdir,
+        backup_depth=2,
+        pass_plans=[PassPlan(backup_snapshot_dir=expected_backup_snapshot_dir)],
         routing_dict={},
         htmldir=None,
     )
 
 
 def test_two_passes_when_routing_multiple(tmp_path):
-    """Multiple Datadirs. Backups and routing enabled.
+    """Multiple Datadirs. 
+
+    Variables in fake MklistsConfig:
+        Backup ENABLED.
+        Routing ENABLED.
+        Urlify disabled.
 
     Expect:
         2 passes
         directory created from timestamp
     """
+    fake_mklists_cfg = make_cfg(
+        backup_enabled=True,
+        routing_enabled=True,
+        urlify_enabled=False,
+    )
+
     run_context = RunContext(
         config_rootdir=tmp_path,
         repo_configfile=None,
@@ -184,15 +216,9 @@ def test_two_passes_when_routing_multiple(tmp_path):
         ],
     )
 
-    cfg = make_cfg(
-        backup_enabled=True,
-        routing_enabled=True,
-        urlify_enabled=False,
-    )
-
     plan = resolve_run_plan(
         run_context=run_context,
-        mklists_cfg=cfg,
+        mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
         run_id="T",
     )
@@ -202,17 +228,31 @@ def test_two_passes_when_routing_multiple(tmp_path):
     # Expected backupdirs
     assert (
         plan.pass_plans[0].backup_snapshot_dir
-        == tmp_path / cfg.backup.backup_rootdir / "T_01"
+        == tmp_path / fake_mklists_cfg.backup.backup_rootdir / "T_01"
     )
     assert (
         plan.pass_plans[1].backup_snapshot_dir
-        == tmp_path / cfg.backup.backup_rootdir / "T_02"
+        == tmp_path / fake_mklists_cfg.backup.backup_rootdir / "T_02"
     )
 
 
-@pytest.mark.skip
 def test_plan_urlify_enabled(tmp_path):
-    """Urlify enabled - expect correct htmldir path."""
+    """Urlify enabled
+
+    Variables in fake MklistsConfig:
+        Backup disabled.
+        Routing disabled.
+        Urlify ENABLED.
+
+    Expect: 
+        Correct htmldir path.
+    """
+    fake_mklists_cfg = make_cfg(
+        backup_enabled=False,
+        routing_enabled=False,
+        urlify_enabled=True,
+    )
+
     run_context = RunContext(
         config_rootdir=tmp_path,
         repo_configfile=None,
@@ -226,17 +266,9 @@ def test_plan_urlify_enabled(tmp_path):
         ],
     )
 
-    # Urlify enabled
-    cfg = make_cfg(
-        backup_enabled=False,
-        routing_enabled=False,
-        urlify_enabled=True,
-        tmp_path=tmp_path,
-    )
-
     actual_run_plan = resolve_run_plan(
         run_context=run_context,
-        mklists_cfg=cfg,
+        mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
         run_id="2026-02-22_12341234",
     )
@@ -250,6 +282,10 @@ def test_plan_urlify_enabled(tmp_path):
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
         pass_plans=[PassPlan(backup_snapshot_dir=None)],
+        repo_configfile=None,
+        repo_rulefile=None,
+        backup_rootdir=None,
+        backup_depth=0,
         routing_dict={},
         htmldir=expected_htmldir,  # expected htmldir
     )
