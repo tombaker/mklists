@@ -9,8 +9,8 @@ def test_create_directory_outside_repo(tmp_path):
     Note: init_backup_snapshot_dir does not care whether "mklists.yaml" or
     "mklists.rules" are valid names for the mklists config settings and global rules.
     It simply copies the pathnames it is passed, if they exist, to the backup
-    directory. The file "mklists.rules" is therefore deliberately misspelled here to
-    make this point.
+    directory. The file "mklists.rules" is therefore deliberately misspelled here
+    to make this point.
     """
     config_rootdir = tmp_path / "repo"
     config_rootdir.mkdir()
