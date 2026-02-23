@@ -26,6 +26,10 @@ class RunPlan:
 
     datadir_contexts: list[DatadirContext]
     pass_plans: list[PassPlan]
+    repo_configfile: Path | None      #
+    repo_rulefile: Path | None        #
+    backup_rootdir: Path | None       #
+    backup_depth: int                 #
     routing_dict: dict
     htmldir: Path
 
@@ -40,12 +44,16 @@ def resolve_run_plan(
     """Construct executable plan for this run.
 
     Args:
-        run_context:
-        mklists_cfg:
-        datadir_contexts:
+        run_context: Execution context for one Mklists run.
+        mklists_cfg: Instance of configuration object MklistsConfig.
+        datadir_contexts: List of Datadir execution contexts.
+        run_id: Timestamp string;.
 
     Returns:
         RunPlan object, holding info needed for execution.
+
+    Note:
+        Responsible for resolving relative config paths to absolute.
     """
     config_rootdir = run_context.config_rootdir
 
@@ -67,6 +75,23 @@ def resolve_run_plan(
             )
             pass_plans.append(PassPlan(backup_snapshot_dir=backup_snapshot_dir))
 
+    # ----- repo-level config -----------------------------------------
+    repo_configfile = None
+    if run_context.repo_configfile:
+        repo_configfile = run_context.repo_configfile
+
+    repo_rulefile = None
+    if run_context.repo_rulefile:
+        repo_rulefile = run_context.repo_rulefile
+
+    # ----- backup ----------------------------------------------------
+    backup_rootdir = None
+    backup_depth = 0
+    if mklists_cfg.backup.backup_enabled:
+        if mklists_cfg.backup.backup_rootdir:
+            backup_rootdir = config_rootdir / mklists_cfg.backup.backup_rootdir
+            backup_depth = mklists_cfg.backup.backup_depth
+
     # ----- routing ---------------------------------------------------
     routing_dict = {}
     if mklists_cfg.routing.routing_enabled:
@@ -80,6 +105,10 @@ def resolve_run_plan(
     return RunPlan(
         datadir_contexts=datadir_contexts,
         pass_plans=pass_plans,
+        repo_configfile=repo_configfile,
+        repo_rulefile=repo_rulefile,
+        backup_rootdir=backup_rootdir,
+        backup_depth=backup_depth,
         routing_dict=routing_dict,
         htmldir=htmldir,
     )
