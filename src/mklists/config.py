@@ -45,7 +45,7 @@ urlify:
 
 
 @dataclass(slots=True, frozen=True)
-class BackupSettings:
+class BackupConfig:
     """Settings about backing up data files before processing."""
 
     backup_enabled: bool
@@ -69,7 +69,7 @@ class SafetyConfig:
 
 
 @dataclass(slots=True, frozen=True)
-class UrlifySettings:
+class UrlifyConfig:
     """Settings about writing data files in HTML to a desination directory."""
 
     urlify_enabled: bool
@@ -77,7 +77,7 @@ class UrlifySettings:
 
 
 @dataclass(slots=True)
-class SettingsContext:
+class ConfigContext:
     """Normalized, validated settings for processing one or more datadirs.
 
     A single config instance is derived from built-in defaults plus an optional
@@ -86,20 +86,20 @@ class SettingsContext:
     """
 
     verbose: bool
-    backup: BackupSettings
+    backup: BackupConfig
     routing: RoutingConfig
     safety: SafetyConfig
-    urlify: UrlifySettings
+    urlify: UrlifyConfig
 
 
-def load_config(configfile_used: Path | None) -> SettingsContext:
+def load_config(configfile_used: Path | None) -> ConfigContext:
     """Derive settings from built-in defaults and optional user-defined config file.
 
     Args:
         configfile_used: Path of user-defined config file to use, if available.
 
     Returns:
-        Instance of configuration object SettingsContext.
+        Instance of configuration object ConfigContext.
 
     Note:
         Is no user-defined config file is found, uses only built-in defaults.
@@ -225,15 +225,15 @@ def _merge_config_dicts(
 def _make_backup_config(
     config_dict: dict[str, Any],
     config_rootdir: Path,
-) -> BackupSettings:
-    """Initialize instance of BackupSettings.
+) -> BackupConfig:
+    """Initialize instance of BackupConfig.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
         config_rootdir: Root directory of mklists repo.
 
     Returns:
-        Instance of BackupSettings initialized from config dictionary.
+        Instance of BackupConfig initialized from config dictionary.
 
     Note:
         Assumes all required keys are present.
@@ -248,7 +248,7 @@ def _make_backup_config(
             )
         backup_rootdir = (config_rootdir / backup_rootdir).resolve()
 
-    return BackupSettings(
+    return BackupConfig(
         backup_enabled=bool(backup_raw["backup_enabled"]),
         backup_rootdir=backup_rootdir,
         backup_depth=int(backup_raw["backup_depth"]),
@@ -332,22 +332,22 @@ def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
 def _make_urlify_config(
     config_dict: dict[str, Any],
     config_rootdir: Path,
-) -> UrlifySettings:
-    """Initialize instance of UrlifySettings.
+) -> UrlifyConfig:
+    """Initialize instance of UrlifyConfig.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
         config_rootdir: Root directory of mklists repo.
 
     Returns:
-        Instance of UrlifySettings initialized from config dictionary.
+        Instance of UrlifyConfig initialized from config dictionary.
 
     Note:
         Assumes all required keys are present.
     """
     urlify_raw = config_dict["urlify"]
 
-    return UrlifySettings(
+    return UrlifyConfig(
         urlify_enabled=bool(urlify_raw["urlify_enabled"]),
         urlify_dir=(config_rootdir / urlify_raw["urlify_dir"]).resolve(),
     )
@@ -356,20 +356,20 @@ def _make_urlify_config(
 def _make_mklists_config(
     config_dict: dict[str, Any],
     config_rootdir: Path,
-) -> SettingsContext:
-    """Normalize and validate merged config dict into SettingsContext.
+) -> ConfigContext:
+    """Normalize and validate merged config dict into ConfigContext.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
         config_rootdir: Root directory of mklists repo.
 
     Returns:
-        Instance of SettingsContext initialized from config dictionary.
+        Instance of ConfigContext initialized from config dictionary.
 
     Note:
         Assumes all required keys are present.
     """
-    return SettingsContext(
+    return ConfigContext(
         verbose=config_dict["verbose"],
         backup=_make_backup_config(config_dict, config_rootdir),
         routing=_make_routing_config(config_dict, config_rootdir),

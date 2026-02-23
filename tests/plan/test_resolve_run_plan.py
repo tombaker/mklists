@@ -23,11 +23,11 @@ Test: Function is responsible for resolving relative config paths to absolute.
 from pathlib import Path
 import pytest
 from mklists.config import (
-    BackupSettings,
+    BackupConfig,
     RoutingConfig,
     SafetyConfig,
-    UrlifySettings,
-    SettingsContext,
+    UrlifyConfig,
+    ConfigContext,
 )
 from mklists.structure.contexts_run import RunContext
 from mklists.structure.contexts_datadir import DatadirContext
@@ -39,11 +39,11 @@ def make_cfg(
     backup_enabled: bool,
     routing_enabled: bool,
     urlify_enabled: bool,
-) -> SettingsContext:
-    """Fake stand-in makes SettingsContext object by varying just three variables."""
-    return SettingsContext(
+) -> ConfigContext:
+    """Fake stand-in makes ConfigContext object by varying just three variables."""
+    return ConfigContext(
         verbose=False,
-        backup=BackupSettings(
+        backup=BackupConfig(
             backup_enabled=backup_enabled,
             backup_rootdir=Path("backups"),  # relative - resolved in plan
             backup_depth=2,
@@ -55,7 +55,7 @@ def make_cfg(
         safety=SafetyConfig(
             invalid_filename_patterns=[],
         ),
-        urlify=UrlifySettings(
+        urlify=UrlifyConfig(
             urlify_enabled=urlify_enabled,
             urlify_dir=Path("html"),  # relative - resolved in plan
         ),
@@ -65,7 +65,7 @@ def make_cfg(
 def test_plan_backups_disabled_one_pass(tmp_path):
     """One Datadir.
 
-    Variables in fake SettingsContext:
+    Variables in fake ConfigContext:
         Backups disabled.
         Routing disabled.
         Urlify disabled.
@@ -119,7 +119,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 def test_plan_backups_enabled_one_pass(tmp_path):
     """One Datadir.
 
-    Variables in fake SettingsContext:
+    Variables in fake ConfigContext:
         Backup ENABLED.
         Routing disabled.
         Urlify disabled.
@@ -183,7 +183,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
 def test_two_passes_when_routing_multiple(tmp_path):
     """Multiple Datadirs. 
 
-    Variables in fake SettingsContext:
+    Variables in fake ConfigContext:
         Backup ENABLED.
         Routing ENABLED.
         Urlify disabled.
@@ -239,7 +239,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
 def test_plan_urlify_enabled(tmp_path):
     """Urlify enabled
 
-    Variables in fake SettingsContexSettingsContext:
+    Variables in fake ConfigContext:
         Backup disabled.
         Routing disabled.
         Urlify ENABLED.

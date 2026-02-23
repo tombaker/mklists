@@ -5,11 +5,11 @@
 
 import pytest
 from mklists.config import (
-    BackupSettings,
+    BackupConfig,
     RoutingConfig,
     SafetyConfig,
-    UrlifySettings,
-    SettingsContext,
+    UrlifyConfig,
+    ConfigContext,
     _make_mklists_config,
 )
 
@@ -45,13 +45,13 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
         config_rootdir=tmp_path,
     )
 
-    assert isinstance(mklists_cfg, SettingsContext)
+    assert isinstance(mklists_cfg, ConfigContext)
     assert mklists_cfg.backup.backup_enabled is False
     assert mklists_cfg.routing.routing_enabled is False
 
-    assert mklists_cfg == SettingsContext(
+    assert mklists_cfg == ConfigContext(
         verbose=False,
-        backup=BackupSettings(
+        backup=BackupConfig(
             backup_enabled=False,
             backup_rootdir=tmp_path / "backups",
             backup_depth=0,
@@ -63,7 +63,7 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
         safety=SafetyConfig(
             invalid_filename_patterns=[],
         ),
-        urlify=UrlifySettings(
+        urlify=UrlifyConfig(
             urlify_enabled=False,
             urlify_dir=tmp_path / "html",
         ),

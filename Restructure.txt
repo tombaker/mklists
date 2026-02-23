@@ -1,42 +1,42 @@
 We’ll define three layers:
 
-- SettingsContext (derived from config files)
+- ConfigContext (derived from config files)
 - StructuralContext (derived from filesystem structure)
 - ExecutionContext (fully resolved, ready to execute)
 - plus ExecutionPass (per-pass execution unit)
 
 
 ---------------------------------------------------------
-SettingsContext - was: MklistsConfig
+ConfigContext - was: MklistsConfig
 - config.py (still)
 
 @dataclass(slots=True, frozen=True)
-class BackupSettings:
+class BackupConfig:
     backup_enabled: bool
     backup_rootdir: Path
     backup_depth: int
 
 
 @dataclass(slots=True, frozen=True)
-class RoutingSettings:
+class RoutingConfig:
     routing_enabled: bool
     routing_dict: dict[str, Path]
 
 
 @dataclass(slots=True, frozen=True)
-class UrlifySettings:
+class UrlifyConfig:
     urlify_enabled: bool
     urlify_dir: Path
 
 
 @dataclass(slots=True, frozen=True)
-class SettingsContext:
+class ConfigContext:
     """Normalized configuration derived from defaults + user config."""
 
     verbose: bool
-    backup: BackupSettings
-    routing: RoutingSettings
-    urlify: UrlifySettings
+    backup: BackupConfig
+    routing: RoutingConfig
+    urlify: UrlifyConfig
 
 ---------------------------------------------------------
 StructuralContext - was: RunContext
