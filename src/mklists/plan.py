@@ -22,14 +22,19 @@ class PassPlan:
 
 @dataclass(slots=True)
 class RunPlan:
-    """Execution plan for one Mklists run."""
+    """Execution plan for one Mklists run.
+
+    Note:
+        This is a fully resolved execution specification (absolute paths only).
+        It includes what must be snapshotted to make the run reproducible.
+    """
 
     datadir_contexts: list[DatadirContext]
     pass_plans: list[PassPlan]
-    repo_configfile: Path | None      #
-    repo_rulefile: Path | None        #
-    backup_rootdir: Path | None       #
-    backup_depth: int                 #
+    repo_configfile: Path | None
+    repo_rulefile: Path | None
+    backup_rootdir: Path | None
+    backup_depth: int
     routing_dict: dict
     htmldir: Path
 
@@ -91,6 +96,8 @@ def resolve_run_plan(
         if mklists_cfg.backup.backup_rootdir:
             backup_rootdir = config_rootdir / mklists_cfg.backup.backup_rootdir
             backup_depth = mklists_cfg.backup.backup_depth
+
+    # todo: What iff backup_enabled=True and backup_rootdir=None?
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}

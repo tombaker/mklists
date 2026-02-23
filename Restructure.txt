@@ -1,0 +1,93 @@
+We’ll define three layers:
+
+- SettingsContext (derived from config files)
+- StructuralContext (derived from filesystem structure)
+- ExecutionContext (fully resolved, ready to execute)
+- plus ExecutionPass (per-pass execution unit)
+
+
+---------------------------------------------------------
+SettingsContext - was: MklistsConfig
+- config.py (still)
+
+@dataclass(slots=True, frozen=True)
+class BackupSettings:
+    backup_enabled: bool
+    backup_rootdir: Path
+    backup_depth: int
+
+
+@dataclass(slots=True, frozen=True)
+class RoutingSettings:
+    routing_enabled: bool
+    routing_dict: dict[str, Path]
+
+
+@dataclass(slots=True, frozen=True)
+class UrlifySettings:
+    urlify_enabled: bool
+    urlify_dir: Path
+
+
+@dataclass(slots=True, frozen=True)
+class SettingsContext:
+    """Normalized configuration derived from defaults + user config."""
+
+    verbose: bool
+    backup: BackupSettings
+    routing: RoutingSettings
+    urlify: UrlifySettings
+
+---------------------------------------------------------
+StructuralContext - was: RunContext
+- structure.contexts_datadir (still)
+- structure.contexts_run (still)
+
+@dataclass(slots=True, frozen=True)
+class DatadirContext:
+    datadir: Path
+    configfile_used: Path | None
+    rules: list  # list[Rule]
+
+
+@dataclass(slots=True, frozen=True)
+class StructuralContext:
+    """Filesystem-derived structure of this run."""
+
+    config_rootdir: Path
+    repo_configfile: Path | None
+    repo_rulefile: Path | None
+    datadir_contexts: list[DatadirContext]
+
+---------------------------------------------------------
+ExecutionPass - was: PassPlan
+- where?
+
+@dataclass(slots=True, frozen=True)
+class ExecutionPass:
+    """One concrete execution pass."""
+
+    backup_snapshot_dir: Path | None
+
+---------------------------------------------------------
+ExecutionContext - was: RunPlan
+- where?
+
+@dataclass(slots=True, frozen=True)
+class ExecutionContext:
+    """Fully resolved execution state for a mklists run."""
+
+    datadir_contexts: list[DatadirContext]
+    passes: list[ExecutionPass]
+
+    # repo-level files needed for backup directory initialization
+    repo_configfile: Path | None
+    repo_rulefile: Path | None
+
+    # backup policy (with paths resolved)
+    backup_rootdir: Path | None
+    backup_depth: int
+
+    # features (with paths resolved)
+    routing_dict: dict[str, Path]
+    htmldir: Path | None

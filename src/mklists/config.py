@@ -46,7 +46,7 @@ urlify:
 
 @dataclass(slots=True, frozen=True)
 class BackupConfig:
-    """Policy for backing up data files before processing."""
+    """Settings about backing up data files before processing."""
 
     backup_enabled: bool
     backup_rootdir: Path
@@ -55,7 +55,7 @@ class BackupConfig:
 
 @dataclass(slots=True, frozen=True)
 class RoutingConfig:
-    """Map of special files to specific destination directories."""
+    """Settings about moving specified files to different destination directories."""
 
     routing_enabled: bool
     routing_dict: dict[str, Path]
@@ -70,7 +70,7 @@ class SafetyConfig:
 
 @dataclass(slots=True, frozen=True)
 class UrlifyConfig:
-    """Policy for writing data files in HTML."""
+    """Settings about writing data files in HTML to a desination directory."""
 
     urlify_enabled: bool
     urlify_dir: Path
@@ -78,7 +78,7 @@ class UrlifyConfig:
 
 @dataclass(slots=True)
 class MklistsConfig:
-    """Normalized, validated configuration used for processing one or more datadirs.
+    """Normalized, validated settings for processing one or more datadirs.
 
     A single config instance is derived from built-in defaults plus an optional
     config file. Multiple datadirs may share the same config instance when they
