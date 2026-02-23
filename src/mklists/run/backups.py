@@ -18,7 +18,7 @@ def backup_datadirs(
     datadirs: Iterable[Path],
     backup_snapshot_dir: Path,
 ) -> None:
-    """Create backup snapshot of all Datadirs to be processed in one execution pass.
+    """Copy datadirs into already-initialized snapshot directory.
 
     Args:
         datadirs: Iterable of Datadirs to snapshot.
@@ -27,12 +27,11 @@ def backup_datadirs(
     Raises:
         FileExistsError: If backup_snapshot_dir already exists.
     """
-    if backup_snapshot_dir.exists():
-        raise FileExistsError(
-            f"Pass backup directory already exists: {backup_snapshot_dir}"
+    if not backup_snapshot_dir.exists() or not backup_snapshot_dir.is_dir():
+        raise FileNotFoundError(
+            f"Backup snapshot directory does not exist: {backup_snapshot_dir}"
         )
 
-    backup_snapshot_dir.mkdir(parents=True)
     logger.info(f"Backup {backup_snapshot_dir}")
 
     for datadir in datadirs:
@@ -67,17 +66,17 @@ def init_backup_snapshot_dir(
         shutil.copy2(src=repo_rulefile, dst=backup_snapshot_dir)
 
 
-def prune_backupdirs(backups_rootdir: Path, backup_depth: int) -> None:
-    """Delete oldest backup directories exceeding backup_depth.
+def prune_backupdirs(backup_rootdir: Path, backup_depth: int) -> None:
+    """Delete oldest backup directories exceeding backup depth.
 
     Args:
-        backups_rootdir: Path of backups tree.
+        backup_rootdir: Path of backups tree.
         backup_depth: Number of backup directories to retain for given datadir.
 
     Returns:
         None, after deleting directories.
     """
-    run_backupdirs = sorted(p for p in backups_rootdir.iterdir() if p.is_dir())
+    run_backupdirs = sorted(p for p in backup_rootdir.iterdir() if p.is_dir())
 
     excess = len(run_backupdirs) - backup_depth
     if excess <= 0:

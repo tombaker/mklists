@@ -22,10 +22,24 @@ def run_mklists(run_plan: RunPlan) -> None:
 
     for pass_plan in run_plan.pass_plans:
         if pass_plan.backup_snapshot_dir is not None:
+
+            init_backup_snapshot_dir(
+                backup_snapshot_dir=pass_plan.backup_snapshot_dir,
+                repo_configfile=run_plan.repo_configfile,
+                repo_rulefile=run_plan.repo_rulefile,
+            )
+
             backup_datadirs(
                 datadirs=datadirs,
                 backup_snapshot_dir=pass_plan.backup_snapshot_dir,
             )
+
+            if run_plan.backup_rootdir is not None:
+                prune_backupdirs(
+                    backup_rootdir=run_plan.backup_rootdir,
+                    backup_depth=run_plan.backup_depth,
+                )
+
 
         configs_by_path: dict[Path | None, MklistsConfig] = {}
 
