@@ -21,7 +21,7 @@ class PassPlan:
 
 
 @dataclass(slots=True)
-class RunPlan:
+class ExecutionContext:
     """Execution plan for one Mklists run.
 
     Note:
@@ -45,7 +45,7 @@ def resolve_run_plan(
     mklists_cfg: ConfigContext,
     datadir_contexts: list[DatadirContext],
     run_id: str,
-) -> RunPlan:
+) -> ExecutionContext:
     """Construct executable plan for this run.
 
     Args:
@@ -55,7 +55,7 @@ def resolve_run_plan(
         run_id: Timestamp string;.
 
     Returns:
-        RunPlan object, holding info needed for execution.
+        ExecutionContext object, holding info needed for execution.
 
     Note:
         Responsible for resolving relative config paths to absolute.
@@ -109,7 +109,7 @@ def resolve_run_plan(
     if mklists_cfg.urlify.urlify_enabled:
         htmldir = config_rootdir / mklists_cfg.urlify.urlify_dir
 
-    return RunPlan(
+    return ExecutionContext(
         datadir_contexts=datadir_contexts,
         pass_plans=pass_plans,
         repo_configfile=repo_configfile,

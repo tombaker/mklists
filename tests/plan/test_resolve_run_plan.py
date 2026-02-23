@@ -31,7 +31,7 @@ from mklists.config import (
 )
 from mklists.structure.contexts_run import RunContext
 from mklists.structure.contexts_datadir import DatadirContext
-from mklists.plan import PassPlan, RunPlan, resolve_run_plan
+from mklists.plan import PassPlan, ExecutionContext, resolve_run_plan
 
 
 def make_cfg(
@@ -102,7 +102,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 
     assert len(actual_run_plan.pass_plans) == 1
     assert actual_run_plan.pass_plans[0].backup_snapshot_dir is None
-    assert actual_run_plan == RunPlan(
+    assert actual_run_plan == ExecutionContext(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
@@ -166,7 +166,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         == expected_backup_snapshot_dir
     )
 
-    assert actual_run_plan == RunPlan(
+    assert actual_run_plan == ExecutionContext(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
@@ -277,7 +277,7 @@ def test_plan_urlify_enabled(tmp_path):
     expected_htmldir = tmp_path / "html"
 
     assert len(actual_run_plan.pass_plans) == 1
-    assert actual_run_plan == RunPlan(
+    assert actual_run_plan == ExecutionContext(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],

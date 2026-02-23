@@ -2,14 +2,14 @@
 
 from pathlib import Path
 from ..config import load_config, ConfigContext
-from ..plan import RunPlan
+from ..plan import ExecutionContext
 from .backups import backup_datadirs, init_backup_snapshot_dir, prune_backupdirs
 from .process_datadirs import process_datadir
 from .routing import redistribute_datafiles
 from .urlify import urlify_datadirs
 
 
-def run_mklists(run_plan: RunPlan) -> None:
+def run_mklists(run_plan: ExecutionContext) -> None:
     """Execute a prepared run plan.
 
     Args:

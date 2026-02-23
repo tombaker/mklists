@@ -21,7 +21,7 @@ Assert:
 How:
 - do not use filesystem
 - do not use real configs
-- use minimal stub RunPlan
+- use minimal stub ExecutionContext
 - monkeypatch collaborators
 - assert calls and call counts
 
@@ -36,7 +36,7 @@ import pytest
 from mklists.config import ConfigContext
 from mklists.run.run import run_mklists
 from mklists.structure.contexts_datadir import DatadirContext
-from mklists.plan import RunPlan, PassPlan
+from mklists.plan import ExecutionContext, PassPlan
 
 
 def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
@@ -48,7 +48,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
         DatadirContext(datadir=Path("/repo/b"), configfile_used=repo_cfg, rules=[]),
     ]
 
-    run_plan = RunPlan(
+    run_plan = ExecutionContext(
         datadir_contexts=datadir_contexts,
         pass_plans=[PassPlan(backup_snapshot_dir=None)],
         repo_configfile=None,
