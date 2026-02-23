@@ -18,11 +18,11 @@ def backup_datadirs(
     datadirs: Iterable[Path],
     backup_snapshot_dir: Path,
 ) -> None:
-    """Create backup snapshot for one execution pass.
+    """Create backup snapshot of all Datadirs to be processed in one execution pass.
 
     Args:
-        datadirs: Iterable of datadir paths to snapshot.
-        backup_snapshot_dir: Directory for backup snapshot.
+        datadirs: Iterable of Datadirs to snapshot.
+        backup_snapshot_dir: Root directory for snapshots of Datadirs.
 
     Raises:
         FileExistsError: If backup_snapshot_dir already exists.
