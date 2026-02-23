@@ -5,7 +5,7 @@
 
 import pytest
 from mklists.config import (
-    BackupConfig,
+    BackupSettings,
     RoutingConfig,
     SafetyConfig,
     UrlifyConfig,
@@ -51,7 +51,7 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
 
     assert mklists_cfg == SettingsContext(
         verbose=False,
-        backup=BackupConfig(
+        backup=BackupSettings(
             backup_enabled=False,
             backup_rootdir=tmp_path / "backups",
             backup_depth=0,

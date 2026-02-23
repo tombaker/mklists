@@ -45,7 +45,7 @@ urlify:
 
 
 @dataclass(slots=True, frozen=True)
-class BackupConfig:
+class BackupSettings:
     """Settings about backing up data files before processing."""
 
     backup_enabled: bool
@@ -86,7 +86,7 @@ class SettingsContext:
     """
 
     verbose: bool
-    backup: BackupConfig
+    backup: BackupSettings
     routing: RoutingConfig
     safety: SafetyConfig
     urlify: UrlifyConfig
@@ -225,15 +225,15 @@ def _merge_config_dicts(
 def _make_backup_config(
     config_dict: dict[str, Any],
     config_rootdir: Path,
-) -> BackupConfig:
-    """Initialize instance of BackupConfig.
+) -> BackupSettings:
+    """Initialize instance of BackupSettings.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
         config_rootdir: Root directory of mklists repo.
 
     Returns:
-        Instance of BackupConfig initialized from config dictionary.
+        Instance of BackupSettings initialized from config dictionary.
 
     Note:
         Assumes all required keys are present.
@@ -248,7 +248,7 @@ def _make_backup_config(
             )
         backup_rootdir = (config_rootdir / backup_rootdir).resolve()
 
-    return BackupConfig(
+    return BackupSettings(
         backup_enabled=bool(backup_raw["backup_enabled"]),
         backup_rootdir=backup_rootdir,
         backup_depth=int(backup_raw["backup_depth"]),

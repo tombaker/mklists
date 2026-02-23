@@ -23,7 +23,7 @@ Test: Function is responsible for resolving relative config paths to absolute.
 from pathlib import Path
 import pytest
 from mklists.config import (
-    BackupConfig,
+    BackupSettings,
     RoutingConfig,
     SafetyConfig,
     UrlifyConfig,
@@ -43,7 +43,7 @@ def make_cfg(
     """Fake stand-in makes SettingsContext object by varying just three variables."""
     return SettingsContext(
         verbose=False,
-        backup=BackupConfig(
+        backup=BackupSettings(
             backup_enabled=backup_enabled,
             backup_rootdir=Path("backups"),  # relative - resolved in plan
             backup_depth=2,
