@@ -3,7 +3,7 @@
 from pathlib import Path
 from ..config import load_config, MklistsConfig
 from ..plan import RunPlan
-from .backups import backup_datadirs
+from .backups import backup_datadirs, init_backup_snapshot_dir, prune_backupdirs
 from .process_datadirs import process_datadir
 from .routing import redistribute_datafiles
 from .urlify import urlify_datadirs
