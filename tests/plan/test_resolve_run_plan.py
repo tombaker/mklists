@@ -26,7 +26,7 @@ from mklists.config import (
     BackupSettings,
     RoutingConfig,
     SafetyConfig,
-    UrlifyConfig,
+    UrlifySettings,
     SettingsContext,
 )
 from mklists.structure.contexts_run import RunContext
@@ -55,7 +55,7 @@ def make_cfg(
         safety=SafetyConfig(
             invalid_filename_patterns=[],
         ),
-        urlify=UrlifyConfig(
+        urlify=UrlifySettings(
             urlify_enabled=urlify_enabled,
             urlify_dir=Path("html"),  # relative - resolved in plan
         ),

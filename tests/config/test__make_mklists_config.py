@@ -8,7 +8,7 @@ from mklists.config import (
     BackupSettings,
     RoutingConfig,
     SafetyConfig,
-    UrlifyConfig,
+    UrlifySettings,
     SettingsContext,
     _make_mklists_config,
 )
@@ -63,7 +63,7 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
         safety=SafetyConfig(
             invalid_filename_patterns=[],
         ),
-        urlify=UrlifyConfig(
+        urlify=UrlifySettings(
             urlify_enabled=False,
             urlify_dir=tmp_path / "html",
         ),

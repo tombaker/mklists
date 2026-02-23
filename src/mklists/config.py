@@ -69,7 +69,7 @@ class SafetyConfig:
 
 
 @dataclass(slots=True, frozen=True)
-class UrlifyConfig:
+class UrlifySettings:
     """Settings about writing data files in HTML to a desination directory."""
 
     urlify_enabled: bool
@@ -89,7 +89,7 @@ class SettingsContext:
     backup: BackupSettings
     routing: RoutingConfig
     safety: SafetyConfig
-    urlify: UrlifyConfig
+    urlify: UrlifySettings
 
 
 def load_config(configfile_used: Path | None) -> SettingsContext:
@@ -332,22 +332,22 @@ def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
 def _make_urlify_config(
     config_dict: dict[str, Any],
     config_rootdir: Path,
-) -> UrlifyConfig:
-    """Initialize instance of UrlifyConfig.
+) -> UrlifySettings:
+    """Initialize instance of UrlifySettings.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
         config_rootdir: Root directory of mklists repo.
 
     Returns:
-        Instance of UrlifyConfig initialized from config dictionary.
+        Instance of UrlifySettings initialized from config dictionary.
 
     Note:
         Assumes all required keys are present.
     """
     urlify_raw = config_dict["urlify"]
 
-    return UrlifyConfig(
+    return UrlifySettings(
         urlify_enabled=bool(urlify_raw["urlify_enabled"]),
         urlify_dir=(config_rootdir / urlify_raw["urlify_dir"]).resolve(),
     )
