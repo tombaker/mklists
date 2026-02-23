@@ -77,7 +77,7 @@ class UrlifyConfig:
 
 
 @dataclass(slots=True)
-class MklistsConfig:
+class SettingsContext:
     """Normalized, validated settings for processing one or more datadirs.
 
     A single config instance is derived from built-in defaults plus an optional
@@ -92,14 +92,14 @@ class MklistsConfig:
     urlify: UrlifyConfig
 
 
-def load_config(configfile_used: Path | None) -> MklistsConfig:
+def load_config(configfile_used: Path | None) -> SettingsContext:
     """Derive settings from built-in defaults and optional user-defined config file.
 
     Args:
         configfile_used: Path of user-defined config file to use, if available.
 
     Returns:
-        Instance of configuration object MklistsConfig.
+        Instance of configuration object SettingsContext.
 
     Note:
         Is no user-defined config file is found, uses only built-in defaults.
@@ -356,20 +356,20 @@ def _make_urlify_config(
 def _make_mklists_config(
     config_dict: dict[str, Any],
     config_rootdir: Path,
-) -> MklistsConfig:
-    """Normalize and validate merged config dict into MklistsConfig.
+) -> SettingsContext:
+    """Normalize and validate merged config dict into SettingsContext.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
         config_rootdir: Root directory of mklists repo.
 
     Returns:
-        Instance of MklistsConfig initialized from config dictionary.
+        Instance of SettingsContext initialized from config dictionary.
 
     Note:
         Assumes all required keys are present.
     """
-    return MklistsConfig(
+    return SettingsContext(
         verbose=config_dict["verbose"],
         backup=_make_backup_config(config_dict, config_rootdir),
         routing=_make_routing_config(config_dict, config_rootdir),

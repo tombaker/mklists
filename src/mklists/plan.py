@@ -8,7 +8,7 @@ resolve_run_plan
 
 from dataclasses import dataclass
 from pathlib import Path
-from .config import MklistsConfig
+from .config import SettingsContext
 from .structure.contexts_datadir import DatadirContext
 from .structure.contexts_run import RunContext
 
@@ -42,7 +42,7 @@ class RunPlan:
 def resolve_run_plan(
     *,
     run_context: RunContext,
-    mklists_cfg: MklistsConfig,
+    mklists_cfg: SettingsContext,
     datadir_contexts: list[DatadirContext],
     run_id: str,
 ) -> RunPlan:
@@ -50,7 +50,7 @@ def resolve_run_plan(
 
     Args:
         run_context: Execution context for one Mklists run.
-        mklists_cfg: Instance of configuration object MklistsConfig.
+        mklists_cfg: Instance of configuration object SettingsContext.
         datadir_contexts: List of Datadir execution contexts.
         run_id: Timestamp string;.
 

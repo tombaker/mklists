@@ -2,7 +2,7 @@
 
 from operator import attrgetter
 from pathlib import Path
-from ..config import MklistsConfig
+from ..config import SettingsContext
 from ..safety import run_safety_checks
 from ..structure.contexts_datadir import DatadirContext
 from .process_datalines import dispatch_datalines_to_targets
@@ -11,7 +11,7 @@ from .process_datalines import dispatch_datalines_to_targets
 def process_datadir(
     *,
     datadir_ctx: DatadirContext,
-    mklists_cfg: MklistsConfig,
+    mklists_cfg: SettingsContext,
 ) -> None:
     """
     Args:

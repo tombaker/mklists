@@ -9,7 +9,7 @@ from mklists.config import (
     RoutingConfig,
     SafetyConfig,
     UrlifyConfig,
-    MklistsConfig,
+    SettingsContext,
     _make_mklists_config,
 )
 
@@ -45,11 +45,11 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
         config_rootdir=tmp_path,
     )
 
-    assert isinstance(mklists_cfg, MklistsConfig)
+    assert isinstance(mklists_cfg, SettingsContext)
     assert mklists_cfg.backup.backup_enabled is False
     assert mklists_cfg.routing.routing_enabled is False
 
-    assert mklists_cfg == MklistsConfig(
+    assert mklists_cfg == SettingsContext(
         verbose=False,
         backup=BackupConfig(
             backup_enabled=False,

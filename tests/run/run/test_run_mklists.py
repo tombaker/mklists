@@ -33,7 +33,7 @@ Principles:
 
 from pathlib import Path
 import pytest
-from mklists.config import MklistsConfig
+from mklists.config import SettingsContext
 from mklists.run.run import run_mklists
 from mklists.structure.contexts_datadir import DatadirContext
 from mklists.plan import RunPlan, PassPlan
@@ -61,9 +61,9 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     calls: list[Path | None] = []
 
-    # The real `load_config` returns a MklistsConfig object that can be passed
+    # The real `load_config` returns a SettingsContext object that can be passed
     # to `process_datadir`.
-    # But we are not testing MklistsConfig here: `fake_load_config` can return a
+    # But we are not testing SettingsContext here: `fake_load_config` can return a
     # trivial, fake object because that object is never inspected (see below).
     def fake_load_config(configfile_used: Path | None):
         calls.append(configfile_used)

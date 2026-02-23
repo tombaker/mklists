@@ -27,7 +27,7 @@ from mklists.config import (
     RoutingConfig,
     SafetyConfig,
     UrlifyConfig,
-    MklistsConfig,
+    SettingsContext,
 )
 from mklists.structure.contexts_run import RunContext
 from mklists.structure.contexts_datadir import DatadirContext
@@ -39,9 +39,9 @@ def make_cfg(
     backup_enabled: bool,
     routing_enabled: bool,
     urlify_enabled: bool,
-) -> MklistsConfig:
-    """Fake stand-in makes MklistsConfig object by varying just three variables."""
-    return MklistsConfig(
+) -> SettingsContext:
+    """Fake stand-in makes SettingsContext object by varying just three variables."""
+    return SettingsContext(
         verbose=False,
         backup=BackupConfig(
             backup_enabled=backup_enabled,
@@ -65,7 +65,7 @@ def make_cfg(
 def test_plan_backups_disabled_one_pass(tmp_path):
     """One Datadir.
 
-    Variables in fake MklistsConfig:
+    Variables in fake SettingsContext:
         Backups disabled.
         Routing disabled.
         Urlify disabled.
@@ -119,7 +119,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 def test_plan_backups_enabled_one_pass(tmp_path):
     """One Datadir.
 
-    Variables in fake MklistsConfig:
+    Variables in fake SettingsContext:
         Backup ENABLED.
         Routing disabled.
         Urlify disabled.
@@ -183,7 +183,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
 def test_two_passes_when_routing_multiple(tmp_path):
     """Multiple Datadirs. 
 
-    Variables in fake MklistsConfig:
+    Variables in fake SettingsContext:
         Backup ENABLED.
         Routing ENABLED.
         Urlify disabled.
@@ -239,7 +239,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
 def test_plan_urlify_enabled(tmp_path):
     """Urlify enabled
 
-    Variables in fake MklistsConfig:
+    Variables in fake SettingsContexSettingsContext:
         Backup disabled.
         Routing disabled.
         Urlify ENABLED.
