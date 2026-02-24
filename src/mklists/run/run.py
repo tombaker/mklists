@@ -1,7 +1,7 @@
 """Orchestration of a Mklists execution run."""
 
 from pathlib import Path
-from ..config import load_config, ConfigContext
+from ..config import resolve_config_context, ConfigContext
 from ..plan import ExecutionContext
 from .backups import backup_datadirs, init_backup_snapshot_dir, prune_backupdirs
 from .process_datadirs import process_datadir
@@ -47,7 +47,7 @@ def run_mklists(run_plan: ExecutionContext) -> None:
             config_path = datadir_ctx.configfile_used
 
             if config_path not in configs_by_path:
-                configs_by_path[config_path] = load_config(configfile_used=config_path)
+                configs_by_path[config_path] = resolve_config_context(configfile_used=config_path)
 
             mklists_cfg = configs_by_path[config_path]
 

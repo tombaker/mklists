@@ -40,7 +40,7 @@ from mklists.plan import ExecutionContext, PassPlan
 
 
 def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
-    """Function `load_config` is called once per unique `configfile_used`."""
+    """Function `resolve_config_context` is called once per unique `configfile_used`."""
     repo_cfg = Path("/repo/mklists.yaml")
 
     datadir_contexts = [
@@ -61,11 +61,11 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     calls: list[Path | None] = []
 
-    # The real `load_config` returns a ConfigContext object that can be passed
-    # to `process_datadir`.
-    # But we are not testing ConfigContext here: `fake_load_config` can return a
-    # trivial, fake object because that object is never inspected (see below).
-    def fake_load_config(configfile_used: Path | None):
+    # The real `resolve_config_context` returns a ConfigContext object that can be
+    # passed to `process_datadir`.
+    # But we are not testing ConfigContext here: `fake_resolve_config_context` can 
+    # return a trivial, fake object because that object is never inspected (see below).
+    def fake_resolve_config_context(configfile_used: Path | None):
         calls.append(configfile_used)
         return object()
 
@@ -73,8 +73,8 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     monkeypatch.setattr(
         target=execute_module, 
-        name="load_config", 
-        value=fake_load_config,
+        name="resolve_config_context", 
+        value=fake_resolve_config_context,
         raising=True,
     )
 
