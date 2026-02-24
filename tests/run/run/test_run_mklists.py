@@ -36,7 +36,7 @@ import pytest
 from mklists.config import ConfigContext
 from mklists.run.run import run_mklists
 from mklists.structure.contexts_datadir import DatadirContext
-from mklists.plan import ExecutionContext, PassPlan
+from mklists.plan import ExecutionContext, ExecutionPass
 
 
 def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
@@ -50,7 +50,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     run_plan = ExecutionContext(
         datadir_contexts=datadir_contexts,
-        pass_plans=[PassPlan(backup_snapshot_dir=None)],
+        pass_plans=[ExecutionPass(backup_snapshot_dir=None)],
         repo_configfile=None,
         repo_rulefile=None,
         backup_rootdir=None,
