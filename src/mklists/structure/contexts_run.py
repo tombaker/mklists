@@ -18,7 +18,7 @@ class RunContext:
     datadir_contexts: list[DatadirContext]
 
 
-def resolve_run_context(startdir: Path | str) -> RunContext:
+def resolve_execution_context(startdir: Path | str) -> RunContext:
     """Resolve full filesystem execution context for one run.
 
     Args:
@@ -27,7 +27,7 @@ def resolve_run_context(startdir: Path | str) -> RunContext:
     Returns:
         Execution context for one run as RunContext object.
 
-    resolve_run_context
+    resolve_execution_context
         ├── determine config_rootdir
         ├── detect repo-level config + rulefile
         ├── discover datadirs

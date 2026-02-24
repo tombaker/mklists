@@ -12,7 +12,7 @@ from mklists.errors import StructureError
 from mklists.plan import ExecutionContext, PassPlan
 
 
-def test_resolve_run_context_repo_mode(tmp_path, monkeypatch):
+def test_resolve_execution_context_repo_mode(tmp_path, monkeypatch):
     """Returns RunContext object specifying execution context for a run."""
     configfile = tmp_path / "mklists.yaml"
     configfile.touch()
@@ -38,7 +38,7 @@ def test_resolve_run_context_repo_mode(tmp_path, monkeypatch):
         raising=True,
     )
 
-    result = contexts_run.resolve_run_context(tmp_path)
+    result = contexts_run.resolve_execution_context(tmp_path)
 
     assert result == RunContext(
         config_rootdir=tmp_path,
@@ -51,12 +51,12 @@ def test_resolve_run_context_repo_mode(tmp_path, monkeypatch):
     )
 
 
-def test_resolve_run_context_no_datadirs_raises(tmp_path):
+def test_resolve_execution_context_no_datadirs_raises(tmp_path):
     """If no datadirs found, raises exception."""
     (tmp_path / "mklists.yaml").touch()
 
     with pytest.raises(StructureError):
-        contexts_run.resolve_run_context(tmp_path)
+        contexts_run.resolve_execution_context(tmp_path)
 
 
 def test_runcontext_mixed_repo_and_local_configs(tmp_path):
@@ -78,7 +78,7 @@ def test_runcontext_mixed_repo_and_local_configs(tmp_path):
     local_cfg = b / ".mklistsrc"
     local_cfg.touch()
 
-    run_ctx = contexts_run.resolve_run_context(tmp_path)
+    run_ctx = contexts_run.resolve_execution_context(tmp_path)
 
     assert run_ctx.repo_configfile == repo_cfg
 

@@ -1,7 +1,7 @@
 """Convenience exports for structural types, resolvers, and marker names."""
 
 from .contexts_datadir import DatadirContext, resolve_datadir_context
-from .contexts_run import RunContext, resolve_run_context
+from .contexts_run import RunContext, resolve_execution_context
 from .markers import (
     DATADIR_CONFIGFILE_NAME,
     DATADIR_RULEFILE_NAME,
