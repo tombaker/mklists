@@ -1,7 +1,7 @@
-"""@@@"""
+"""Edit $MKLMKL/exec/safety.py"""
 
 import pytest
-from mklists.safety import _check_file_contents
+from mklists.exec.safety import _check_file_contents
 
 
 def test_valid_text_file_passes(tmp_path):

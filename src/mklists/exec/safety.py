@@ -2,7 +2,7 @@
 
 import stat
 from pathlib import Path
-from .config import SafetyConfig
+from mklists.config import SafetyConfig
 
 
 CATEGORY_FILENAME = "filename"

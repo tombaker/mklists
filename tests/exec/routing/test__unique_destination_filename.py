@@ -1,4 +1,4 @@
-"""Tests $MKLMKL/routing.py
+"""Tests $MKLMKL/exec/routing.py
 
 Function has three behaviors:
 - Base case: datadir prefix avoids collision
@@ -8,7 +8,7 @@ Function has three behaviors:
 
 from pathlib import Path
 import pytest
-from mklists.run.routing import _unique_destination_filename
+from mklists.exec.routing import _unique_destination_filename
 
 
 def test_unique_destination_filename_basic(tmp_path: Path):
@@ -68,7 +68,7 @@ def test_unique_destination_filename_collision_raises(tmp_path, monkeypatch):
     - No fragile string equality checks beyond structure.
     """
     # pylint: disable = consider-using-from-import,import-outside-toplevel
-    import mklists.run.routing as routing
+    import mklists.exec.routing as routing
 
     datadir = tmp_path / "data_a"
     datadir.mkdir()

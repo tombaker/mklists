@@ -1,8 +1,8 @@
-"""Tests $MKLRUN/process_datalines.py"""
+"""Tests $MKLMKL/exec/process_datalines.py"""
 
 import re
 import pytest
-from mklists.run.process_datalines import _dataline_matches_pattern
+from mklists.exec.process_datalines import _dataline_matches_pattern
 
 
 def test_dataline_matches_pattern_returns_false_when_field_exists_but_no_match():

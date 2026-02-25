@@ -2,10 +2,10 @@
 
 from operator import attrgetter
 from pathlib import Path
-from ..config import ConfigContext
-from ..safety import run_safety_checks
-from ..structure.contexts_datadir import DatadirContext
-from .process_datalines import dispatch_datalines_to_targets
+from mklists.config import ConfigContext
+from mklists.structure.contexts_datadir import DatadirContext
+from mklists.exec.process_datalines import dispatch_datalines_to_targets
+from mklists.exec.safety import run_safety_checks
 
 
 def process_datadir(

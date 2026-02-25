@@ -1,7 +1,7 @@
-"""Tests $MKLRUN/backups.py"""
+"""Tests $MKLMKL/exec/backups.py"""
 
 import pytest
-from mklists.run.backups import backup_datadirs, init_backup_snapshot_dir
+from mklists.exec.backups import backup_datadirs, init_backup_snapshot_dir
 
 
 def test_write_backup_copies_all_datadirs(tmp_path):

@@ -1,4 +1,4 @@
-"""Tests $MKLMKL/routing.py
+"""Tests $MKLMKL/exec/routing.py
 
 No need to test logging for now:
 - Logging behavior is not part of contract.
@@ -8,7 +8,7 @@ No need to test logging for now:
 
 from pathlib import Path
 import pytest
-from mklists.run.routing import redistribute_datafiles
+from mklists.exec.routing import redistribute_datafiles
 
 
 @pytest.fixture

@@ -1,9 +1,9 @@
-"""Tests for ~/github/tombaker/mklists/src/mklists/safety.py"""
+"""Tests for $MKLMKL/exec/safety.py"""
 
 import re
 import pytest
 from mklists.config import SafetyConfig
-from mklists.safety import _check_is_valid_name
+from mklists.exec.safety import _check_is_valid_name
 
 
 @pytest.fixture

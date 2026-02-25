@@ -1,6 +1,6 @@
-"""Tests $MKLRUN/process_datadirs.py"""
+"""Tests $MKLMKL/exec/process_datadirs.py"""
 
-from mklists.run.process_datadirs import _delete_datafiles
+from mklists.exec.process_datadirs import _delete_datafiles
 
 
 def test_delete_datafiles(tmp_path):

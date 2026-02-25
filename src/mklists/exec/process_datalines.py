@@ -10,8 +10,8 @@ with fan-out behavior and routing semantics.
 
 import re
 from typing import Pattern
-from ..errors import RulesNotFoundError, DataNotFoundError
-from ..rules import Rule
+from mklists.errors import RulesNotFoundError, DataNotFoundError
+from mklists.rules import Rule
 
 
 def dispatch_datalines_to_targets(

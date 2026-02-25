@@ -1,7 +1,7 @@
-"""Tests $MKLRUN/process_datalines.py"""
+"""Tests $MKLMKL/exec/process_datalines.py"""
 
 import pytest
-from mklists.run.process_datalines import _sort_datalines
+from mklists.exec.process_datalines import _sort_datalines
 
 
 def test_sort_datalines_none_sortkey_returns_input_unchanged():

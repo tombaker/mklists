@@ -1,6 +1,6 @@
-"""Tests $MKLRUN/backups.py"""
+"""Tests $MKLMKL/exec/backups.py"""
 
-from mklists.run.backups import prune_backupdirs
+from mklists.exec.backups import prune_backupdirs
 
 
 def _mk_backupdirs(backup_snapshot_dir, names):

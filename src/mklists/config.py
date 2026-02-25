@@ -6,7 +6,7 @@ from pathlib import Path
 import re
 from typing import Any, Pattern
 import yaml
-from .rules import Rule
+from mklists.rules import Rule
 
 
 # The complete default config schema in YAML; all required keys must appear here.

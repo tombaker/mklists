@@ -4,7 +4,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Pattern
-from .errors import RuleError, FilenameError
+from mklists.errors import RuleError, FilenameError
 
 
 FIELD_COUNT = 5

@@ -1,11 +1,11 @@
-"""Tests $MKLRUN/process_datalines.py"""
+"""Tests $MKLMKL/exec/process_datalines.py"""
 
 from dataclasses import dataclass
 import re
 import pytest
 from mklists.errors import DataNotFoundError, RulesNotFoundError
 from mklists.rules import Rule
-from mklists.run.process_datalines import dispatch_datalines_to_targets
+from mklists.exec.process_datalines import dispatch_datalines_to_targets
 
 
 def test_apply_rules_moves_matching_lines():

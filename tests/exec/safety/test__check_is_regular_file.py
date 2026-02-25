@@ -1,8 +1,8 @@
-"""Tests ~/github/tombaker/mklists/src/mklists/safety.py"""
+"""Tests $MKLMKL/exec/safety.py"""
 
 import os
 import pytest
-from mklists.safety import _check_is_regular_file
+from mklists.exec.safety import _check_is_regular_file
 
 
 def test_regular_readable_file_passes(tmp_path):

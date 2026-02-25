@@ -1,6 +1,6 @@
-"""Tests $MKLRUN/backups.py"""
+"""Tests $MKLMKL/exec/backups.py"""
 
-from mklists.run.backups import init_backup_snapshot_dir
+from mklists.exec.backups import init_backup_snapshot_dir
 
 
 def test_create_directory_outside_repo(tmp_path):
