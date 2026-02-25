@@ -5,7 +5,7 @@ resolve_structural_context (pure filesystem resolution)
   ↓
 resolve_config_context (configuration resolution)
   ↓
-resolve_execution_context
+resolve_run_plan
   ↓
 run_mklists (side effects)
 

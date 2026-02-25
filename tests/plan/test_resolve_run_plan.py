@@ -20,11 +20,11 @@ from mklists.config.model import (
 )
 from mklists.structure.contexts_run import StructuralContext
 from mklists.structure.contexts_datadir import DatadirContext
-from mklists.execution.execution_context import (
+from mklists.plan.model import (
     PassPlan,
-    ExecutionPlan,
-    resolve_execution_context,
+    RunPlan,
 )
+from mklists.plan.resolve import resolve_run_plan
 
 
 def fake_make_config_context(
@@ -88,7 +88,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         urlify_enabled=False,
     )
 
-    actual_execution_context = resolve_execution_context(
+    actual_execution_context = resolve_run_plan(
         run_context=run_context,
         mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,
@@ -97,7 +97,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 
     assert len(actual_execution_context.pass_plans) == 1
     assert actual_execution_context.pass_plans[0].backup_snapshot_dir is None
-    assert actual_execution_context == ExecutionPlan(
+    assert actual_execution_context == RunPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
@@ -142,8 +142,8 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         ],
     )
 
-    # resolve_execution_context should make backup_root absolute.
-    actual_execution_context = resolve_execution_context(
+    # resolve_run_plan should make backup_root absolute.
+    actual_execution_context = resolve_run_plan(
         run_context=run_context,
         mklists_cfg=fake_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
@@ -161,7 +161,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         == expected_backup_snapshot_dir
     )
 
-    assert actual_execution_context == ExecutionPlan(
+    assert actual_execution_context == RunPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
@@ -211,7 +211,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
         ],
     )
 
-    plan = resolve_execution_context(
+    plan = resolve_run_plan(
         run_context=run_context,
         mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
@@ -261,7 +261,7 @@ def test_plan_urlify_enabled(tmp_path):
         ],
     )
 
-    actual_execution_context = resolve_execution_context(
+    actual_execution_context = resolve_run_plan(
         run_context=run_context,
         mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
@@ -272,7 +272,7 @@ def test_plan_urlify_enabled(tmp_path):
     expected_htmldir = tmp_path / "html"
 
     assert len(actual_execution_context.pass_plans) == 1
-    assert actual_execution_context == ExecutionPlan(
+    assert actual_execution_context == RunPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
