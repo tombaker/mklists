@@ -1,6 +1,6 @@
 """Plan of a Mklists execution run.
 
-resolve_run_plan
+resolve_execution_context
 ├── compute run_id (timestamp)
 ├── decide number of passes
 └── produce concrete pass directories
@@ -39,7 +39,7 @@ class ExecutionContext:
     htmldir: Path
 
 
-def resolve_run_plan(
+def resolve_execution_context(
     *,
     run_context: StructuralContext,
     mklists_cfg: ConfigContext,

@@ -40,14 +40,15 @@ def run_mklists(run_plan: ExecutionContext) -> None:
                     backup_depth=run_plan.backup_depth,
                 )
 
-
         configs_by_path: dict[Path | None, ConfigContext] = {}
 
         for datadir_ctx in run_plan.datadir_contexts:
             config_path = datadir_ctx.configfile_used
 
             if config_path not in configs_by_path:
-                configs_by_path[config_path] = resolve_config_context(configfile_used=config_path)
+                configs_by_path[config_path] = resolve_config_context(
+                    configfile_used=config_path
+                )
 
             mklists_cfg = configs_by_path[config_path]
 

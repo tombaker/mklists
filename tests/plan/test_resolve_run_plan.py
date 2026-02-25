@@ -31,7 +31,7 @@ from mklists.config import (
 )
 from mklists.structure.contexts_run import StructuralContext
 from mklists.structure.contexts_datadir import DatadirContext
-from mklists.plan import ExecutionPass, ExecutionContext, resolve_run_plan
+from mklists.plan import ExecutionPass, ExecutionContext, resolve_execution_context
 
 
 def make_cfg(
@@ -93,7 +93,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         urlify_enabled=False,
     )
 
-    actual_run_plan = resolve_run_plan(
+    actual_run_plan = resolve_execution_context(
         run_context=run_context,
         mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,
@@ -147,8 +147,8 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         ],
     )
 
-    # resolve_run_plan should make backup_root absolute.
-    actual_run_plan = resolve_run_plan(
+    # resolve_execution_context should make backup_root absolute.
+    actual_run_plan = resolve_execution_context(
         run_context=run_context,
         mklists_cfg=fake_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
@@ -216,7 +216,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
         ],
     )
 
-    plan = resolve_run_plan(
+    plan = resolve_execution_context(
         run_context=run_context,
         mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
@@ -266,7 +266,7 @@ def test_plan_urlify_enabled(tmp_path):
         ],
     )
 
-    actual_run_plan = resolve_run_plan(
+    actual_run_plan = resolve_execution_context(
         run_context=run_context,
         mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
