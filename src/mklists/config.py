@@ -361,7 +361,7 @@ def _make_mklists_config(
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory for resolving relative paths.
 
     Returns:
         Instance of ConfigContext initialized from config dictionary.

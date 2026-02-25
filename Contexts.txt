@@ -1,9 +1,13 @@
-We’ll define three layers:
+We have been speaking of the "context layers":
 
 - ConfigContext (derived from config files)
 - StructuralContext (derived from filesystem structure)
 - ExecutionContext (fully resolved, ready to execute)
 - plus ExecutionPass (per-pass execution unit)
+
+as if processing should start with deriving ConfigContext then continue on to StructuralContext. 
+
+However, it looks to me like resolving ConfigContext depends on first resolving StructuralContext, because 
 
 
 ---------------------------------------------------------
@@ -40,8 +44,8 @@ class ConfigContext:
 
 ---------------------------------------------------------
 StructuralContext - was: RunContext
-- structure.contexts_datadir (still)
-- structure.contexts_run (still)
+- $MKLSTRUCTURE/contexts_datadir.py
+- $MKLSTRUCTURE/contexts_run.py
 
 @dataclass(slots=True, frozen=True)
 class DatadirContext:

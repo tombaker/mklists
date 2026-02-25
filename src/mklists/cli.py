@@ -1,7 +1,7 @@
 """
 CLI
   ↓
-resolve_execution_context   (pure filesystem + config resolution)
+resolve_structural_context   (pure filesystem + config resolution)
   ↓
 resolve_run_plan      (execution strategy decision)
   ↓

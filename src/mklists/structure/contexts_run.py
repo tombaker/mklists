@@ -18,7 +18,7 @@ class StructuralContext:
     datadir_contexts: list[DatadirContext]
 
 
-def resolve_execution_context(startdir: Path | str) -> StructuralContext:
+def resolve_structural_context(startdir: Path | str) -> StructuralContext:
     """Derive structural context from filesystem layout.
 
     Args:
@@ -29,24 +29,24 @@ def resolve_execution_context(startdir: Path | str) -> StructuralContext:
     """
     startdir = Path(startdir).resolve()
 
-    # 1. Determine repo-level markers
+    # 1. Look for repo-level markers in startdir.
     repo_configfile = _find_repo_configfile(startdir)
     repo_rulefile = _find_repo_rulefile(startdir)
 
-    # Decide effective config_rootdir (repo root or single datadir)
+    # 2. Determine whether effective config_rootdir is repo root or single datadir.
     config_rootdir = _determine_config_rootdir(
         startdir=startdir,
         repo_configfile=repo_configfile,
         repo_rulefile=repo_rulefile,
     )
 
-    # 2. Discover datadirs
+    # 3. Discover datadirs
     datadirs = _find_datadirs(config_rootdir)
 
     if not datadirs:
         raise StructureError("No datadirs found under repository root.")
 
-    # 3. Resolve each DatadirContext
+    # 4. Resolve each DatadirContext and accumulate in list.
     datadir_contexts: list[DatadirContext] = []
 
     for datadir in datadirs:
@@ -57,9 +57,7 @@ def resolve_execution_context(startdir: Path | str) -> StructuralContext:
         )
         datadir_contexts.append(context)
 
-    # ------------------------------------------------------------
-    # 4. Emit fully resolved StructuralContext
-    # ------------------------------------------------------------
+    # 5. Emit fully resolved StructuralContext
     return StructuralContext(
         config_rootdir=config_rootdir,
         repo_configfile=repo_configfile,
