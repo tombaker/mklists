@@ -1,23 +1,12 @@
-"""Tests $MKLMKL/plan.py
-
-5. Routing disabled
-   Expect:
-        routing_dict is empty
-
-6. Urlify disabled
-   Expect:
-        htmldir is None
-
-7. Urlify enabled
-   Expect:
-        correct htmldir path
+"""Tests $MKLMKL/plan.py: test that function resolves relative config paths to absolute.
+- Routing disabled. Expect: routing_dict is empty
+- Urlify disabled. Expect: htmldir is None
+- Urlify enabled. Expect: correct htmldir path
 
 Real filesystem not needed. Rather, tiny factories:
 - fake_run_context
 - fake_config
 - fake_datadir_contexts
-
-Test: Function is responsible for resolving relative config paths to absolute.
 """
 
 from pathlib import Path
@@ -93,16 +82,16 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         urlify_enabled=False,
     )
 
-    actual_run_plan = resolve_execution_context(
+    actual_execution_context = resolve_execution_context(
         run_context=run_context,
         mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,
         run_id="2026-02-22_12341234",
     )
 
-    assert len(actual_run_plan.pass_plans) == 1
-    assert actual_run_plan.pass_plans[0].backup_snapshot_dir is None
-    assert actual_run_plan == ExecutionContext(
+    assert len(actual_execution_context.pass_plans) == 1
+    assert actual_execution_context.pass_plans[0].backup_snapshot_dir is None
+    assert actual_execution_context == ExecutionContext(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
@@ -148,25 +137,25 @@ def test_plan_backups_enabled_one_pass(tmp_path):
     )
 
     # resolve_execution_context should make backup_root absolute.
-    actual_run_plan = resolve_execution_context(
+    actual_execution_context = resolve_execution_context(
         run_context=run_context,
         mklists_cfg=fake_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
         run_id="2026-02-22_12341234",
     )
 
-    assert len(actual_run_plan.pass_plans) == 1
+    assert len(actual_execution_context.pass_plans) == 1
 
     expected_backup_rootdir = tmp_path / fake_cfg.backup.backup_rootdir
-    assert actual_run_plan.backup_rootdir == expected_backup_rootdir
+    assert actual_execution_context.backup_rootdir == expected_backup_rootdir
 
     expected_backup_snapshot_dir = expected_backup_rootdir / "2026-02-22_12341234_01"
     assert (
-        actual_run_plan.pass_plans[0].backup_snapshot_dir
+        actual_execution_context.pass_plans[0].backup_snapshot_dir
         == expected_backup_snapshot_dir
     )
 
-    assert actual_run_plan == ExecutionContext(
+    assert actual_execution_context == ExecutionContext(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
@@ -266,7 +255,7 @@ def test_plan_urlify_enabled(tmp_path):
         ],
     )
 
-    actual_run_plan = resolve_execution_context(
+    actual_execution_context = resolve_execution_context(
         run_context=run_context,
         mklists_cfg=fake_mklists_cfg,
         datadir_contexts=run_context.datadir_contexts,  # from above
@@ -276,8 +265,8 @@ def test_plan_urlify_enabled(tmp_path):
     # Expected htmldir
     expected_htmldir = tmp_path / "html"
 
-    assert len(actual_run_plan.pass_plans) == 1
-    assert actual_run_plan == ExecutionContext(
+    assert len(actual_execution_context.pass_plans) == 1
+    assert actual_execution_context == ExecutionContext(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],

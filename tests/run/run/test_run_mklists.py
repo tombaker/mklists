@@ -48,7 +48,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
         DatadirContext(datadir=Path("/repo/b"), configfile_used=repo_cfg, rules=[]),
     ]
 
-    run_plan = ExecutionContext(
+    execution_context = ExecutionContext(
         datadir_contexts=datadir_contexts,
         pass_plans=[ExecutionPass(backup_snapshot_dir=None)],
         repo_configfile=None,
@@ -86,7 +86,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
         raising=True,
     )
 
-    execute_module.run_mklists(run_plan)
+    execute_module.run_mklists(execution_context)
 
     # This will pass if caching logic is implemented:
     assert calls == [repo_cfg]
