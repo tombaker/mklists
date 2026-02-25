@@ -13,5 +13,3 @@ class Rule:
     source: str
     target: str
     target_sortkey: int | None
-
-

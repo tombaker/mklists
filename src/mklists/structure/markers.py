@@ -1,7 +1,7 @@
 """Markers for directory types
 
-Certain marker files, when present, define a directory structurally as a Repo Root 
-or Datadir: 
+Certain marker files, when present, define a directory structurally as a Repo Root
+or Datadir:
 -  A Repo Root is marked by the presence of `mklists.yaml` and/or `mklists.rules`.
 -  A Datadir is marked by the presence of `.rules`.
 -  A directory cannot be both a Repo Root and a Datadir.

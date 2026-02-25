@@ -55,5 +55,3 @@ class ConfigContext:
     routing: RoutingConfig
     safety: SafetyConfig
     urlify: UrlifyConfig
-
-

@@ -6,9 +6,9 @@ from pathlib import Path
 from mklists.errors import StructureError
 from mklists.rules.load import load_rules_for_datadir
 from mklists.structure.markers import (
-    DATADIR_CONFIGFILE_NAME, 
+    DATADIR_CONFIGFILE_NAME,
     DATADIR_RULEFILE_NAME,
-    REPO_CONFIGFILE_NAME, 
+    REPO_CONFIGFILE_NAME,
     REPO_RULEFILE_NAME,
 )
 from mklists.structure.model import DatadirContext, StructuralContext

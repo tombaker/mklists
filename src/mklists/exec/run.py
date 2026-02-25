@@ -3,7 +3,11 @@
 from pathlib import Path
 from mklists.config import resolve_config_context, ConfigContext
 from mklists.plan.model import RunPlan
-from mklists.exec.backups import backup_datadirs, init_backup_snapshot_dir, prune_backupdirs
+from mklists.exec.backups import (
+    backup_datadirs,
+    init_backup_snapshot_dir,
+    prune_backupdirs,
+)
 from mklists.exec.process_datadirs import process_datadir
 from mklists.exec.routing import redistribute_datafiles
 from mklists.exec.urlify import urlify_datadirs
