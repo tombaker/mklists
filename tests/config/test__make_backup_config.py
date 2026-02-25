@@ -40,7 +40,7 @@ def test_make_backup_config_type_coercion():
         }
     }
 
-    backup_cfg = _make_backup_config(config_dict, config_rootdir)
+    backup_cfg = _make_backup_config(config_dict=config_dict, config_rootdir=config_rootdir)
 
     assert backup_cfg.backup_enabled is True
     assert backup_cfg.backup_depth == 5

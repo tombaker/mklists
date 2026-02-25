@@ -27,7 +27,7 @@ from mklists.execution.execution_context import (
 )
 
 
-def make_cfg(
+def fake_make_config_context(
     *,
     backup_enabled: bool,
     routing_enabled: bool,
@@ -36,6 +36,8 @@ def make_cfg(
     """Fake stand-in makes ConfigContext object by varying just three variables."""
     return ConfigContext(
         verbose=False,
+        configfile_used=Path("foo"),
+        config_rootdir=Path("bar"),
         backup=BackupConfig(
             backup_enabled=backup_enabled,
             backup_rootdir=Path("backups"),  # relative - resolved in plan
@@ -80,7 +82,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         ],
     )
 
-    fake_mklists_cfg = make_cfg(
+    fake_mklists_cfg = fake_make_config_context(
         backup_enabled=False,
         routing_enabled=False,
         urlify_enabled=False,
@@ -121,7 +123,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         len(pass_plans) == 1
         pass_plans[0].backup_snapshot_dir is None
     """
-    fake_cfg = make_cfg(
+    fake_cfg = fake_make_config_context(
         backup_enabled=True,
         routing_enabled=False,
         urlify_enabled=False,
@@ -185,7 +187,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
         2 passes
         directory created from timestamp
     """
-    fake_mklists_cfg = make_cfg(
+    fake_mklists_cfg = fake_make_config_context(
         backup_enabled=True,
         routing_enabled=True,
         urlify_enabled=False,
@@ -240,7 +242,7 @@ def test_plan_urlify_enabled(tmp_path):
     Expect:
         Correct htmldir path.
     """
-    fake_mklists_cfg = make_cfg(
+    fake_mklists_cfg = fake_make_config_context(
         backup_enabled=False,
         routing_enabled=False,
         urlify_enabled=True,

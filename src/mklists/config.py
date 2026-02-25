@@ -76,7 +76,7 @@ class UrlifyConfig:
     urlify_dir: Path
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class ConfigContext:
     """Normalized, validated settings for processing one or more datadirs.
 
@@ -85,6 +85,11 @@ class ConfigContext:
     share the same effective config file.
     """
 
+    # Provenance
+    configfile_used: Path | None
+    config_rootdir: Path
+
+    # Settings
     verbose: bool
     backup: BackupConfig
     routing: RoutingConfig
@@ -108,12 +113,12 @@ def resolve_config_context(
         Is no user-defined config file is found, uses only built-in defaults.
     """
     config_dict = _load_merged_configdict(configfile_used=configfile_used)
-    mklists_cfg = _make_mklists_config(
+
+    return _make_config_context(
         config_dict=config_dict,
         config_rootdir=config_rootdir,
+        configfile_used=configfile_used,
     )
-
-    return mklists_cfg
 
 
 def _deepmerge_dicts(
@@ -226,6 +231,7 @@ def _merge_config_dicts(
 
 
 def _make_backup_config(
+    *,
     config_dict: dict[str, Any],
     config_rootdir: Path,
 ) -> BackupConfig:
@@ -259,7 +265,9 @@ def _make_backup_config(
 
 
 def _make_routing_config(
-    config_dict: dict[str, Any], config_rootdir: Path
+    *, 
+    config_dict: dict[str, Any], 
+    config_rootdir: Path,
 ) -> RoutingConfig:
     """Initialize instance of RoutingConfig with validated routing rules.
 
@@ -307,7 +315,10 @@ def _make_routing_config(
     )
 
 
-def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
+def _make_safety_config(
+    *, 
+    config_dict: dict[str, Any], 
+) -> SafetyConfig:
     """Initialize instance of SafetyConfig.
 
     Args:
@@ -333,6 +344,7 @@ def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
 
 
 def _make_urlify_config(
+    *, 
     config_dict: dict[str, Any],
     config_rootdir: Path,
 ) -> UrlifyConfig:
@@ -356,15 +368,18 @@ def _make_urlify_config(
     )
 
 
-def _make_mklists_config(
-    config_dict: dict[str, Any],
+def _make_config_context(
+    *,
+    config_dict: dict,
     config_rootdir: Path,
+    configfile_used: Path | None,
 ) -> ConfigContext:
     """Normalize and validate merged config dict into ConfigContext.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
         config_rootdir: Root directory for resolving relative paths.
+        configfile_used: Config file actually used.
 
     Returns:
         Instance of ConfigContext initialized from config dictionary.
@@ -373,9 +388,11 @@ def _make_mklists_config(
         Assumes all required keys are present.
     """
     return ConfigContext(
+        configfile_used=configfile_used,
+        config_rootdir=config_rootdir,
         verbose=config_dict["verbose"],
-        backup=_make_backup_config(config_dict, config_rootdir),
-        routing=_make_routing_config(config_dict, config_rootdir),
-        safety=_make_safety_config(config_dict),
-        urlify=_make_urlify_config(config_dict, config_rootdir),
+        backup=_make_backup_config(config_dict=config_dict, config_rootdir=config_rootdir),
+        routing=_make_routing_config(config_dict=config_dict, config_rootdir=config_rootdir),
+        safety=_make_safety_config(config_dict=config_dict),
+        urlify=_make_urlify_config(config_dict=config_dict, config_rootdir=config_rootdir),
     )
