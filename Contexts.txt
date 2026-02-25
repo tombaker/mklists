@@ -1,8 +1,20 @@
-We have been speaking of the "context layers":
+CLI
+  ↓
+resolve_structural_context (pure filesystem resolution)
+  ↓
+resolve_config_context (configuration resolution)
+  ↓
+resolve_execution_context
+  ↓
+run_mklists (side effects)
 
-- ConfigContext (derived from config files)
+We have been speaking of "context layers":
+
 - StructuralContext (derived from filesystem structure)
+  - DatadirStructuralContext
+- ConfigContext (derived from config files)
 - ExecutionContext (fully resolved, ready to execute)
+  - DatadirExecutionContext
 - plus ExecutionPass (per-pass execution unit)
 
 as if processing should start with deriving ConfigContext then continue on to StructuralContext. 
@@ -13,6 +25,27 @@ However, it looks to me like resolving ConfigContext depends on first resolving 
 ---------------------------------------------------------
 ConfigContext - was: MklistsConfig
 - config.py (still)
+
+@dataclass(frozen=True, slots=True)
+class ConfigContext:
+    """Normalized, validated settings for processing one or more datadirs.
+
+    A single config instance is derived from built-in defaults plus an optional
+    config file. Multiple datadirs may share the same config instance when they
+    share the same effective config file.
+    """
+
+    # Provenance
+    configfile_used: Path | None
+    config_rootdir: Path
+
+    # Settings
+    verbose: bool
+    backup: BackupConfig
+    routing: RoutingConfig
+    safety: SafetyConfig
+    urlify: UrlifyConfig
+
 
 @dataclass(slots=True, frozen=True)
 class BackupConfig:
@@ -33,15 +66,6 @@ class UrlifyConfig:
     urlify_dir: Path
 
 
-@dataclass(slots=True, frozen=True)
-class ConfigContext:
-    """Normalized configuration derived from defaults + user config."""
-
-    verbose: bool
-    backup: BackupConfig
-    routing: RoutingConfig
-    urlify: UrlifyConfig
-
 ---------------------------------------------------------
 StructuralContext - was: RunContext
 - $MKLSTRUCTURE/contexts_datadir.py
@@ -51,6 +75,7 @@ StructuralContext - was: RunContext
 class DatadirContext:
     datadir: Path
     configfile_used: Path | None
+    config_context: ConfigContext
     rules: list  # list[Rule]
 
 
@@ -75,7 +100,7 @@ class ExecutionPass:
 
 ---------------------------------------------------------
 ExecutionContext - was: RunPlan
-- where?
+- $MKLMKL/execution/execution_context.py
 
 @dataclass(slots=True, frozen=True)
 class ExecutionContext:
