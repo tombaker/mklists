@@ -1,4 +1,4 @@
-"""Test $MKLMKL/config.py """
+"""Test $MKLMKL/config.py"""
 
 # pylint: disable=redefined-outer-name
 
@@ -104,7 +104,7 @@ def test_make_mklists_config_invalid_regex_raises(minimal_valid_configdict, tmp_
 
     with pytest.raises(ValueError):
         _make_config_context(
-            config_dict=minimal_valid_configdict, 
+            config_dict=minimal_valid_configdict,
             config_rootdir=tmp_path,
             configfile_used=Path("foo"),
         )

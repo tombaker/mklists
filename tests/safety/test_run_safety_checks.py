@@ -24,10 +24,10 @@ def test_run_safety_checks_passes(tmp_path, safety_config):
 
     run_safety_checks(tmp_path, safety_config)
 
+
 def test_run_safety_checks_stops_on_violation(tmp_path, safety_config):
     (tmp_path / "ok.txt").write_text("alpha\nbeta\n")
     (tmp_path / "bad.swp").write_text("junk\n")
 
     with pytest.raises(ValueError):
         run_safety_checks(tmp_path, safety_config)
-

@@ -1,4 +1,4 @@
-"""Tests for ~/github/tombaker/mklists/src/mklists/safety.py """
+"""Tests for ~/github/tombaker/mklists/src/mklists/safety.py"""
 
 import re
 import pytest

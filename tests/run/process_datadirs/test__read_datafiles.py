@@ -1,4 +1,4 @@
-"""Tests $MKLRUN/process_datadirs.py """
+"""Tests $MKLRUN/process_datadirs.py"""
 
 from mklists.run.process_datadirs import _read_datafiles
 

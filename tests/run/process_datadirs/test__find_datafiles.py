@@ -1,6 +1,5 @@
 """Tests $MKLRUN/process_datadirs"""
 
-
 from mklists.run.process_datadirs import _find_datafiles
 
 

@@ -17,12 +17,12 @@ def test_resolve_datadir_context_local_config_and_rules(tmp_path, monkeypatch):
     def fake_loader(_rulefiles: list[Path]):
         """Test double for load_rules_for_datadir.
 
-        Returns fixed value to isolate resolve_datadir_context 
+        Returns fixed value to isolate resolve_datadir_context
         from rule parsing logic.
 
         The real function returns list[Rule].
 
-        The parameter `rulefiles` is retained to match the real 
+        The parameter `rulefiles` is retained to match the real
         signature, but it is prefixed with `_` to signal that it
         is intentionally unused in this test.
         """

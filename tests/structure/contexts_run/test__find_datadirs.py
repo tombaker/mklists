@@ -83,7 +83,7 @@ def test_find_datadirs_in_toplevel_directories_only(tmp_path):
 def test_finds_datadirs_even_in_hidden_directories(tmp_path):
     """Edge case: will find `.rules` even in hidden directories.
 
-    FYI: It should in practice never happen that a user creates a hidden 
+    FYI: It should in practice never happen that a user creates a hidden
     data directory, but it seems excessive for `_find_datadirs` to explicitly
     guard against this.
     """

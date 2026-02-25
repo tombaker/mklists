@@ -11,7 +11,7 @@ def write(tmp_ruledir: Path, text: str) -> Path:
     Args:
         tmp_ruledir: Temporary path used for a specific Pytest test run.
         text: Rule file text to be written to a temporary rule file.
-        
+
     Returns:
         Rule file, as Path object, written to temporary test run directory.
     """
@@ -23,7 +23,7 @@ def write(tmp_ruledir: Path, text: str) -> Path:
 
 def test_ignores_blank_lines(tmp_path):
     """Blank lines in rule file are ignored."""
-    path = write(tmp_path, '\n\n\n')
+    path = write(tmp_path, "\n\n\n")
 
     assert list(_iter_rulelines(path)) == []
 
@@ -81,4 +81,3 @@ def test_preserves_internal_whitespace(tmp_path):
     assert list(_iter_rulelines(path)) == [
         "0|foo bar|baz qux|__RENAME__|",
     ]
-

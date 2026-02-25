@@ -6,7 +6,6 @@ No need to test logging for now:
 - Later: caplog (stdlib logging) or Loguru’s logger.catch() tool.
 """
 
-
 from pathlib import Path
 import pytest
 from mklists.run.routing import redistribute_datafiles

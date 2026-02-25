@@ -265,8 +265,8 @@ def _make_backup_config(
 
 
 def _make_routing_config(
-    *, 
-    config_dict: dict[str, Any], 
+    *,
+    config_dict: dict[str, Any],
     config_rootdir: Path,
 ) -> RoutingConfig:
     """Initialize instance of RoutingConfig with validated routing rules.
@@ -316,8 +316,8 @@ def _make_routing_config(
 
 
 def _make_safety_config(
-    *, 
-    config_dict: dict[str, Any], 
+    *,
+    config_dict: dict[str, Any],
 ) -> SafetyConfig:
     """Initialize instance of SafetyConfig.
 
@@ -344,7 +344,7 @@ def _make_safety_config(
 
 
 def _make_urlify_config(
-    *, 
+    *,
     config_dict: dict[str, Any],
     config_rootdir: Path,
 ) -> UrlifyConfig:
@@ -391,8 +391,14 @@ def _make_config_context(
         configfile_used=configfile_used,
         config_rootdir=config_rootdir,
         verbose=config_dict["verbose"],
-        backup=_make_backup_config(config_dict=config_dict, config_rootdir=config_rootdir),
-        routing=_make_routing_config(config_dict=config_dict, config_rootdir=config_rootdir),
+        backup=_make_backup_config(
+            config_dict=config_dict, config_rootdir=config_rootdir
+        ),
+        routing=_make_routing_config(
+            config_dict=config_dict, config_rootdir=config_rootdir
+        ),
         safety=_make_safety_config(config_dict=config_dict),
-        urlify=_make_urlify_config(config_dict=config_dict, config_rootdir=config_rootdir),
+        urlify=_make_urlify_config(
+            config_dict=config_dict, config_rootdir=config_rootdir
+        ),
     )

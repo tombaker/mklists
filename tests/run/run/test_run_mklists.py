@@ -63,7 +63,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     # The real `resolve_config_context` returns a ConfigContext object that can be
     # passed to `process_datadir`.
-    # But we are not testing ConfigContext here: `fake_resolve_config_context` can 
+    # But we are not testing ConfigContext here: `fake_resolve_config_context` can
     # return a trivial, fake object because that object is never inspected (see below).
     def fake_resolve_config_context(configfile_used: Path | None):
         calls.append(configfile_used)
@@ -72,16 +72,16 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
     import mklists.run.run as execute_module
 
     monkeypatch.setattr(
-        target=execute_module, 
-        name="resolve_config_context", 
+        target=execute_module,
+        name="resolve_config_context",
         value=fake_resolve_config_context,
         raising=True,
     )
 
     # `lambda **kwargs: None` ensures that `mklists_cfg` is never inspected.
     monkeypatch.setattr(
-        target=execute_module, 
-        name="process_datadir", 
+        target=execute_module,
+        name="process_datadir",
         value=lambda **kwargs: None,
         raising=True,
     )

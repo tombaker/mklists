@@ -103,6 +103,7 @@ def test_apply_rules_single_rule_all_lines_match():
     assert result["in"] == []
     assert result["out"] == ["alpha one\n", "beta two\n"]
 
+
 def test_apply_rules_two_rules_chain_lines_through_targets():
     """Target of first rule is source of second.
 
