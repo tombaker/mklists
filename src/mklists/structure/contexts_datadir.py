@@ -16,6 +16,22 @@ class DatadirContext:
     rules: list[Rule]
 
 
+@dataclass(slots=True)
+class DatadirStructuralContext:
+    """Filesystem-derived context for one datadir."""
+
+    datadir: Path
+
+    # What was actually discovered / selected
+    configfile_found: Path | None          # eg datadir/.mklistsrc if present
+    configfile_used: Path | None           # after inheritance rules
+    rulefiles_found: list[Path]            # eg [parent/mklists.rules, datadir/.rules]
+    rulefiles_used: list[Path]             # after 'self-contained' rules
+
+    # Materialized structural results
+    rules: list[Rule]                      # parsed + validated from rulefiles_used
+
+
 def resolve_datadir_context(
     *,
     datadir: Path,

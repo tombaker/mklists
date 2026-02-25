@@ -1,32 +1,60 @@
-CLI
-  ↓
-resolve_structural_context (pure filesystem resolution)
-  ↓
-resolve_config_context (configuration resolution)
-  ↓
-resolve_execution_context
-  ↓
-run_mklists (side effects)
 
-We have been speaking of "context layers":
+---------------------------------------------------------
+Structural Context - derived from filesystem structure
+- StructuralContext          - resolve_structural_context $MKLSTRUCTURE/contexts_run.py
+  - DatadirStructuralContext - $MKLSTRUCTURE/contexts_datadir.py
 
-- StructuralContext (derived from filesystem structure)
-  - DatadirStructuralContext
-- ConfigContext (derived from config files)
-- ExecutionContext (fully resolved, ready to execute)
+class DatadirContext:
+    datadir: Path
+    configfile_used: Path | None
+    config_context: ConfigContext
+    rules: list  # list[Rule]
+
+class StructuralContext:
+    config_rootdir: Path
+    repo_configfile: Path | None
+    repo_rulefile: Path | None
+    datadir_contexts: list[DatadirContext]
+
+---------------------------------------------------------
+Execution Context - everything needed for execution
+- ExecutionContext           - resolve_execution_context $MKLMKL/execution/execution_context.py
   - DatadirExecutionContext
-- plus ExecutionPass (per-pass execution unit)
+  - ExecutionPass (per-pass execution unit)
 
-as if processing should start with deriving ConfigContext then continue on to StructuralContext. 
+class ExecutionPass:
+    """One concrete execution pass."""
 
-However, it looks to me like resolving ConfigContext depends on first resolving StructuralContext, because 
+    backup_snapshot_dir: Path | None
+
+---------------------------------------------------------
+ExecutionContext - was: RunPlan
+- $MKLMKL/execution/execution_context.py
+
+class ExecutionContext:
+    """Fully resolved execution state for a mklists run."""
+
+    datadir_contexts: list[DatadirContext]
+    passes: list[ExecutionPass]
+
+    # repo-level files needed for backup directory initialization
+    repo_configfile: Path | None
+    repo_rulefile: Path | None
+
+    # backup policy (with paths resolved)
+    backup_rootdir: Path | None
+    backup_depth: int
+
+    # features (with paths resolved)
+    routing_dict: dict[str, Path]
+    htmldir: Path | None
+
 
 
 ---------------------------------------------------------
 ConfigContext - was: MklistsConfig
 - config.py (still)
 
-@dataclass(frozen=True, slots=True)
 class ConfigContext:
     """Normalized, validated settings for processing one or more datadirs.
 
@@ -47,76 +75,19 @@ class ConfigContext:
     urlify: UrlifyConfig
 
 
-@dataclass(slots=True, frozen=True)
 class BackupConfig:
     backup_enabled: bool
     backup_rootdir: Path
     backup_depth: int
 
 
-@dataclass(slots=True, frozen=True)
 class RoutingConfig:
     routing_enabled: bool
     routing_dict: dict[str, Path]
 
 
-@dataclass(slots=True, frozen=True)
 class UrlifyConfig:
     urlify_enabled: bool
     urlify_dir: Path
 
 
----------------------------------------------------------
-StructuralContext - was: RunContext
-- $MKLSTRUCTURE/contexts_datadir.py
-- $MKLSTRUCTURE/contexts_run.py
-
-@dataclass(slots=True, frozen=True)
-class DatadirContext:
-    datadir: Path
-    configfile_used: Path | None
-    config_context: ConfigContext
-    rules: list  # list[Rule]
-
-
-@dataclass(slots=True, frozen=True)
-class StructuralContext:
-    """Filesystem-derived structure of this run."""
-
-    config_rootdir: Path
-    repo_configfile: Path | None
-    repo_rulefile: Path | None
-    datadir_contexts: list[DatadirContext]
-
----------------------------------------------------------
-ExecutionPass - was: PassPlan
-- where?
-
-@dataclass(slots=True, frozen=True)
-class ExecutionPass:
-    """One concrete execution pass."""
-
-    backup_snapshot_dir: Path | None
-
----------------------------------------------------------
-ExecutionContext - was: RunPlan
-- $MKLMKL/execution/execution_context.py
-
-@dataclass(slots=True, frozen=True)
-class ExecutionContext:
-    """Fully resolved execution state for a mklists run."""
-
-    datadir_contexts: list[DatadirContext]
-    passes: list[ExecutionPass]
-
-    # repo-level files needed for backup directory initialization
-    repo_configfile: Path | None
-    repo_rulefile: Path | None
-
-    # backup policy (with paths resolved)
-    backup_rootdir: Path | None
-    backup_depth: int
-
-    # features (with paths resolved)
-    routing_dict: dict[str, Path]
-    htmldir: Path | None

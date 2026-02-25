@@ -14,6 +14,15 @@ from mklists.structure.contexts_run import StructuralContext
 
 
 @dataclass(slots=True)
+class DatadirExecutionContext:
+    """Execution-ready context for one datadir."""
+
+    datadir: Path
+    rules: list[Rule]
+    config_context: ConfigContext
+
+
+@dataclass(slots=True)
 class ExecutionPass:
     """Execution plan for one pass of a Mklists run."""
 
@@ -22,21 +31,24 @@ class ExecutionPass:
 
 @dataclass(slots=True)
 class ExecutionContext:
-    """Execution plan for one Mklists run.
+    """Execution-ready context for one Mklists run.
 
     Note:
         This is a fully resolved execution specification (absolute paths only).
         It includes what must be snapshotted to make the run reproducible.
     """
 
-    datadir_contexts: list[DatadirContext]
+    datadir_contexts: list[DatadirExecutionContext]
     pass_plans: list[ExecutionPass]
+
     repo_configfile: Path | None
     repo_rulefile: Path | None
+
     backup_rootdir: Path | None
     backup_depth: int
+
     routing_dict: dict
-    htmldir: Path
+    htmldir: Path | None
 
 
 def resolve_execution_context(
