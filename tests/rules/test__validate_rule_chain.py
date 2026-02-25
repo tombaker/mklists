@@ -2,7 +2,8 @@
 
 import pytest
 from mklists.errors import RuleError
-from mklists.rules import Rule, _validate_rulechain
+from mklists.rules.model import Rule
+from mklists.rules.load import _validate_rulechain
 
 
 def minimal_rule(source, target):

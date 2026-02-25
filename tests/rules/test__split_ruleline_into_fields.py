@@ -1,8 +1,8 @@
-"""Tests ~/github/tombaker/mklists/src/mklists/rules.py"""
+"""Tests $MKLMKL/rules/resolve.py"""
 
 import pytest
 from mklists.errors import RuleError
-from mklists.rules import _split_ruleline_into_fields, PIPE, FIELD_COUNT
+from mklists.rules.load import _split_ruleline_into_fields, PIPE, FIELD_COUNT
 
 
 def test_valid_ruleline_is_split_into_fields():

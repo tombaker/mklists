@@ -21,7 +21,7 @@ Execution Context - everything needed for execution
   - DatadirPlan
   - PassPlan (per-pass execution unit)
 
-class ExecutionPass:
+class PassPlan:
     """One concrete execution pass."""
 
     backup_snapshot_dir: Path | None
@@ -30,7 +30,7 @@ class ExecutionPlan:
     """Fully resolved execution state for a mklists run."""
 
     datadir_contexts: list[DatadirContext]
-    passes: list[ExecutionPass]
+    passes: list[PassPlan]
 
     # repo-level files needed for backup directory initialization
     repo_configfile: Path | None

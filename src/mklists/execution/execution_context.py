@@ -23,7 +23,7 @@ class DatadirExecutionPlan:
 
 
 @dataclass(slots=True)
-class ExecutionPass:
+class PassPlan:
     """Execution plan for one pass of a Mklists run."""
 
     backup_snapshot_dir: Path | None
@@ -39,7 +39,7 @@ class ExecutionPlan:
     """
 
     datadir_contexts: list[DatadirExecutionPlan]
-    pass_plans: list[ExecutionPass]
+    pass_plans: list[PassPlan]
 
     repo_configfile: Path | None
     repo_rulefile: Path | None
@@ -75,10 +75,10 @@ def resolve_execution_context(
     config_rootdir = run_context.config_rootdir
 
     # ----- passes ----------------------------------------------------
-    pass_plans: list[ExecutionPass] = []
+    pass_plans: list[PassPlan] = []
 
     if not mklists_cfg.backup.backup_enabled:
-        pass_plans.append(ExecutionPass(backup_snapshot_dir=None))
+        pass_plans.append(PassPlan(backup_snapshot_dir=None))
     else:
         pass_count = 1
         if mklists_cfg.routing.routing_enabled and len(datadir_contexts) > 1:
@@ -90,7 +90,7 @@ def resolve_execution_context(
                 / mklists_cfg.backup.backup_rootdir
                 / f"{run_id}_{i+1:02d}"
             )
-            pass_plans.append(ExecutionPass(backup_snapshot_dir=backup_snapshot_dir))
+            pass_plans.append(PassPlan(backup_snapshot_dir=backup_snapshot_dir))
 
     # ----- repo-level config -----------------------------------------
     repo_configfile = None

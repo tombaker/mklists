@@ -21,7 +21,7 @@ from mklists.config import (
 from mklists.structure.contexts_run import StructuralContext
 from mklists.structure.contexts_datadir import DatadirContext
 from mklists.execution.execution_context import (
-    ExecutionPass,
+    PassPlan,
     ExecutionPlan,
     resolve_execution_context,
 )
@@ -101,7 +101,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[ExecutionPass(backup_snapshot_dir=None)],
+        pass_plans=[PassPlan(backup_snapshot_dir=None)],
         repo_configfile=None,
         repo_rulefile=None,
         backup_rootdir=None,
@@ -169,7 +169,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         repo_rulefile=None,
         backup_rootdir=expected_backup_rootdir,
         backup_depth=2,
-        pass_plans=[ExecutionPass(backup_snapshot_dir=expected_backup_snapshot_dir)],
+        pass_plans=[PassPlan(backup_snapshot_dir=expected_backup_snapshot_dir)],
         routing_dict={},
         htmldir=None,
     )
@@ -276,7 +276,7 @@ def test_plan_urlify_enabled(tmp_path):
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
-        pass_plans=[ExecutionPass(backup_snapshot_dir=None)],
+        pass_plans=[PassPlan(backup_snapshot_dir=None)],
         repo_configfile=None,
         repo_rulefile=None,
         backup_rootdir=None,

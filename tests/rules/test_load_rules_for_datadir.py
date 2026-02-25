@@ -4,7 +4,8 @@ import re
 from pathlib import Path
 import pytest
 from mklists.errors import RuleError
-from mklists.rules import Rule, load_rules_for_datadir
+from mklists.rules.model import Rule
+from mklists.rules.load import load_rules_for_datadir
 
 
 def write_rulefile(path: Path, lines: list[str]) -> None:

@@ -1,8 +1,8 @@
-"""Tests ~/github/tombaker/mklists/src/mklists/rules.py"""
+"""Tests $MKLMKL/rules/resolve.py"""
 
 from pathlib import Path
 import pytest
-from mklists.rules import _iter_rulelines
+from mklists.rules.load import _iter_rulelines
 
 
 def write(tmp_ruledir: Path, text: str) -> Path:

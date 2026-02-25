@@ -9,7 +9,8 @@ Documentation should make this clear.
 import re
 import pytest
 from mklists.errors import RuleError
-from mklists.rules import _compile_pattern, Rule
+from mklists.rules.model import Rule
+from mklists.rules.load import _compile_pattern
 
 
 def test_valid_regex_returns_compiled_pattern():

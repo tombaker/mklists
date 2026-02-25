@@ -2,9 +2,10 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from ..rules import Rule, load_rules_for_datadir
-from ..errors import StructureError
-from .markers import DATADIR_CONFIGFILE_NAME, DATADIR_RULEFILE_NAME
+from mklists.errors import StructureError
+from mklists.rules.model import Rule
+from mklists.rules.load import load_rules_for_datadir
+from mklists.structure.markers import DATADIR_CONFIGFILE_NAME, DATADIR_RULEFILE_NAME
 
 
 @dataclass(slots=True)

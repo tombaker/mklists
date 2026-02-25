@@ -1,9 +1,10 @@
-"""Tests ~/github/tombaker/mklists/src/mklists/rules.py"""
+"""Tests $MKLMKL/rules/resolve.py"""
 
 import re
 import pytest
 from mklists.errors import RuleError
-from mklists.rules import _parse_rule, Rule
+from mklists.rules.model import Rule
+from mklists.rules.load import _parse_rule
 
 
 def test_valid_rule_is_parsed_correctly():

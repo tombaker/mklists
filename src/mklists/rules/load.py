@@ -1,25 +1,13 @@
 """Load and validate transformation rules for a given data directory."""
 
 import re
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Pattern
 from mklists.errors import RuleError, FilenameError
-
+from mklists.rules.model import Rule
 
 FIELD_COUNT = 5
 PIPE = "|"
-
-
-@dataclass(frozen=True)
-class Rule:
-    """Immutable data structure for one validated rule."""
-
-    source_matchfield: int
-    source_matchpattern: Pattern[str]
-    source: str
-    target: str
-    target_sortkey: int | None
 
 
 def load_rules_for_datadir(rulefiles: list[Path]) -> list[Rule]:

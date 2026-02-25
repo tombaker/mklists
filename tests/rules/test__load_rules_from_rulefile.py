@@ -1,10 +1,11 @@
-"""Tests $MKLMKL/rules.py"""
+"""Tests $MKLMKL/rules/resolve.py"""
 
 from pathlib import Path
 import re
 import pytest
 from mklists.errors import RuleError
-from mklists.rules import _load_rules_from_rulefile, Rule
+from mklists.rules.model import Rule
+from mklists.rules.load import _load_rules_from_rulefile
 
 
 def write_rulefile(tmp_ruledir: Path, text_to_write: str) -> Path:
