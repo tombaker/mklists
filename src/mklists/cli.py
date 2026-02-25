@@ -1,12 +1,14 @@
 """
 CLI
   ↓
-resolve_structural_context   (pure filesystem + config resolution)
+resolve_structural_context (pure filesystem resolution)
   ↓
-resolve_run_plan      (execution strategy decision)
+resolve_config_context (configuration resolution)
   ↓
-run_mklists           (side effects)
+resolve_run_plan (execution strategy decision)
+  ↓
+run_mklists (side effects)
 
-mklists list datadirs
-
+mklists subcommands:
+- mklists list datadirs
 """

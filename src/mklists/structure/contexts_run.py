@@ -33,20 +33,20 @@ def resolve_structural_context(startdir: Path | str) -> StructuralContext:
     repo_configfile = _find_repo_configfile(startdir)
     repo_rulefile = _find_repo_rulefile(startdir)
 
-    # 2. Determine whether effective config_rootdir is repo root or single datadir.
+    # 2. Determine effective config_rootdir, whether Repo Root or single Datadir.
     config_rootdir = _determine_config_rootdir(
         startdir=startdir,
         repo_configfile=repo_configfile,
         repo_rulefile=repo_rulefile,
     )
 
-    # 3. Discover datadirs
+    # 3. Discover Datadirs
     datadirs = _find_datadirs(config_rootdir)
 
     if not datadirs:
         raise StructureError("No datadirs found under repository root.")
 
-    # 4. Resolve each DatadirContext and accumulate in list.
+    # 4. Resolve each DatadirContext and build list.
     datadir_contexts: list[DatadirContext] = []
 
     for datadir in datadirs:
