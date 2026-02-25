@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from ..config import resolve_config_context, ConfigContext
-from ..plan import ExecutionContext
+from ..execution.execution_context import ExecutionContext
 from .backups import backup_datadirs, init_backup_snapshot_dir, prune_backupdirs
 from .process_datadirs import process_datadir
 from .routing import redistribute_datafiles

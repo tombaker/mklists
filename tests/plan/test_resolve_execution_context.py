@@ -20,7 +20,11 @@ from mklists.config import (
 )
 from mklists.structure.contexts_run import StructuralContext
 from mklists.structure.contexts_datadir import DatadirContext
-from mklists.plan import ExecutionPass, ExecutionContext, resolve_execution_context
+from mklists.execution.execution_context import (
+    ExecutionPass,
+    ExecutionContext,
+    resolve_execution_context,
+)
 
 
 def make_cfg(
@@ -170,7 +174,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
 
 
 def test_two_passes_when_routing_multiple(tmp_path):
-    """Multiple Datadirs. 
+    """Multiple Datadirs.
 
     Variables in fake ConfigContext:
         Backup ENABLED.
@@ -233,7 +237,7 @@ def test_plan_urlify_enabled(tmp_path):
         Routing disabled.
         Urlify ENABLED.
 
-    Expect: 
+    Expect:
         Correct htmldir path.
     """
     fake_mklists_cfg = make_cfg(

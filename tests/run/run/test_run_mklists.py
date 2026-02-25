@@ -36,7 +36,7 @@ import pytest
 from mklists.config import ConfigContext
 from mklists.run.run import run_mklists
 from mklists.structure.contexts_datadir import DatadirContext
-from mklists.plan import ExecutionContext, ExecutionPass
+from mklists.execution.execution_context import ExecutionContext, ExecutionPass
 
 
 def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):

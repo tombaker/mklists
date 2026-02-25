@@ -8,9 +8,9 @@ resolve_execution_context
 
 from dataclasses import dataclass
 from pathlib import Path
-from .config import ConfigContext
-from .structure.contexts_datadir import DatadirContext
-from .structure.contexts_run import StructuralContext
+from mklists.config import ConfigContext
+from mklists.structure.contexts_datadir import DatadirContext
+from mklists.structure.contexts_run import StructuralContext
 
 
 @dataclass(slots=True)
