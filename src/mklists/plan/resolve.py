@@ -9,9 +9,8 @@ resolve_run_plan
 from dataclasses import dataclass
 from pathlib import Path
 from mklists.config import ConfigContext
-from mklists.structure.contexts_datadir import DatadirContext
-from mklists.structure.contexts_run import StructuralContext
-from mklists.plan.model import PassPlan, RunPlan
+from mklists.structure.model import DatadirContext
+from mklists.plan.model import PassPlan, RunPlan, StructuralContext
 
 
 def resolve_run_plan(

@@ -18,8 +18,7 @@ from mklists.config.model import (
     UrlifyConfig,
     ConfigContext,
 )
-from mklists.structure.contexts_run import StructuralContext
-from mklists.structure.contexts_datadir import DatadirContext
+from mklists.structure.model import DatadirContext, StructuralContext
 from mklists.plan.model import (
     PassPlan,
     RunPlan,

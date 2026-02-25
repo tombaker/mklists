@@ -35,7 +35,7 @@ from pathlib import Path
 import pytest
 from mklists.config import ConfigContext
 from mklists.exec.run import run_mklists
-from mklists.structure.contexts_datadir import DatadirContext
+from mklists.structure.resolve import DatadirContext
 from mklists.plan.model import RunPlan, PassPlan
 
 

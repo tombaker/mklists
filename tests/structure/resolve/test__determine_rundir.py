@@ -1,9 +1,9 @@
-"""Tests $MKLMKL/contexts_run.py"""
+"""Tests $MKLMKL/structure/resolve.py"""
 
 from pathlib import Path
 import pytest
 from mklists.errors import StructureError
-from mklists.structure.contexts_run import _determine_config_rootdir
+from mklists.structure.resolve import _determine_config_rootdir
 from mklists.structure.markers import DATADIR_RULEFILE_NAME
 
 

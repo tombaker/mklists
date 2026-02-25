@@ -1,13 +1,12 @@
-"""Tests $MKLMKL/contexts_run.py
+"""Tests $MKLMKL/resolve.py
 
 Tests function as orchestration only.
 Monkeypatch `resolve_datadir_context` instead of relying on actual rule parsing.
 """
 
 import pytest
-from mklists.structure import contexts_run
-from mklists.structure.contexts_datadir import DatadirContext
-from mklists.structure.contexts_run import StructuralContext
+from mklists.structure import resolve
+from mklists.structure.model import DatadirContext, StructuralContext
 from mklists.errors import StructureError
 
 
@@ -31,13 +30,13 @@ def test_resolve_structural_context_repo_mode(tmp_path, monkeypatch):
         )
 
     monkeypatch.setattr(
-        target=contexts_run,
+        target=resolve,
         name="resolve_datadir_context",
         value=fake_resolve_datadir_context,
         raising=True,
     )
 
-    result = contexts_run.resolve_structural_context(tmp_path)
+    result = resolve.resolve_structural_context(tmp_path)
 
     assert result == StructuralContext(
         config_rootdir=tmp_path,
@@ -55,7 +54,7 @@ def test_resolve_structural_context_no_datadirs_raises(tmp_path):
     (tmp_path / "mklists.yaml").touch()
 
     with pytest.raises(StructureError):
-        contexts_run.resolve_structural_context(tmp_path)
+        resolve.resolve_structural_context(tmp_path)
 
 
 def test_runcontext_mixed_repo_and_local_configs(tmp_path):
@@ -77,7 +76,7 @@ def test_runcontext_mixed_repo_and_local_configs(tmp_path):
     local_cfg = b / ".mklistsrc"
     local_cfg.touch()
 
-    run_ctx = contexts_run.resolve_structural_context(tmp_path)
+    run_ctx = resolve.resolve_structural_context(tmp_path)
 
     assert run_ctx.repo_configfile == repo_cfg
 

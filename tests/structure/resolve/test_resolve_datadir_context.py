@@ -1,8 +1,8 @@
 """Tests $MKLSTRUCTURE/contexts.py"""
 
 from pathlib import Path
-from mklists.structure import contexts_datadir
-from mklists.structure.contexts_datadir import DatadirContext
+from mklists.structure import resolve
+from mklists.structure.resolve import DatadirContext
 
 
 def test_resolve_datadir_context_local_config_and_rules(tmp_path, monkeypatch):
@@ -29,13 +29,13 @@ def test_resolve_datadir_context_local_config_and_rules(tmp_path, monkeypatch):
         return ["R1"]
 
     monkeypatch.setattr(
-        target=contexts_datadir,
+        target=resolve,
         name="load_rules_for_datadir",
         value=fake_loader,
         raising=True,
     )
 
-    result = contexts_datadir.resolve_datadir_context(
+    result = resolve.resolve_datadir_context(
         datadir=datadir,
         repo_configfile=None,
         repo_rulefile=None,
@@ -60,13 +60,13 @@ def test_resolve_datadir_context_inherits_repo_config(tmp_path, monkeypatch):
     repo_cfg.touch()
 
     monkeypatch.setattr(
-        target=contexts_datadir,
+        target=resolve,
         name="load_rules_for_datadir",
         value=lambda _: [],
         raising=True,
     )
 
-    result = contexts_datadir.resolve_datadir_context(
+    result = resolve.resolve_datadir_context(
         datadir=datadir,
         repo_configfile=repo_cfg,
         repo_rulefile=None,
@@ -94,13 +94,13 @@ def test_resolve_datadir_context_passes_rulefiles_to_loader(tmp_path, monkeypatc
         return []
 
     monkeypatch.setattr(
-        target=contexts_datadir,
+        target=resolve,
         name="load_rules_for_datadir",
         value=fake_loader,
         raising=True,
     )
 
-    contexts_datadir.resolve_datadir_context(
+    resolve.resolve_datadir_context(
         datadir=datadir,
         repo_configfile=None,
         repo_rulefile=None,

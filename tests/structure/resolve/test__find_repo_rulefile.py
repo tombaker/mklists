@@ -1,6 +1,6 @@
 """Tests $MKLMKL/contexts_run.py"""
 
-from mklists.structure.contexts_run import _find_repo_rulefile
+from mklists.structure.resolve import _find_repo_rulefile
 from mklists.structure.markers import REPO_RULEFILE_NAME
 
 

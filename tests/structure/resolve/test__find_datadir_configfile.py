@@ -1,6 +1,6 @@
-"""Tests $MKLSTRUCTURE/contexts_datadir.py"""
+"""Tests $MKLSTRUCTURE/resolve.py"""
 
-from mklists.structure.contexts_datadir import _find_datadir_configfile
+from mklists.structure.resolve import _find_datadir_configfile
 from mklists.structure.markers import DATADIR_CONFIGFILE_NAME
 
 
