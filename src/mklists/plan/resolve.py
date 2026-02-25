@@ -6,8 +6,6 @@ resolve_run_plan
 └── produce concrete pass directories
 """
 
-from dataclasses import dataclass
-from pathlib import Path
 from mklists.config import ConfigContext
 from mklists.structure.model import DatadirContext
 from mklists.plan.model import PassPlan, RunPlan, StructuralContext
@@ -70,8 +68,6 @@ def resolve_run_plan(
         if mklists_cfg.backup.backup_rootdir:
             backup_rootdir = config_rootdir / mklists_cfg.backup.backup_rootdir
             backup_depth = mklists_cfg.backup.backup_depth
-
-    # todo: What iff backup_enabled=True and backup_rootdir=None?
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}
