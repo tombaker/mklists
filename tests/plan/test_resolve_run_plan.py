@@ -29,7 +29,7 @@ from mklists.config import (
     UrlifyConfig,
     ConfigContext,
 )
-from mklists.structure.contexts_run import RunContext
+from mklists.structure.contexts_run import StructuralContext
 from mklists.structure.contexts_datadir import DatadirContext
 from mklists.plan import ExecutionPass, ExecutionContext, resolve_run_plan
 
@@ -74,7 +74,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         len(pass_plans) == 1
         pass_plans[0].backup_snapshot_dir is None
     """
-    run_context = RunContext(
+    run_context = StructuralContext(
         config_rootdir=tmp_path,
         repo_configfile=None,
         repo_rulefile=None,
@@ -134,7 +134,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         urlify_enabled=False,
     )
 
-    run_context = RunContext(
+    run_context = StructuralContext(
         config_rootdir=tmp_path,
         repo_configfile=None,
         repo_rulefile=None,
@@ -198,7 +198,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
         urlify_enabled=False,
     )
 
-    run_context = RunContext(
+    run_context = StructuralContext(
         config_rootdir=tmp_path,
         repo_configfile=None,
         repo_rulefile=None,
@@ -253,7 +253,7 @@ def test_plan_urlify_enabled(tmp_path):
         urlify_enabled=True,
     )
 
-    run_context = RunContext(
+    run_context = StructuralContext(
         config_rootdir=tmp_path,
         repo_configfile=None,
         repo_rulefile=None,

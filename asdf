@@ -1,0 +1,39 @@
+I would in fact like to some way to improve the focus of `config.py`. As you point out, the module already parses YAML, does deep-merge logic, validates and normalizes, defines dataclass definitions, and holds the schema text in YAML.
+
+As I see it, the following dataclasses 
+```
+class BackupConfig
+class RoutingConfig
+class SafetyConfig
+class UrlifyConfig
+```
+exist only for normalizing the content of:
+```
+class ConfigContext
+```
+and the following helper functions:
+```
+def _make_backup_config
+def _make_routing_config
+def _make_safety_config
+def _make_urlify_config
+```
+exist only to populate instances of those four dataclasses, while these helper functions:
+```
+def _deepmerge_dicts
+def _load_merged_configdict
+def _load_yaml_from_file
+def _load_yaml_from_string
+def _merge_config_dicts
+```
+exist only to parse YAML.
+
+Is there not a coherent way to move most of the above to a "helper module", as it were, and leave just
+
+```
+DEFAULT_CONFIG_YAML
+class ConfigContext
+def resolve_config_context
+def _make_mklists_config
+```
+in the main config module?

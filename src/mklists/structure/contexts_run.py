@@ -9,8 +9,8 @@ from .markers import DATADIR_RULEFILE_NAME, REPO_CONFIGFILE_NAME, REPO_RULEFILE_
 
 
 @dataclass(slots=True)
-class RunContext:
-    """Resolved execution context for a single run."""
+class StructuralContext:
+    """Structural context as derived from filesystem layout."""
 
     config_rootdir: Path
     repo_configfile: Path | None
@@ -18,22 +18,14 @@ class RunContext:
     datadir_contexts: list[DatadirContext]
 
 
-def resolve_execution_context(startdir: Path | str) -> RunContext:
-    """Resolve full filesystem execution context for one run.
+def resolve_execution_context(startdir: Path | str) -> StructuralContext:
+    """Derive structural context from filesystem layout.
 
     Args:
-        startdir:
+        startdir: Starting directory, based on CWD or CLI option.
 
     Returns:
-        Execution context for one run as RunContext object.
-
-    resolve_execution_context
-        ├── determine config_rootdir
-        ├── detect repo-level config + rulefile
-        ├── discover datadirs
-        └── resolve_datadir_context(...) for each
-                ↓
-            produce list[DatadirContext]
+        Structural context derived from filesystem layout.
     """
     startdir = Path(startdir).resolve()
 
@@ -66,9 +58,9 @@ def resolve_execution_context(startdir: Path | str) -> RunContext:
         datadir_contexts.append(context)
 
     # ------------------------------------------------------------
-    # 4. Emit fully resolved RunContext
+    # 4. Emit fully resolved StructuralContext
     # ------------------------------------------------------------
-    return RunContext(
+    return StructuralContext(
         config_rootdir=config_rootdir,
         repo_configfile=repo_configfile,
         repo_rulefile=repo_rulefile,

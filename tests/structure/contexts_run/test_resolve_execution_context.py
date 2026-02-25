@@ -7,13 +7,13 @@ Monkeypatch `resolve_datadir_context` instead of relying on actual rule parsing.
 import pytest
 from mklists.structure import contexts_run
 from mklists.structure.contexts_datadir import DatadirContext
-from mklists.structure.contexts_run import RunContext
+from mklists.structure.contexts_run import StructuralContext
 from mklists.errors import StructureError
 from mklists.plan import ExecutionContext, ExecutionPass
 
 
 def test_resolve_execution_context_repo_mode(tmp_path, monkeypatch):
-    """Returns RunContext object specifying execution context for a run."""
+    """Returns StructuralContext object specifying execution context for a run."""
     configfile = tmp_path / "mklists.yaml"
     configfile.touch()
 
@@ -40,7 +40,7 @@ def test_resolve_execution_context_repo_mode(tmp_path, monkeypatch):
 
     result = contexts_run.resolve_execution_context(tmp_path)
 
-    assert result == RunContext(
+    assert result == StructuralContext(
         config_rootdir=tmp_path,
         repo_configfile=tmp_path / "mklists.yaml",
         repo_rulefile=None,

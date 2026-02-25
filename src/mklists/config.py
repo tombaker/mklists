@@ -1,4 +1,4 @@
-"""Load configuration settings from defaults and user config files."""
+"""Resolve ConfigContext from defaults and optional user config file."""
 
 from copy import deepcopy
 from dataclasses import dataclass

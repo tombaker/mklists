@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from .config import ConfigContext
 from .structure.contexts_datadir import DatadirContext
-from .structure.contexts_run import RunContext
+from .structure.contexts_run import StructuralContext
 
 
 @dataclass(slots=True)
@@ -41,7 +41,7 @@ class ExecutionContext:
 
 def resolve_run_plan(
     *,
-    run_context: RunContext,
+    run_context: StructuralContext,
     mklists_cfg: ConfigContext,
     datadir_contexts: list[DatadirContext],
     run_id: str,
