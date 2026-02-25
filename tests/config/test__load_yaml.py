@@ -4,7 +4,7 @@ import re
 import yaml
 from pathlib import Path
 import pytest
-from mklists.config import _load_yaml_from_string, _load_yaml_from_file
+from mklists.config.resolve import _load_yaml_from_string, _load_yaml_from_file
 
 
 @pytest.fixture(params=["string", "file"])

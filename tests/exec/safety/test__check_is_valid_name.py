@@ -2,7 +2,7 @@
 
 import re
 import pytest
-from mklists.config import SafetyConfig
+from mklists.config.model import SafetyConfig
 from mklists.exec.safety import _check_is_valid_name
 
 

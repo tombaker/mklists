@@ -2,8 +2,7 @@
 
 import re
 import pytest
-from mklists.config import SafetyConfig
-from mklists.exec.safety import run_safety_checks
+from mklists.exec.safety import SafetyConfig, run_safety_checks
 
 
 @pytest.fixture

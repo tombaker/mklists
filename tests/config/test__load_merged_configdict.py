@@ -2,7 +2,7 @@
 
 import yaml
 import pytest
-from mklists.config import _load_merged_configdict
+from mklists.config.resolve import _load_merged_configdict
 
 
 def test_empty_user_config_results_in_defaults(tmp_path):

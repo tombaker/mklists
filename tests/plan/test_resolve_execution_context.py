@@ -11,7 +11,7 @@ Real filesystem not needed. Rather, tiny factories:
 
 from pathlib import Path
 import pytest
-from mklists.config import (
+from mklists.config.model import (
     BackupConfig,
     RoutingConfig,
     SafetyConfig,

@@ -1,7 +1,8 @@
 """Tests $MKLMKL/config.py"""
 
 import pytest
-from mklists.config import DEFAULT_CONFIG_YAML, _deepmerge_dicts
+from mklists.config.defaults import DEFAULT_CONFIG_YAML
+from mklists.config.resolve import _deepmerge_dicts
 
 
 def test_deep_merge_nested_dicts():

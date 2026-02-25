@@ -5,14 +5,14 @@
 from pathlib import Path
 import re
 import pytest
-from mklists.config import (
+from mklists.config.model import (
     BackupConfig,
     RoutingConfig,
     SafetyConfig,
     UrlifyConfig,
     ConfigContext,
-    _make_config_context,
 )
+from mklists.config.resolve import _make_config_context
 
 
 @pytest.fixture

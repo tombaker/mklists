@@ -2,7 +2,7 @@
 
 from pathlib import Path
 import pytest
-from mklists.config import _make_backup_config
+from mklists.config.resolve import _make_backup_config
 
 
 def test_make_backup_config_given_relative_return_relative():

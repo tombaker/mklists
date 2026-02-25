@@ -1,100 +1,19 @@
 """Resolve ConfigContext from defaults and optional user config file."""
 
 from copy import deepcopy
-from dataclasses import dataclass
 from pathlib import Path
 import re
 from typing import Any, Pattern
 import yaml
-from mklists.rules import Rule
-
-
-# The complete default config schema in YAML; all required keys must appear here.
-DEFAULT_CONFIG_YAML = """\
-verbose: False
-
-# Backup: Snapshot data directory for each pass to a time-stamped backup directory.
-backup:
-  backup_enabled: False
-  backup_rootdir: backups
-  backup_depth: 3
-
-# Routing: Newly generated files with special names can be moved to given directories.
-routing:
-  routing_enabled: False
-  routing_dict: {}
-  ## Example:
-  # routing_dict:
-  #   to_a.txt: a
-  #   to_b.txt: b
-  #   to_bar.txt: /Users/foo/bar
-
-# Safety: Processing halts if safety criteria are violated.
-safety:
-  invalid_filename_patterns:
-   - \\.swp$
-   - \\.tmp$
-   - \\.vim$
-   - "~$"
-
-# Urlification: After processing, data files can be written in HTML to given directory.
-urlify:
-  urlify_enabled: False
-  urlify_dir: html
-"""
-
-
-@dataclass(slots=True, frozen=True)
-class BackupConfig:
-    """Settings about backing up data files before processing."""
-
-    backup_enabled: bool
-    backup_rootdir: Path
-    backup_depth: int
-
-
-@dataclass(slots=True, frozen=True)
-class RoutingConfig:
-    """Settings about moving specified files to different destination directories."""
-
-    routing_enabled: bool
-    routing_dict: dict[str, Path]
-
-
-@dataclass(slots=True, frozen=True)
-class SafetyConfig:
-    """Heuristics for rejecting unsafe filenames for data."""
-
-    invalid_filename_patterns: list[Pattern[str]]
-
-
-@dataclass(slots=True, frozen=True)
-class UrlifyConfig:
-    """Settings about writing data files in HTML to a desination directory."""
-
-    urlify_enabled: bool
-    urlify_dir: Path
-
-
-@dataclass(frozen=True, slots=True)
-class ConfigContext:
-    """Normalized, validated settings for processing one or more datadirs.
-
-    A single config instance is derived from built-in defaults plus an optional
-    config file. Multiple datadirs may share the same config instance when they
-    share the same effective config file.
-    """
-
-    # Provenance
-    configfile_used: Path | None
-    config_rootdir: Path
-
-    # Settings
-    verbose: bool
-    backup: BackupConfig
-    routing: RoutingConfig
-    safety: SafetyConfig
-    urlify: UrlifyConfig
+from mklists.rules.model import Rule
+from mklists.config.defaults import DEFAULT_CONFIG_YAML
+from mklists.config.model import (
+    BackupConfig,
+    RoutingConfig,
+    SafetyConfig,
+    UrlifyConfig,
+    ConfigContext,
+)
 
 
 def resolve_config_context(
