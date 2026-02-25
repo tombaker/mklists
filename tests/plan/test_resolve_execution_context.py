@@ -22,7 +22,7 @@ from mklists.structure.contexts_run import StructuralContext
 from mklists.structure.contexts_datadir import DatadirContext
 from mklists.execution.execution_context import (
     ExecutionPass,
-    ExecutionContext,
+    ExecutionPlan,
     resolve_execution_context,
 )
 
@@ -97,7 +97,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 
     assert len(actual_execution_context.pass_plans) == 1
     assert actual_execution_context.pass_plans[0].backup_snapshot_dir is None
-    assert actual_execution_context == ExecutionContext(
+    assert actual_execution_context == ExecutionPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
@@ -161,7 +161,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         == expected_backup_snapshot_dir
     )
 
-    assert actual_execution_context == ExecutionContext(
+    assert actual_execution_context == ExecutionPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],
@@ -272,7 +272,7 @@ def test_plan_urlify_enabled(tmp_path):
     expected_htmldir = tmp_path / "html"
 
     assert len(actual_execution_context.pass_plans) == 1
-    assert actual_execution_context == ExecutionContext(
+    assert actual_execution_context == ExecutionPlan(
         datadir_contexts=[
             DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
         ],

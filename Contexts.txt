@@ -1,4 +1,3 @@
-
 ---------------------------------------------------------
 Structural Context - derived from filesystem structure
 - StructuralContext          - resolve_structural_context $MKLSTRUCTURE/contexts_run.py
@@ -18,20 +17,16 @@ class StructuralContext:
 
 ---------------------------------------------------------
 Execution Context - everything needed for execution
-- ExecutionContext           - resolve_execution_context $MKLMKL/execution/execution_context.py
-  - DatadirExecutionContext
-  - ExecutionPass (per-pass execution unit)
+- ExecutionPlan           - resolve_execution_context $MKLMKL/execution/execution_context.py
+  - DatadirPlan
+  - PassPlan (per-pass execution unit)
 
 class ExecutionPass:
     """One concrete execution pass."""
 
     backup_snapshot_dir: Path | None
 
----------------------------------------------------------
-ExecutionContext - was: RunPlan
-- $MKLMKL/execution/execution_context.py
-
-class ExecutionContext:
+class ExecutionPlan:
     """Fully resolved execution state for a mklists run."""
 
     datadir_contexts: list[DatadirContext]
@@ -49,45 +44,27 @@ class ExecutionContext:
     routing_dict: dict[str, Path]
     htmldir: Path | None
 
-
-
 ---------------------------------------------------------
-ConfigContext - was: MklistsConfig
-- config.py (still)
+ConfigContext
 
 class ConfigContext:
-    """Normalized, validated settings for processing one or more datadirs.
-
-    A single config instance is derived from built-in defaults plus an optional
-    config file. Multiple datadirs may share the same config instance when they
-    share the same effective config file.
-    """
-
-    # Provenance
     configfile_used: Path | None
     config_rootdir: Path
-
-    # Settings
     verbose: bool
     backup: BackupConfig
     routing: RoutingConfig
     safety: SafetyConfig
     urlify: UrlifyConfig
 
-
 class BackupConfig:
     backup_enabled: bool
     backup_rootdir: Path
     backup_depth: int
 
-
 class RoutingConfig:
     routing_enabled: bool
     routing_dict: dict[str, Path]
 
-
 class UrlifyConfig:
     urlify_enabled: bool
     urlify_dir: Path
-
-

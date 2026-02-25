@@ -9,7 +9,7 @@ from mklists.structure import contexts_run
 from mklists.structure.contexts_datadir import DatadirContext
 from mklists.structure.contexts_run import StructuralContext
 from mklists.errors import StructureError
-from mklists.execution.execution_context import ExecutionContext, ExecutionPass
+from mklists.execution.execution_context import ExecutionPlan, ExecutionPass
 
 
 def test_resolve_structural_context_repo_mode(tmp_path, monkeypatch):

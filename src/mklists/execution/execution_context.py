@@ -14,7 +14,7 @@ from mklists.structure.contexts_run import StructuralContext
 
 
 @dataclass(slots=True)
-class DatadirExecutionContext:
+class DatadirExecutionPlan:
     """Execution-ready context for one datadir."""
 
     datadir: Path
@@ -30,7 +30,7 @@ class ExecutionPass:
 
 
 @dataclass(slots=True)
-class ExecutionContext:
+class ExecutionPlan:
     """Execution-ready context for one Mklists run.
 
     Note:
@@ -38,7 +38,7 @@ class ExecutionContext:
         It includes what must be snapshotted to make the run reproducible.
     """
 
-    datadir_contexts: list[DatadirExecutionContext]
+    datadir_contexts: list[DatadirExecutionPlan]
     pass_plans: list[ExecutionPass]
 
     repo_configfile: Path | None
@@ -57,7 +57,7 @@ def resolve_execution_context(
     mklists_cfg: ConfigContext,
     datadir_contexts: list[DatadirContext],
     run_id: str,
-) -> ExecutionContext:
+) -> ExecutionPlan:
     """Construct executable plan for this run.
 
     Args:
@@ -67,7 +67,7 @@ def resolve_execution_context(
         run_id: Timestamp string;.
 
     Returns:
-        ExecutionContext object, holding info needed for execution.
+        ExecutionPlan object, holding info needed for execution.
 
     Note:
         Responsible for resolving relative config paths to absolute.
@@ -121,7 +121,7 @@ def resolve_execution_context(
     if mklists_cfg.urlify.urlify_enabled:
         htmldir = config_rootdir / mklists_cfg.urlify.urlify_dir
 
-    return ExecutionContext(
+    return ExecutionPlan(
         datadir_contexts=datadir_contexts,
         pass_plans=pass_plans,
         repo_configfile=repo_configfile,
