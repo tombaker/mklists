@@ -13,7 +13,7 @@ from mklists.plan.model import PassPlan, RunPlan
 
 def resolve_run_plan(
     *,
-    run_context: StructuralContext,
+    structural_context: StructuralContext,
     config_context: ConfigContext,
     datadir_contexts: list[DatadirStructuralContext],
     run_id: str,
@@ -21,7 +21,7 @@ def resolve_run_plan(
     """Construct executable plan for this run.
 
     Args:
-        run_context: Execution context for one Mklists run.
+        structural_context: Execution context for one Mklists run.
         config_context: Instance of configuration object ConfigContext.
         datadir_contexts: List of Datadir execution contexts.
         run_id: Timestamp string;.
@@ -32,7 +32,7 @@ def resolve_run_plan(
     Note:
         Responsible for resolving relative config paths to absolute.
     """
-    config_rootdir = run_context.config_rootdir
+    config_rootdir = structural_context.config_rootdir
 
     # ----- passes ----------------------------------------------------
     pass_plans: list[PassPlan] = []
@@ -54,12 +54,12 @@ def resolve_run_plan(
 
     # ----- repo-level config -----------------------------------------
     repo_configfile = None
-    if run_context.repo_configfile:
-        repo_configfile = run_context.repo_configfile
+    if structural_context.repo_configfile:
+        repo_configfile = structural_context.repo_configfile
 
     repo_rulefile = None
-    if run_context.repo_rulefile:
-        repo_rulefile = run_context.repo_rulefile
+    if structural_context.repo_rulefile:
+        repo_rulefile = structural_context.repo_rulefile
 
     # ----- backup ----------------------------------------------------
     backup_rootdir = None
