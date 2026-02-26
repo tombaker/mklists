@@ -17,8 +17,8 @@ from mklists.config.model import (
 
 
 def resolve_config_context(
-    configfile_used: Path | None,
     config_rootdir: Path,
+    configfile_used: Path | None,
 ) -> ConfigContext:
     """Derive settings from built-in defaults and optional user-defined config file.
 

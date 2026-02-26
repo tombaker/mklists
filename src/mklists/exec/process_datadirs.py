@@ -11,17 +11,17 @@ from mklists.exec.safety import run_safety_checks
 def process_datadir(
     *,
     datadir_ctx: DatadirStructuralContext,
-    mklists_cfg: ConfigContext,
+    config_context: ConfigContext,
 ) -> None:
     """
     Args:
         datadir:
-        mklists_cfg:
+        config_context:
 
     Returns:
         None, after safety check, reading data, applying rules, backup, re-writing.
     """
-    run_safety_checks(datadir_ctx.datadir, mklists_cfg.safety)
+    run_safety_checks(datadir_ctx.datadir, config_context.safety)
 
     rules = datadir_ctx.rules
 
