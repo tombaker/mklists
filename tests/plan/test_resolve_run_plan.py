@@ -74,9 +74,8 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),
@@ -102,9 +101,8 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),
@@ -144,9 +142,8 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),
@@ -176,9 +173,8 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),
@@ -218,17 +214,15 @@ def test_two_passes_when_routing_multiple(tmp_path):
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),
             DatadirStructuralContext(
                 datadir=Path("/path/to/b"),
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),
@@ -279,9 +273,8 @@ def test_plan_urlify_enabled(tmp_path):
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),
@@ -303,9 +296,8 @@ def test_plan_urlify_enabled(tmp_path):
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),

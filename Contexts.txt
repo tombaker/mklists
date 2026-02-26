@@ -22,11 +22,13 @@ Structural Context - derived from filesystem structure
 - StructuralContext          - resolve_structural_context $MKLSTRUCTURE/contexts_run.py
   - DatadirStructuralContext - $MKLSTRUCTURE/contexts_datadir.py
 
-class DatadirContext:
+class DatadirStructuralContext:
     datadir: Path
     configfile_used: Path | None
-    config_context: ConfigContext
-    rules: list  # list[Rule]
+    config_rootdir: Path
+    rulefiles_found: list[Path]  # eg [parent/mklists.rules, datadir/.rules]
+    rulefiles_used: list[Path]  # after 'self-contained' rules
+    rules: list[Rule]  # parsed + validated from rulefiles_used
 
 class StructuralContext:
     config_rootdir: Path

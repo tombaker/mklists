@@ -25,9 +25,8 @@ def test_resolve_structural_context_repo_mode(tmp_path, monkeypatch):
     def fake_resolve_datadir_context(**kwargs):
         return DatadirStructuralContext(
             datadir=kwargs["datadir"],
-            configfile_found=None,
             configfile_used=None,
-            rulefiles_found=None,
+            config_rootdir=None,
             rulefiles_used=None,
             rules=[],
         )
@@ -48,17 +47,15 @@ def test_resolve_structural_context_repo_mode(tmp_path, monkeypatch):
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=tmp_path / "a",
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),
             DatadirStructuralContext(
                 datadir=tmp_path / "b",
-                configfile_found=None,
                 configfile_used=None,
-                rulefiles_found=None,
+                config_rootdir=None,
                 rulefiles_used=None,
                 rules=[],
             ),

@@ -1,0 +1,91 @@
+Now I am wondering if `_resolve_configfile_for_datadir` is really necessary.
+
+Currently it is used to determine the effective configfile:
+```
+    configfile_used = _resolve_configfile_for_datadir(
+        datadir=datadir,
+        repo_configfile=repo_configfile,
+    )
+```
+Why not just do the following?
+```
+    datadir_configfile = datadir / DATADIR_CONFIGFILE_NAME
+    if local_configfile.is_file():
+        configfile_used = local_configfile
+    else:
+        configfile_used = repo_configfile
+```
+
+
+
+Here, for reference, are `resolve_datadir_context` and `_resolve_configfile_for_datadir`:
+```
+def resolve_datadir_context(
+    *,
+    datadir: Path,
+    repo_configfile: Path | None,
+    repo_rulefile: Path | None,
+) -> DatadirStructuralContext:
+    """Resolve execution context for a single datadir.
+
+    Args:
+        datadir:
+        repo_configfile:
+        repo_rulefile:
+
+    Returns:
+        DatadirStructuralContext object holding execution context for a single datadir.
+    """
+
+    datadir = Path(datadir)
+
+    # Determine effective configfile.
+    configfile_used = _resolve_configfile_for_datadir(
+        datadir=datadir,
+        repo_configfile=repo_configfile,
+    )
+
+    # Config rootdir is directory that contains config file actually used.
+    # When there is no config file at all, config rootdir defaults to Datadir.
+    if configfile_used is None:
+        config_rootdir = datadir
+    else:
+        config_rootdir = configfile_used.parent
+
+    # If config root is at repo level, then any repo-level rules are used.
+    datadir_rulefile = datadir / DATADIR_RULEFILE_NAME
+    if config_rootdir != datadir and repo_rulefile is not None:
+        rulefiles_used = [repo_rulefile, datadir_rulefile]
+    else:
+        rulefiles_used = [datadir_rulefile]
+
+    # Parse rules
+    rules = load_rules_for_datadir(rulefiles_used)
+
+    return DatadirStructuralContext(
+        datadir=datadir,
+        configfile_used=configfile_used,
+        configfile_rootdir=configfile_rootdir,
+        rulefiles_used=rulefiles_used,
+        rules=rules,
+    )
+
+def _resolve_configfile_for_datadir(
+    *,
+    datadir: Path,
+    repo_configfile: Path | None,
+) -> Path | None:
+    """Return config file actually used for this datadir.
+
+    Args:
+        datadir:
+        repo_configfile:
+
+    Return:
+        Path of datadir actually used, or None.
+    """
+    local_configfile = datadir / DATADIR_CONFIGFILE_NAME
+    if local_configfile.is_file():
+        return local_configfile
+
+    return repo_configfile
