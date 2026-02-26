@@ -7,8 +7,8 @@ resolve_run_plan
 """
 
 from mklists.config import ConfigContext
-from mklists.structure.model import DatadirContext
-from mklists.plan.model import PassPlan, RunPlan, StructuralContext
+from mklists.structure.model import DatadirContext, StructuralContext
+from mklists.plan.model import PassPlan, RunPlan
 
 
 def resolve_run_plan(

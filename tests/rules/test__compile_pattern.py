@@ -9,7 +9,6 @@ Documentation should make this clear.
 import re
 import pytest
 from mklists.errors import RuleError
-from mklists.rules.model import Rule
 from mklists.rules.load import _compile_pattern
 
 

@@ -1,8 +1,6 @@
 """Returns passed-in filename after validation and type coercion."""
 
-import os
 import pytest
-from pathlib import Path
 from mklists.errors import FilenameError
 from mklists.rules.load import _validate_filename
 
@@ -13,6 +11,7 @@ def test_valid_filename():
 
 
 def test_filename_must_not_be_empty_string():
+    """@@@"""
     with pytest.raises(FilenameError):
         _validate_filename("")
 

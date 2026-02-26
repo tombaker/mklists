@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 from mklists.config import ConfigContext
-from mklists.structure.model import DatadirContext, StructuralContext
+from mklists.rules.model import Rule
 
 
 @dataclass(slots=True)

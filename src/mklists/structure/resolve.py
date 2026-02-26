@@ -1,6 +1,5 @@
 """Resolve execution context for a single datadir."""
 
-from dataclasses import dataclass
 from operator import attrgetter
 from pathlib import Path
 from mklists.errors import StructureError
