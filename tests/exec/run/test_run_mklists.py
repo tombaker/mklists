@@ -35,7 +35,7 @@ from pathlib import Path
 import pytest
 from mklists.config import ConfigContext
 from mklists.exec.run import run_mklists
-from mklists.structure.resolve import DatadirContext
+from mklists.structure.resolve import DatadirStructuralContext
 from mklists.plan.model import RunPlan, PassPlan
 
 
@@ -44,8 +44,22 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
     repo_cfg = Path("/repo/mklists.yaml")
 
     datadir_contexts = [
-        DatadirContext(datadir=Path("/repo/a"), configfile_used=repo_cfg, rules=[]),
-        DatadirContext(datadir=Path("/repo/b"), configfile_used=repo_cfg, rules=[]),
+        DatadirStructuralContext(
+            datadir=Path("/repo/a"), 
+            configfile_found=repo_cfg,
+            configfile_used=repo_cfg,
+            rulefiles_found=None,
+            rulefiles_used=None,
+            rules=[],
+        ),
+        DatadirStructuralContext(
+            datadir=Path("/repo/b"), 
+            configfile_found=repo_cfg,
+            configfile_used=repo_cfg,
+            rulefiles_found=None,
+            rulefiles_used=None,
+            rules=[],
+        ),
     ]
 
     execution_context = RunPlan(

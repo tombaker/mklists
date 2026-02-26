@@ -10,6 +10,7 @@ def test_resolve_effective_rulefiles_datadir_only(tmp_path):
     datadir_rulefile = tmp_path / ".rules"
 
     result = _resolve_effective_rulefiles(
+        datadir_configfile=None,
         datadir_rulefile=datadir_rulefile,
         repo_rulefile=None,
     )
@@ -24,11 +25,28 @@ def test_resolve_effective_rulefiles_repo_and_datadir(tmp_path):
     datadir_rulefile = datadir / ".rules"
 
     result = _resolve_effective_rulefiles(
+        datadir_configfile=None,
         datadir_rulefile=datadir_rulefile,
         repo_rulefile=repo_rulefile,
     )
 
     assert result == [repo_rulefile, datadir_rulefile]
+
+
+def test_resolve_effective_rulefiles_repo_and_datadir_datadir_selfcontained(tmp_path):
+    """Repo and datadir rulefiles are both present, but datadir is self-contained."""
+    repo_rulefile = tmp_path / "mklists.rules"
+    datadir = tmp_path / "a"
+    datadir_rulefile = datadir / ".rules"
+    datadir_configfile = datadir / ".mklistsrc"
+
+    result = _resolve_effective_rulefiles(
+        datadir_configfile=datadir_configfile,
+        datadir_rulefile=datadir_rulefile,
+        repo_rulefile=repo_rulefile,
+    )
+
+    assert result == [datadir_rulefile]
 
 
 def test_resolve_effective_rulefiles_repo_and_datadir_the_same(tmp_path):
@@ -40,11 +58,14 @@ def test_resolve_effective_rulefiles_repo_and_datadir_the_same(tmp_path):
 
     Given two rulefile paths, the function returns them in deterministic
     order. They enforce only that the datadir rulefile exists.
+
+    todo: Is this necessary?
     """
     repo = tmp_path / "mklists.rules"
     datadir = tmp_path / ".rules"
 
     result = _resolve_effective_rulefiles(
+        datadir_configfile=None,
         datadir_rulefile=datadir,
         repo_rulefile=repo,
     )
@@ -53,11 +74,15 @@ def test_resolve_effective_rulefiles_repo_and_datadir_the_same(tmp_path):
 
 
 def test_resolve_effective_rulefiles_repo_only_raises(tmp_path):
-    """Datadir rulefile is missing, so raises StructureError."""
+    """Datadir rulefile is missing, so raises StructureError.
+
+    todo: Is this necessary?
+    """
     repo = tmp_path / "mklists.rules"
 
     with pytest.raises(StructureError):
         _resolve_effective_rulefiles(
+            datadir_configfile=None,
             datadir_rulefile=None,
             repo_rulefile=repo,
         )
@@ -69,9 +94,12 @@ def test_resolve_effective_rulefiles_missing_datadir_raises():
     Given safeguards upstream, this should in practice never happen.
     The invariant is enforced here defensively for robustness and
     future-proofing.
+
+    todo: Is this necessary?
     """
     with pytest.raises(StructureError):
         _resolve_effective_rulefiles(
+            datadir_configfile=None,
             datadir_rulefile=None,
             repo_rulefile=None,
         )

@@ -10,7 +10,6 @@ Real filesystem not needed. Rather, tiny factories:
 """
 
 from pathlib import Path
-import pytest
 from mklists.config.model import (
     BackupConfig,
     RoutingConfig,
@@ -18,7 +17,7 @@ from mklists.config.model import (
     UrlifyConfig,
     ConfigContext,
 )
-from mklists.structure.model import DatadirContext, StructuralContext
+from mklists.structure.model import DatadirStructuralContext, StructuralContext
 from mklists.plan.model import (
     PassPlan,
     RunPlan,
@@ -73,15 +72,18 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         repo_configfile=None,
         repo_rulefile=None,
         datadir_contexts=[
-            DatadirContext(
+            DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
+                configfile_found=None,
                 configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
                 rules=[],
             ),
         ],
     )
 
-    fake_mklists_cfg = fake_make_config_context(
+    fake_config_context = fake_make_config_context(
         backup_enabled=False,
         routing_enabled=False,
         urlify_enabled=False,
@@ -89,7 +91,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 
     actual_execution_context = resolve_run_plan(
         run_context=run_context,
-        mklists_cfg=fake_mklists_cfg,
+        config_context=fake_config_context,
         datadir_contexts=run_context.datadir_contexts,
         run_id="2026-02-22_12341234",
     )
@@ -98,7 +100,14 @@ def test_plan_backups_disabled_one_pass(tmp_path):
     assert actual_execution_context.pass_plans[0].backup_snapshot_dir is None
     assert actual_execution_context == RunPlan(
         datadir_contexts=[
-            DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
+            DatadirStructuralContext(
+                datadir=Path("/path/to/a"),
+                configfile_found=None,
+                configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
+                rules=[],
+            ),
         ],
         pass_plans=[PassPlan(backup_snapshot_dir=None)],
         repo_configfile=None,
@@ -122,7 +131,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         len(pass_plans) == 1
         pass_plans[0].backup_snapshot_dir is None
     """
-    fake_cfg = fake_make_config_context(
+    fake_config_context = fake_make_config_context(
         backup_enabled=True,
         routing_enabled=False,
         urlify_enabled=False,
@@ -133,9 +142,12 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         repo_configfile=None,
         repo_rulefile=None,
         datadir_contexts=[
-            DatadirContext(
+            DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
+                configfile_found=None,
                 configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
                 rules=[],
             ),
         ],
@@ -144,14 +156,14 @@ def test_plan_backups_enabled_one_pass(tmp_path):
     # resolve_run_plan should make backup_root absolute.
     actual_execution_context = resolve_run_plan(
         run_context=run_context,
-        mklists_cfg=fake_cfg,
+        config_context=fake_config_context,
         datadir_contexts=run_context.datadir_contexts,  # from above
         run_id="2026-02-22_12341234",
     )
 
     assert len(actual_execution_context.pass_plans) == 1
 
-    expected_backup_rootdir = tmp_path / fake_cfg.backup.backup_rootdir
+    expected_backup_rootdir = tmp_path / fake_config_context.backup.backup_rootdir
     assert actual_execution_context.backup_rootdir == expected_backup_rootdir
 
     expected_backup_snapshot_dir = expected_backup_rootdir / "2026-02-22_12341234_01"
@@ -162,7 +174,14 @@ def test_plan_backups_enabled_one_pass(tmp_path):
 
     assert actual_execution_context == RunPlan(
         datadir_contexts=[
-            DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
+            DatadirStructuralContext(
+                datadir=Path("/path/to/a"),
+                configfile_found=None,
+                configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
+                rules=[],
+            ),
         ],
         repo_configfile=None,
         repo_rulefile=None,
@@ -186,7 +205,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
         2 passes
         directory created from timestamp
     """
-    fake_mklists_cfg = fake_make_config_context(
+    fake_config_context = fake_make_config_context(
         backup_enabled=True,
         routing_enabled=True,
         urlify_enabled=False,
@@ -197,14 +216,20 @@ def test_two_passes_when_routing_multiple(tmp_path):
         repo_configfile=None,
         repo_rulefile=None,
         datadir_contexts=[
-            DatadirContext(
+            DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
+                configfile_found=None,
                 configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
                 rules=[],
             ),
-            DatadirContext(
+            DatadirStructuralContext(
                 datadir=Path("/path/to/b"),
+                configfile_found=None,
                 configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
                 rules=[],
             ),
         ],
@@ -212,7 +237,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
 
     plan = resolve_run_plan(
         run_context=run_context,
-        mklists_cfg=fake_mklists_cfg,
+        config_context=fake_config_context,
         datadir_contexts=run_context.datadir_contexts,  # from above
         run_id="T",
     )
@@ -222,11 +247,11 @@ def test_two_passes_when_routing_multiple(tmp_path):
     # Expected backupdirs
     assert (
         plan.pass_plans[0].backup_snapshot_dir
-        == tmp_path / fake_mklists_cfg.backup.backup_rootdir / "T_01"
+        == tmp_path / fake_config_context.backup.backup_rootdir / "T_01"
     )
     assert (
         plan.pass_plans[1].backup_snapshot_dir
-        == tmp_path / fake_mklists_cfg.backup.backup_rootdir / "T_02"
+        == tmp_path / fake_config_context.backup.backup_rootdir / "T_02"
     )
 
 
@@ -241,7 +266,7 @@ def test_plan_urlify_enabled(tmp_path):
     Expect:
         Correct htmldir path.
     """
-    fake_mklists_cfg = fake_make_config_context(
+    fake_config_context = fake_make_config_context(
         backup_enabled=False,
         routing_enabled=False,
         urlify_enabled=True,
@@ -252,9 +277,12 @@ def test_plan_urlify_enabled(tmp_path):
         repo_configfile=None,
         repo_rulefile=None,
         datadir_contexts=[
-            DatadirContext(
+            DatadirStructuralContext(
                 datadir=Path("/path/to/a"),
+                configfile_found=None,
                 configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
                 rules=[],
             ),
         ],
@@ -262,7 +290,7 @@ def test_plan_urlify_enabled(tmp_path):
 
     actual_execution_context = resolve_run_plan(
         run_context=run_context,
-        mklists_cfg=fake_mklists_cfg,
+        config_context=fake_config_context,
         datadir_contexts=run_context.datadir_contexts,  # from above
         run_id="2026-02-22_12341234",
     )
@@ -273,7 +301,14 @@ def test_plan_urlify_enabled(tmp_path):
     assert len(actual_execution_context.pass_plans) == 1
     assert actual_execution_context == RunPlan(
         datadir_contexts=[
-            DatadirContext(datadir=Path("/path/to/a"), configfile_used=None, rules=[]),
+            DatadirStructuralContext(
+                datadir=Path("/path/to/a"),
+                configfile_found=None,
+                configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
+                rules=[],
+            ),
         ],
         pass_plans=[PassPlan(backup_snapshot_dir=None)],
         repo_configfile=None,

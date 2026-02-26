@@ -1,8 +1,45 @@
 """Tests $MKLSTRUCTURE/contexts.py"""
 
 from pathlib import Path
+import pytest
 from mklists.structure import resolve
-from mklists.structure.resolve import DatadirContext
+from mklists.structure.resolve import DatadirStructuralContext
+
+
+def test_rulefiles_found_differs_from_used_when_local_configfile_found(
+    tmp_path, monkeypatch
+):
+    """Local and repo rulefiles are discovered in self-contained, only local used."""
+    datadir = tmp_path
+
+    local_configfile = datadir / ".mklistsrc"
+    local_configfile.touch()
+
+    local_rulefile = datadir / ".rules"
+    local_rulefile.touch()
+
+    repo_rulefile = tmp_path / "mklists.rules"
+    repo_rulefile.touch()
+
+    monkeypatch.setattr(
+        target=resolve,
+        name="load_rules_for_datadir",
+        value=lambda _: [],
+        raising=True,
+    )
+
+    result = resolve.resolve_datadir_context(
+        datadir=datadir,
+        repo_configfile=None,
+        repo_rulefile=repo_rulefile,
+    )
+
+    # Structural invariant
+    assert result.rulefiles_found != result.rulefiles_used
+
+    # More precise expectations
+    assert result.rulefiles_found == [repo_rulefile, local_rulefile]
+    assert result.rulefiles_used == [local_rulefile]
 
 
 def test_resolve_datadir_context_local_config_and_rules(tmp_path, monkeypatch):
@@ -41,9 +78,12 @@ def test_resolve_datadir_context_local_config_and_rules(tmp_path, monkeypatch):
         repo_rulefile=None,
     )
 
-    expected = DatadirContext(
+    expected = DatadirStructuralContext(
         datadir=datadir,
+        configfile_found=local_cfg,
         configfile_used=local_cfg,
+        rulefiles_found=[local_rule],
+        rulefiles_used=[local_rule],
         rules=["R1"],
     )
 
@@ -56,8 +96,8 @@ def test_resolve_datadir_context_inherits_repo_config(tmp_path, monkeypatch):
     rulefile = datadir / ".rules"
     rulefile.touch()
 
-    repo_cfg = tmp_path / "mklists.yaml"
-    repo_cfg.touch()
+    repo_configfile = tmp_path / "mklists.yaml"
+    repo_configfile.touch()
 
     monkeypatch.setattr(
         target=resolve,
@@ -68,13 +108,16 @@ def test_resolve_datadir_context_inherits_repo_config(tmp_path, monkeypatch):
 
     result = resolve.resolve_datadir_context(
         datadir=datadir,
-        repo_configfile=repo_cfg,
+        repo_configfile=repo_configfile,
         repo_rulefile=None,
     )
 
-    expected = DatadirContext(
+    expected = DatadirStructuralContext(
         datadir=datadir,
-        configfile_used=repo_cfg,
+        configfile_found=None,
+        configfile_used=repo_configfile,
+        rulefiles_found=[rulefile],
+        rulefiles_used=[rulefile],
         rules=[],
     )
 

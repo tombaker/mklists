@@ -7,22 +7,22 @@ resolve_run_plan
 """
 
 from mklists.config import ConfigContext
-from mklists.structure.model import DatadirContext, StructuralContext
+from mklists.structure.model import DatadirStructuralContext, StructuralContext
 from mklists.plan.model import PassPlan, RunPlan
 
 
 def resolve_run_plan(
     *,
     run_context: StructuralContext,
-    mklists_cfg: ConfigContext,
-    datadir_contexts: list[DatadirContext],
+    config_context: ConfigContext,
+    datadir_contexts: list[DatadirStructuralContext],
     run_id: str,
 ) -> RunPlan:
     """Construct executable plan for this run.
 
     Args:
         run_context: Execution context for one Mklists run.
-        mklists_cfg: Instance of configuration object ConfigContext.
+        config_context: Instance of configuration object ConfigContext.
         datadir_contexts: List of Datadir execution contexts.
         run_id: Timestamp string;.
 
@@ -37,17 +37,17 @@ def resolve_run_plan(
     # ----- passes ----------------------------------------------------
     pass_plans: list[PassPlan] = []
 
-    if not mklists_cfg.backup.backup_enabled:
+    if not config_context.backup.backup_enabled:
         pass_plans.append(PassPlan(backup_snapshot_dir=None))
     else:
         pass_count = 1
-        if mklists_cfg.routing.routing_enabled and len(datadir_contexts) > 1:
+        if config_context.routing.routing_enabled and len(datadir_contexts) > 1:
             pass_count = 2
 
         for i in range(pass_count):
             backup_snapshot_dir = (
                 config_rootdir
-                / mklists_cfg.backup.backup_rootdir
+                / config_context.backup.backup_rootdir
                 / f"{run_id}_{i+1:02d}"
             )
             pass_plans.append(PassPlan(backup_snapshot_dir=backup_snapshot_dir))
@@ -64,20 +64,20 @@ def resolve_run_plan(
     # ----- backup ----------------------------------------------------
     backup_rootdir = None
     backup_depth = 0
-    if mklists_cfg.backup.backup_enabled:
-        if mklists_cfg.backup.backup_rootdir:
-            backup_rootdir = config_rootdir / mklists_cfg.backup.backup_rootdir
-            backup_depth = mklists_cfg.backup.backup_depth
+    if config_context.backup.backup_enabled:
+        if config_context.backup.backup_rootdir:
+            backup_rootdir = config_rootdir / config_context.backup.backup_rootdir
+            backup_depth = config_context.backup.backup_depth
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}
-    if mklists_cfg.routing.routing_enabled:
-        routing_dict = mklists_cfg.routing.routing_dict
+    if config_context.routing.routing_enabled:
+        routing_dict = config_context.routing.routing_dict
 
     # ----- html ------------------------------------------------------
     htmldir = None
-    if mklists_cfg.urlify.urlify_enabled:
-        htmldir = config_rootdir / mklists_cfg.urlify.urlify_dir
+    if config_context.urlify.urlify_enabled:
+        htmldir = config_rootdir / config_context.urlify.urlify_dir
 
     return RunPlan(
         datadir_contexts=datadir_contexts,

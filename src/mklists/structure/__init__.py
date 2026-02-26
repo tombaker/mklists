@@ -1,6 +1,6 @@
 """Convenience exports for structural types, resolvers, and marker names."""
 
-from mklists.structure.model import DatadirContext, StructuralContext
+from mklists.structure.model import DatadirStructuralContext, StructuralContext
 from mklists.structure.resolve import (
     resolve_datadir_context,
     resolve_structural_context,

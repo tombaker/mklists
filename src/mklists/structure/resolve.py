@@ -10,7 +10,7 @@ from mklists.structure.markers import (
     REPO_CONFIGFILE_NAME,
     REPO_RULEFILE_NAME,
 )
-from mklists.structure.model import DatadirContext, StructuralContext
+from mklists.structure.model import DatadirStructuralContext, StructuralContext
 
 
 def resolve_datadir_context(
@@ -18,7 +18,7 @@ def resolve_datadir_context(
     datadir: Path,
     repo_configfile: Path | None,
     repo_rulefile: Path | None,
-) -> DatadirContext:
+) -> DatadirStructuralContext:
     """Resolve execution context for a single datadir.
 
     Args:
@@ -27,32 +27,51 @@ def resolve_datadir_context(
         repo_rulefile:
 
     Returns:
-        DatadirContext object holding execution context for a single datadir.
+        DatadirStructuralContext object holding execution context for a single datadir.
+
+    class DatadirStructuralContext:
+        datadir: Path
+        configfile_found <-
+        configfile_used
+        rulefiles_found <-
+        rulefiles_used <-
+        rules
     """
 
     datadir = Path(datadir)
 
     # 1. Detect local markers
-    datadir_configfile = _find_datadir_configfile(datadir)
+    configfile_found = _find_datadir_configfile(datadir)
     datadir_rulefile = _find_datadir_rulefile(datadir)
 
     # 2. Determine effective configfile
     configfile_used = (
-        datadir_configfile if datadir_configfile is not None else repo_configfile
+        configfile_found if configfile_found is not None else repo_configfile
     )
 
-    # 3. Determine effective rulefiles
-    rulefile_paths = _resolve_effective_rulefiles(
+    # 3. Determine rulefiles found
+    rulefiles_found = []
+    if repo_rulefile is not None:
+        rulefiles_found.append(repo_rulefile)
+    if datadir_rulefile is not None:
+        rulefiles_found.append(datadir_rulefile)
+
+    # 4. Determine effective rulefiles
+    rulefiles_used = _resolve_effective_rulefiles(
+        datadir_configfile=configfile_found,
         datadir_rulefile=datadir_rulefile,
         repo_rulefile=repo_rulefile,
     )
 
-    # 4. Parse rules
-    rules = load_rules_for_datadir(rulefile_paths)
+    # 5. Parse rules
+    rules = load_rules_for_datadir(rulefiles_used)
 
-    return DatadirContext(
+    return DatadirStructuralContext(
         datadir=datadir,
+        configfile_found=configfile_found,
         configfile_used=configfile_used,
+        rulefiles_found=rulefiles_found,
+        rulefiles_used=rulefiles_used,
         rules=rules,
     )
 
@@ -87,19 +106,21 @@ def _find_datadir_rulefile(datadir: Path) -> Path | None:
 
 def _resolve_effective_rulefiles(
     *,
-    datadir_rulefile: Path | None,
+    datadir_configfile: Path | None,
+    datadir_rulefile: Path,
     repo_rulefile: Path | None,
 ) -> list[Path]:
     """Determine ordered list of rulefiles for a datadir.
 
     Args:
-        datadir_rulefile: Path to datadir-level rule file.
+        datadir_configfile: Path to datadir-level config file, if present.
+        datadir_rulefile: Path to datadir-level rule file (always present).
         repo_rulefile: Path repo-level rule file, if present.
 
     Returns:
         List of rulefile paths in application order:
-            1. Repo-level rulefile `mklists.rules` (if present)
-            2. Datadir-level rulefile `.rules` (required)
+        1. Repo-level rulefile `mklists.rules` (if present)
+        2. Datadir-level rulefile `.rules` (required)
 
     Raises:
         StructureError: If datadir_rulefile is None.
@@ -108,13 +129,14 @@ def _resolve_effective_rulefiles(
         This function only determines rulefile order.
         Validation of concatenated chain is performed by rules module.
     """
-    if datadir_rulefile is None:
+    if datadir_rulefile is None:  # todo: Is this really necessary?
         raise StructureError("Datadir must contain a rulefile.")
 
     effective_rulefiles: list[Path] = []
 
-    if repo_rulefile is not None:
-        effective_rulefiles.append(repo_rulefile)
+    if datadir_configfile is None:
+        if repo_rulefile is not None:
+            effective_rulefiles.append(repo_rulefile)
 
     effective_rulefiles.append(datadir_rulefile)
 
@@ -149,8 +171,8 @@ def resolve_structural_context(startdir: Path | str) -> StructuralContext:
     if not datadirs:
         raise StructureError("No datadirs found under repository root.")
 
-    # 4. Resolve each DatadirContext and build list.
-    datadir_contexts: list[DatadirContext] = []
+    # 4. Resolve each DatadirStructuralContext and build list.
+    datadir_contexts: list[DatadirStructuralContext] = []
 
     for datadir in datadirs:
         context = resolve_datadir_context(

@@ -6,15 +6,6 @@ from mklists.rules.model import Rule
 
 
 @dataclass(slots=True)
-class DatadirContext:
-    """Resolved execution context for a single Datadir."""
-
-    datadir: Path
-    configfile_used: Path | None
-    rules: list[Rule]
-
-
-@dataclass(slots=True)
 class DatadirStructuralContext:
     """Filesystem-derived context for one datadir."""
 
@@ -37,4 +28,4 @@ class StructuralContext:
     config_rootdir: Path
     repo_configfile: Path | None
     repo_rulefile: Path | None
-    datadir_contexts: list[DatadirContext]
+    datadir_contexts: list[DatadirStructuralContext]

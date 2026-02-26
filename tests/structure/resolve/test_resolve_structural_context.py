@@ -6,7 +6,7 @@ Monkeypatch `resolve_datadir_context` instead of relying on actual rule parsing.
 
 import pytest
 from mklists.structure import resolve
-from mklists.structure.model import DatadirContext, StructuralContext
+from mklists.structure.model import DatadirStructuralContext, StructuralContext
 from mklists.errors import StructureError
 
 
@@ -23,9 +23,12 @@ def test_resolve_structural_context_repo_mode(tmp_path, monkeypatch):
     (d2 / ".rules").touch()
 
     def fake_resolve_datadir_context(**kwargs):
-        return DatadirContext(
+        return DatadirStructuralContext(
             datadir=kwargs["datadir"],
+            configfile_found=None,
             configfile_used=None,
+            rulefiles_found=None,
+            rulefiles_used=None,
             rules=[],
         )
 
@@ -43,8 +46,22 @@ def test_resolve_structural_context_repo_mode(tmp_path, monkeypatch):
         repo_configfile=tmp_path / "mklists.yaml",
         repo_rulefile=None,
         datadir_contexts=[
-            DatadirContext(datadir=tmp_path / "a", configfile_used=None, rules=[]),
-            DatadirContext(datadir=tmp_path / "b", configfile_used=None, rules=[]),
+            DatadirStructuralContext(
+                datadir=tmp_path / "a",
+                configfile_found=None,
+                configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
+                rules=[],
+            ),
+            DatadirStructuralContext(
+                datadir=tmp_path / "b",
+                configfile_found=None,
+                configfile_used=None,
+                rulefiles_found=None,
+                rulefiles_used=None,
+                rules=[],
+            ),
         ],
     )
 
@@ -61,8 +78,8 @@ def test_runcontext_mixed_repo_and_local_configs(tmp_path):
     """Repo root has config, but one datadir overrides with .mklistsrc."""
 
     # Repo root config
-    repo_cfg = tmp_path / "mklists.yaml"
-    repo_cfg.touch()
+    repo_configfile = tmp_path / "mklists.yaml"
+    repo_configfile.touch()
 
     # Datadir A inherits repo config
     a = tmp_path / "a"
@@ -76,13 +93,13 @@ def test_runcontext_mixed_repo_and_local_configs(tmp_path):
     local_cfg = b / ".mklistsrc"
     local_cfg.touch()
 
-    run_ctx = resolve.resolve_structural_context(tmp_path)
+    structural_context = resolve.resolve_structural_context(tmp_path)
 
-    assert run_ctx.repo_configfile == repo_cfg
+    assert structural_context.repo_configfile == repo_configfile
 
     # find contexts
-    ctx_a = next(d for d in run_ctx.datadir_contexts if d.datadir == a)
-    ctx_b = next(d for d in run_ctx.datadir_contexts if d.datadir == b)
+    ctx_a = next(d for d in structural_context.datadir_contexts if d.datadir == a)
+    ctx_b = next(d for d in structural_context.datadir_contexts if d.datadir == b)
 
-    assert ctx_a.configfile_used == repo_cfg
+    assert ctx_a.configfile_used == repo_configfile
     assert ctx_b.configfile_used == local_cfg
