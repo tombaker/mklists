@@ -1,4 +1,4 @@
-"""@@@"""
+"""Resolved features for executing a Mklists run."""
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -6,39 +6,38 @@ from mklists.config import ConfigContext
 from mklists.rules.model import Rule
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class DatadirPlan:
-    """Execution-ready context for one datadir."""
+    """Execution plan for one datadir."""
 
     datadir: Path
     rules: list[Rule]
-    config_context: ConfigContext
+    rulefiles_used: list[Path]
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class PassPlan:
     """Execution plan for one pass of a Mklists run."""
 
-    backup_snapshot_dir: Path | None
+    snapshot_dir: Path | None
+    repo_configfile_found: Path | None
+    repo_rulefile_found: Path | None
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
+class SkippedDatadir:
+    """Metadata about datadirs in execution scope that are marked as self-contained."""
+
+    datadir: Path
+    datadir_configfile_found: Path
+
+
+@dataclass(frozen=True, slots=True)
 class RunPlan:
-    """Execution-ready context for one Mklists run.
+    """Execution plan for one Mklists run."""
 
-    Note:
-        This is a fully resolved execution specification (absolute paths only).
-        It includes what must be snapshotted to make the run reproducible.
-    """
-
-    datadir_contexts: list[DatadirPlan]
     pass_plans: list[PassPlan]
-
-    repo_configfile: Path | None
-    repo_rulefile: Path | None
-
-    backup_rootdir: Path | None
-    backup_depth: int
-
+    datadir_plans: list[DatadirPlan]
+    skipped_datadirs: list[SkippedDatadirPlan]
     routing_dict: dict
     htmldir: Path | None

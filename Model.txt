@@ -1,0 +1,52 @@
+---------------------------------------------------------
+$MKLMKL/structure/model.py
+
+class DatadirStructuralContext
+    datadir: Path
+    datadir_configfile_found: Path | None
+    datadir_rulefile: Path
+
+class StartdirStructuralContext
+    startdir: Path
+    repo_configfile_found: Path | None
+    repo_rulefile_found: Path | None
+
+class StructuralContext
+    startdir_context: StartdirStructuralContext
+    datadir_contexts: list[DatadirStructuralContext]
+
+---------------------------------------------------------
+$MKLMKL/config/model.py
+
+class ConfigContext
+    configfile_used: Path | None
+    config_rootdir: Path
+    verbose: bool
+    backup: BackupConfig
+    routing: RoutingConfig
+    safety: SafetyConfig
+    urlify: UrlifyConfig
+
+---------------------------------------------------------
+$MKLMKL/plan/model.py
+
+class DatadirPlan:
+    datadir: Path
+    rules: list[Rule]
+    rulefiles_used: list[Path]
+
+class PassPlan:
+    snapshot_dir: Path | None
+    repo_configfile_found: Path | None
+    repo_rulefile_found: Path | None
+
+class SkippedDatadir:
+    datadir: Path
+    datadir_configfile_found: Path
+
+class RunPlan
+    pass_plans: list[PassPlan]
+    datadir_plans: list[DatadirPlan]
+    skipped_datadirs: list[SkippedDatadirPlan]
+    routing_dict: dict
+    htmldir: Path | None

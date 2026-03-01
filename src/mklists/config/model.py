@@ -39,12 +39,7 @@ class UrlifyConfig:
 
 @dataclass(frozen=True, slots=True)
 class ConfigContext:
-    """Normalized, validated settings for processing one or more datadirs.
-
-    A single config instance is derived from built-in defaults plus an optional
-    config file. Multiple datadirs may share the same config instance when they
-    share the same effective config file.
-    """
+    """Normalized, validated settings for processing one or more datadirs."""
 
     # Provenance
     configfile_used: Path | None

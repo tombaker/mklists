@@ -121,3 +121,13 @@ cli.main()
   Backup helpers assume validated paths and copy filesystem state exactly; policy decisions (whether backups are enabled, retention depth, etc.) are handled at higher levels.
 
 This structure keeps responsibilities clear, avoids redundant computation, and makes the execution flow of `mklists` easy to reason about and test.
+Worth codifying as a convention:
+- *_found → filesystem discovery result (may be None)
+- *_used → a decision (effective inputs)
+- *_to_snapshot → planned side-effect inputs
+- *_dir / *_path → derived locations
+sets `config_rootdir` as follows:
+- If configfile found in startdir, config_rootdir is startdir.
+- Or if configfile found in parent of startdir, config_rootdir is parent of startdir.
+- Or if no configfile is found, config_rootdir is startdir.
+
