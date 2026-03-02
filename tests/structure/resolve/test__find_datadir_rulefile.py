@@ -1,6 +1,7 @@
 """Tests $MKLSTRUCTURE/resolve.py"""
 
 import pytest
+
 # from mklists.structure.resolve import _find_datadir_rulefile
 # from mklists.structure.markers import DATADIR_RULEFILE_NAME
 

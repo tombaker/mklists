@@ -46,7 +46,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     datadir_contexts = [
         DatadirStructuralContext(
-            datadir=Path("/repo/a"), 
+            datadir=Path("/repo/a"),
             configfile_found=repo_cfg,
             configfile_used=repo_cfg,
             rulefiles_found=None,
@@ -54,7 +54,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
             rules=[],
         ),
         DatadirStructuralContext(
-            datadir=Path("/repo/b"), 
+            datadir=Path("/repo/b"),
             configfile_found=repo_cfg,
             configfile_used=repo_cfg,
             rulefiles_found=None,

@@ -1,6 +1,7 @@
 """Tests $MKLSTRUCTURE/resolve.py"""
 
 import pytest
+
 # from mklists.structure.resolve import _resolve_effective_rulefiles
 # from mklists.errors import StructureError
 

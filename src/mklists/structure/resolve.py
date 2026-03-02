@@ -13,59 +13,6 @@ from mklists.structure.markers import (
 from mklists.structure.model import DatadirStructuralContext, StructuralContext
 
 
-def resolve_datadir_context(
-    *,
-    datadir: Path,
-    repo_configfile: Path | None,
-    repo_rulefile: Path | None,
-) -> DatadirStructuralContext:
-    """Resolve execution context for a single datadir.
-
-    Args:
-        datadir:
-        repo_configfile:
-        repo_rulefile:
-
-    Returns:
-        DatadirStructuralContext object holding execution context for a single datadir.
-    """
-
-    datadir = Path(datadir)
-    datadir_rulefile = datadir / DATADIR_RULEFILE_NAME
-    datadir_configfile = datadir / DATADIR_CONFIGFILE_NAME
-    is_self_contained = (datadir / DATADIR_CONFIGFILE_NAME).is_file()
-
-    if is_self_contained:
-        configfile_used = datadir_configfile
-    else:
-        configfile_used = repo_configfile  # As passed in; this could be None.
-
-    # Config rootdir is used for resolving relative paths in the config universe.
-    # It is the directory that contains config file actually used.
-    # When no config file exists, config rootdir defaults to Datadir.
-    if configfile_used is None:
-        config_rootdir = datadir
-    else:
-        config_rootdir = configfile_used.parent
-
-    # If Datadir is self-contained (config root is itself), ignore repo-level rules.
-    if (not is_self_contained) and repo_rulefile is not None:
-        rulefiles_used = [repo_rulefile, datadir_rulefile]
-    else:
-        rulefiles_used = [datadir_rulefile]
-
-    # Parse rules
-    rules = load_rules_for_datadir(rulefiles_used)
-
-    return DatadirStructuralContext(
-        datadir=datadir,
-        configfile_used=configfile_used,
-        config_rootdir=config_rootdir,
-        rulefiles_used=rulefiles_used,
-        rules=rules,
-    )
-
-
 def resolve_structural_context(startdir: Path | str) -> StructuralContext:
     """Derive structural context from filesystem layout.
 
@@ -193,3 +140,56 @@ def _determine_config_rootdir(
         return startdir
 
     raise StructureError("Directory is neither repository root nor datadir.")
+
+
+def _resolve_datadir_context(
+    *,
+    datadir: Path,
+    repo_configfile: Path | None,
+    repo_rulefile: Path | None,
+) -> DatadirStructuralContext:
+    """Resolve execution context for a single datadir.
+
+    Args:
+        datadir:
+        repo_configfile:
+        repo_rulefile:
+
+    Returns:
+        DatadirStructuralContext object holding execution context for a single datadir.
+    """
+
+    datadir = Path(datadir)
+    datadir_rulefile = datadir / DATADIR_RULEFILE_NAME
+    datadir_configfile = datadir / DATADIR_CONFIGFILE_NAME
+    is_self_contained = (datadir / DATADIR_CONFIGFILE_NAME).is_file()
+
+    if is_self_contained:
+        configfile_used = datadir_configfile
+    else:
+        configfile_used = repo_configfile  # As passed in; this could be None.
+
+    # Config rootdir is used for resolving relative paths in the config universe.
+    # It is the directory that contains config file actually used.
+    # When no config file exists, config rootdir defaults to Datadir.
+    if configfile_used is None:
+        config_rootdir = datadir
+    else:
+        config_rootdir = configfile_used.parent
+
+    # If Datadir is self-contained (config root is itself), ignore repo-level rules.
+    if (not is_self_contained) and repo_rulefile is not None:
+        rulefiles_used = [repo_rulefile, datadir_rulefile]
+    else:
+        rulefiles_used = [datadir_rulefile]
+
+    # Parse rules
+    rules = load_rules_for_datadir(rulefiles_used)
+
+    return DatadirStructuralContext(
+        datadir=datadir,
+        configfile_used=configfile_used,
+        config_rootdir=config_rootdir,
+        rulefiles_used=rulefiles_used,
+        rules=rules,
+    )

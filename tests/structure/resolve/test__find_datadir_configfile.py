@@ -1,6 +1,7 @@
 """Tests $MKLSTRUCTURE/resolve.py"""
 
 import pytest
+
 # from mklists.structure.resolve import _find_datadir_configfile
 # from mklists.structure.markers import DATADIR_CONFIGFILE_NAME
 
