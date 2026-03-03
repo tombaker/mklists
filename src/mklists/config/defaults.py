@@ -10,15 +10,18 @@ backup:
   backup_rootdir: backups
   backup_depth: 3
 
+# Linkification: After processing, data files can be written in HTML to given directory.
+urlify:
+  urlify_enabled: False
+  urlify_dir: html
+
 # Routing: Newly generated files with special names can be moved to given directories.
 routing:
   routing_enabled: False
-  routing_dict: {}
-  ## Example:
-  # routing_dict:
-  #   to_a.txt: a
-  #   to_b.txt: b
-  #   to_bar.txt: /Users/foo/bar
+  routing_dict:
+    to_a.txt: a
+    to_b.txt: b
+    to_bar.txt: /Users/foo/bar
 
 # Safety: Processing halts if safety criteria are violated.
 safety:
@@ -27,9 +30,4 @@ safety:
    - \\.tmp$
    - \\.vim$
    - "~$"
-
-# Urlification: After processing, data files can be written in HTML to given directory.
-urlify:
-  urlify_enabled: False
-  urlify_dir: html
 """
