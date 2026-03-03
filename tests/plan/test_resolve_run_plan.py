@@ -1,7 +1,7 @@
 """Tests $MKLMKL/plan.py: test that function resolves relative config paths to absolute.
 - Routing disabled. Expect: routing_dict is empty
-- Urlify disabled. Expect: htmldir is None
-- Urlify enabled. Expect: correct htmldir path
+- Linify disabled. Expect: htmldir is None
+- Linify enabled. Expect: correct htmldir path
 
 Real filesystem not needed. Rather, tiny factories:
 - fake_run_context
@@ -15,7 +15,7 @@ from mklists.config.model import (
     BackupConfig,
     RoutingConfig,
     SafetyConfig,
-    UrlifyConfig,
+    LinkifyConfig,
     ConfigContext,
 )
 from mklists.structure.model import DatadirStructuralContext, StructuralContext
@@ -29,8 +29,8 @@ from mklists.plan.resolve import resolve_run_plan
 def fake_make_config_context(
     *,
     backup_enabled: bool,
+    html_enabled: bool,
     routing_enabled: bool,
-    urlify_enabled: bool,
 ) -> ConfigContext:
     """Fake stand-in makes ConfigContext object by varying just three variables."""
     return ConfigContext(
@@ -49,9 +49,9 @@ def fake_make_config_context(
         safety=SafetyConfig(
             invalid_filename_patterns=[],
         ),
-        urlify=UrlifyConfig(
-            urlify_enabled=urlify_enabled,
-            urlify_dir=Path("html"),  # relative - resolved in plan
+        linkify=LinkifyConfig(
+            html_enabled=html_enabled,
+            html_dir=Path("html"),  # relative - resolved in plan
         ),
     )
 
@@ -63,7 +63,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
     Variables in fake ConfigContext:
         Backups disabled.
         Routing disabled.
-        Urlify disabled.
+        Linkify disabled.
 
     Expect:
         len(pass_plans) == 1
@@ -87,7 +87,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
     fake_config_context = fake_make_config_context(
         backup_enabled=False,
         routing_enabled=False,
-        urlify_enabled=False,
+        linkify_enabled=False,
     )
 
     actual_execution_context = resolve_run_plan(
@@ -126,7 +126,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
     Variables in fake ConfigContext:
         Backup ENABLED.
         Routing disabled.
-        Urlify disabled.
+        Linkify disabled.
 
     Expect:
         len(pass_plans) == 1
@@ -135,7 +135,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
     fake_config_context = fake_make_config_context(
         backup_enabled=True,
         routing_enabled=False,
-        urlify_enabled=False,
+        linkify_enabled=False,
     )
 
     structural_context = StructuralContext(
@@ -199,7 +199,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
     Variables in fake ConfigContext:
         Backup ENABLED.
         Routing ENABLED.
-        Urlify disabled.
+        Linkify disabled.
 
     Expect:
         2 passes
@@ -208,7 +208,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
     fake_config_context = fake_make_config_context(
         backup_enabled=True,
         routing_enabled=True,
-        urlify_enabled=False,
+        linkify_enabled=False,
     )
 
     structural_context = StructuralContext(
@@ -254,13 +254,13 @@ def test_two_passes_when_routing_multiple(tmp_path):
 
 
 @pytest.mark.skip(reason="Tightening RunPlan")
-def test_plan_urlify_enabled(tmp_path):
-    """Urlify enabled
+def test_plan_linkify_enabled(tmp_path):
+    """Linkify enabled
 
     Variables in fake ConfigContext:
         Backup disabled.
         Routing disabled.
-        Urlify ENABLED.
+        Linkify ENABLED.
 
     Expect:
         Correct htmldir path.
@@ -268,7 +268,7 @@ def test_plan_urlify_enabled(tmp_path):
     fake_config_context = fake_make_config_context(
         backup_enabled=False,
         routing_enabled=False,
-        urlify_enabled=True,
+        linkify_enabled=True,
     )
 
     structural_context = StructuralContext(

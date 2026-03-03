@@ -30,11 +30,11 @@ class SafetyConfig:
 
 
 @dataclass(slots=True, frozen=True)
-class UrlifyConfig:
+class LinkifyConfig:
     """Settings about writing data files in HTML to a desination directory."""
 
-    urlify_enabled: bool
-    urlify_dir: Path
+    html_enabled: bool
+    html_dir: Path
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,6 +48,6 @@ class ConfigContext:
     # Settings
     verbose: bool
     backup: BackupConfig
+    linkify: LinkifyConfig
     routing: RoutingConfig
     safety: SafetyConfig
-    urlify: UrlifyConfig

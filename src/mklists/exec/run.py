@@ -10,7 +10,7 @@ from mklists.exec.backups import (
 )
 from mklists.exec.process_datadirs import process_datadir
 from mklists.exec.routing import redistribute_datafiles
-from mklists.exec.urlify import urlify_datadirs
+from mklists.exec.linkify import linkify_datadirs
 
 
 def run_mklists(run_plan: RunPlan) -> None:
@@ -69,4 +69,4 @@ def run_mklists(run_plan: RunPlan) -> None:
                 )
 
     if run_plan.htmldir:
-        urlify_datadirs(datadirs=datadirs, htmldir=run_plan.htmldir)
+        linkify_datadirs(datadirs=datadirs, htmldir=run_plan.htmldir)

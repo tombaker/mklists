@@ -123,7 +123,7 @@ def _determine_config_rootdir(
 
         Config root directory may be used as:
         - base for backup directories
-        - base for urlify directories
+        - base for linkify directories
         
 
         if repo_configfile_found    -> is_repo_rootdir is_config_rootdir

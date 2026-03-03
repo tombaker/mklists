@@ -11,9 +11,9 @@ backup:
   backup_depth: 3
 
 # Linkification: After processing, data files can be written in HTML to given directory.
-urlify:
-  urlify_enabled: False
-  urlify_dir: html
+linkify:
+  html_enabled: False
+  html_dir: html
 
 # Routing: Newly generated files with special names can be moved to given directories.
 routing:

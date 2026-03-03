@@ -9,9 +9,9 @@ from mklists.rules.model import Rule
 from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.config.model import (
     BackupConfig,
+    LinkifyConfig,
     RoutingConfig,
     SafetyConfig,
-    UrlifyConfig,
     ConfigContext,
 )
 
@@ -262,28 +262,28 @@ def _make_safety_config(
     return SafetyConfig(invalid_filename_patterns=invalid_patterns)
 
 
-def _make_urlify_config(
+def _make_linkify_config(
     *,
     config_dict: dict[str, Any],
     config_rootdir: Path,
-) -> UrlifyConfig:
-    """Initialize instance of UrlifyConfig.
+) -> LinkifyConfig:
+    """Initialize instance of LinkifyConfig.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
         config_rootdir: Root directory of mklists repo.
 
     Returns:
-        Instance of UrlifyConfig initialized from config dictionary.
+        Instance of LinkifyConfig initialized from config dictionary.
 
     Note:
         Assumes all required keys are present.
     """
-    urlify_raw = config_dict["urlify"]
+    linkify_raw = config_dict["linkify"]
 
-    return UrlifyConfig(
-        urlify_enabled=bool(urlify_raw["urlify_enabled"]),
-        urlify_dir=(config_rootdir / urlify_raw["urlify_dir"]).resolve(),
+    return LinkifyConfig(
+        html_enabled=bool(linkify_raw["html_enabled"]),
+        html_dir=(config_rootdir / linkify_raw["html_dir"]).resolve(),
     )
 
 
@@ -317,7 +317,7 @@ def _make_config_context(
             config_dict=config_dict, config_rootdir=config_rootdir
         ),
         safety=_make_safety_config(config_dict=config_dict),
-        urlify=_make_urlify_config(
+        linkify=_make_linkify_config(
             config_dict=config_dict, config_rootdir=config_rootdir
         ),
     )

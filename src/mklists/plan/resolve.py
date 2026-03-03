@@ -76,8 +76,8 @@ def resolve_run_plan(
 
     # ----- html ------------------------------------------------------
     htmldir = None
-    if config_context.urlify.urlify_enabled:
-        htmldir = config_rootdir / config_context.urlify.urlify_dir
+    if config_context.linkify.html_enabled:
+        htmldir = config_rootdir / config_context.linkify.htmldir
 
     return RunPlan(
         datadir_contexts=datadir_contexts,

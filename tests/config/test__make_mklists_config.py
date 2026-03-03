@@ -9,7 +9,7 @@ from mklists.config.model import (
     BackupConfig,
     RoutingConfig,
     SafetyConfig,
-    UrlifyConfig,
+    LinkifyConfig,
     ConfigContext,
 )
 from mklists.config.resolve import _make_config_context
@@ -32,9 +32,9 @@ def minimal_valid_configdict():
         "safety": {
             "invalid_filename_patterns": [],
         },
-        "urlify": {
-            "urlify_enabled": False,
-            "urlify_dir": "html",
+        "linkify": {
+            "html_enabled": False,
+            "html_dir": "html",
         },
     }
 
@@ -67,9 +67,9 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
         safety=SafetyConfig(
             invalid_filename_patterns=[],
         ),
-        urlify=UrlifyConfig(
-            urlify_enabled=False,
-            urlify_dir=tmp_path / "html",
+        linkify=LinkifyConfig(
+            html_enabled=False,
+            html_dir=tmp_path / "html",
         ),
     )
 
@@ -83,7 +83,7 @@ def test_make_mklists_config_resolves_paths(minimal_valid_configdict, tmp_path):
     )
 
     assert config_context.backup.backup_rootdir == (tmp_path / "backups").resolve()
-    assert config_context.urlify.urlify_dir == (tmp_path / "html").resolve()
+    assert config_context.linkify.html_dir == (tmp_path / "html").resolve()
 
 
 def test_make_mklists_config_compiles_regexes(minimal_valid_configdict, tmp_path):
