@@ -1,4 +1,4 @@
-"""Resolve ConfigContext from defaults and optional user config file."""
+"""Resolve Config from defaults and optional user config file."""
 
 from copy import deepcopy
 from pathlib import Path
@@ -12,21 +12,21 @@ from mklists.config.model import (
     LinkifyConfig,
     RoutingConfig,
     SafetyConfig,
-    ConfigContext,
+    Config,
 )
 
 
 def resolve_config_context(
     config_rootdir: Path,
     configfile_used: Path | None,
-) -> ConfigContext:
+) -> Config:
     """Derive settings from built-in defaults and optional user-defined config file.
 
     Args:
         configfile_used: Path of user-defined config file to use, if available.
 
     Returns:
-        Instance of configuration object ConfigContext.
+        Instance of configuration object Config.
 
     Note:
         Is no user-defined config file is found, uses only built-in defaults.
@@ -292,8 +292,8 @@ def _make_config_context(
     config_dict: dict,
     config_rootdir: Path,
     configfile_used: Path | None,
-) -> ConfigContext:
-    """Normalize and validate merged config dict into ConfigContext.
+) -> Config:
+    """Normalize and validate merged config dict into Config.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
@@ -301,12 +301,12 @@ def _make_config_context(
         configfile_used: Config file actually used.
 
     Returns:
-        Instance of ConfigContext initialized from config dictionary.
+        Instance of Config initialized from config dictionary.
 
     Note:
         Assumes all required keys are present.
     """
-    return ConfigContext(
+    return Config(
         configfile_used=configfile_used,
         config_rootdir=config_rootdir,
         verbose=config_dict["verbose"],

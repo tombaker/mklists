@@ -1,7 +1,7 @@
 """Orchestration of a Mklists execution run."""
 
 from pathlib import Path
-from mklists.config import resolve_config_context, ConfigContext
+from mklists.config import resolve_config_context, Config
 from mklists.plan.model import RunPlan
 from mklists.exec.backups import (
     backup_datadirs,
@@ -44,7 +44,7 @@ def run_mklists(run_plan: RunPlan) -> None:
                     backup_depth=run_plan.backup_depth,
                 )
 
-        configs_by_path: dict[Path | None, ConfigContext] = {}
+        configs_by_path: dict[Path | None, Config] = {}
 
         for datadir_context in run_plan.datadir_contexts:
             config_path = datadir_context.configfile_used

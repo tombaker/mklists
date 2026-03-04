@@ -33,7 +33,7 @@ Principles:
 
 from pathlib import Path
 import pytest
-from mklists.config import ConfigContext
+from mklists.config import Config
 from mklists.exec.run import run_mklists
 from mklists.structure.resolve import DatadirStructuralContext
 from mklists.plan.model import RunPlan, PassPlan
@@ -76,9 +76,9 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     calls: list[Path | None] = []
 
-    # The real `resolve_config_context` returns a ConfigContext object that can be
+    # The real `resolve_config_context` returns a Config object that can be
     # passed to `process_datadir`.
-    # But we are not testing ConfigContext here: `fake_resolve_config_context` can
+    # But we are not testing Config here: `fake_resolve_config_context` can
     # return a trivial, fake object because that object is never inspected (see below).
     def fake_resolve_config_context(configfile_used: Path | None):
         calls.append(configfile_used)

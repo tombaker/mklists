@@ -10,7 +10,7 @@ from mklists.config.model import (
     RoutingConfig,
     SafetyConfig,
     LinkifyConfig,
-    ConfigContext,
+    Config,
 )
 from mklists.config.resolve import _make_config_context
 
@@ -47,11 +47,11 @@ def test_make_mklists_config_from_dict_success(minimal_valid_configdict, tmp_pat
         configfile_used=Path("foo"),
     )
 
-    assert isinstance(config_context, ConfigContext)
+    assert isinstance(config_context, Config)
     assert config_context.backup.backup_enabled is False
     assert config_context.routing.routing_enabled is False
 
-    assert config_context == ConfigContext(
+    assert config_context == Config(
         verbose=False,
         config_rootdir=tmp_path,
         configfile_used=Path("foo"),

@@ -18,7 +18,7 @@ class StructuralContext
 ---------------------------------------------------------
 $MKLMKL/config/model.py
 
-class ConfigContext
+class Config
     configfile_used: Path | None
     config_rootdir: Path
     verbose: bool

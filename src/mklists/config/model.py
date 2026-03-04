@@ -38,7 +38,7 @@ class LinkifyConfig:
 
 
 @dataclass(frozen=True, slots=True)
-class ConfigContext:
+class Config:
     """Normalized, validated settings for processing one or more datadirs."""
 
     # Provenance

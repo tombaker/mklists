@@ -3,10 +3,10 @@
 from pathlib import Path
 from mklists.config.model import (
     BackupConfig,
-    ConfigContext,
     LinkifyConfig,
     RoutingConfig,
     SafetyConfig,
+    Config,
 )
 from mklists.structure.model import (
     DatadirStructuralContext,
@@ -21,9 +21,9 @@ def fake_make_config_context(
     *,
     backup_enabled: bool,
     routing_enabled: bool = False,
-) -> ConfigContext:
-    """Fake stand-in makes ConfigContext object by varying key variables."""
-    return ConfigContext(
+) -> Config:
+    """Fake stand-in makes Config object by varying key variables."""
+    return Config(
         verbose=False,
         configfile_used=Path("foo"),
         config_rootdir=Path("bar"),

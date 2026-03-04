@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from mklists.config import ConfigContext
+from mklists.config import Config
 from mklists.rules.model import Rule
 
 

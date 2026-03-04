@@ -16,7 +16,7 @@ from mklists.config.model import (
     RoutingConfig,
     SafetyConfig,
     LinkifyConfig,
-    ConfigContext,
+    Config,
 )
 from mklists.structure.model import DatadirStructuralContext, StructuralContext
 from mklists.plan.model import (
@@ -31,9 +31,9 @@ def fake_make_config_context(
     backup_enabled: bool,
     html_enabled: bool,
     routing_enabled: bool,
-) -> ConfigContext:
-    """Fake stand-in makes ConfigContext object by varying just three variables."""
-    return ConfigContext(
+) -> Config:
+    """Fake stand-in makes Config object by varying just three variables."""
+    return Config(
         verbose=False,
         configfile_used=Path("foo"),
         config_rootdir=Path("bar"),
@@ -60,7 +60,7 @@ def fake_make_config_context(
 def test_plan_backups_disabled_one_pass(tmp_path):
     """One Datadir.
 
-    Variables in fake ConfigContext:
+    Variables in fake Config:
         Backups disabled.
         Routing disabled.
         Linkify disabled.
@@ -123,7 +123,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 def test_plan_backups_enabled_one_pass(tmp_path):
     """One Datadir.
 
-    Variables in fake ConfigContext:
+    Variables in fake Config:
         Backup ENABLED.
         Routing disabled.
         Linkify disabled.
@@ -196,7 +196,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
 def test_two_passes_when_routing_multiple(tmp_path):
     """Multiple Datadirs.
 
-    Variables in fake ConfigContext:
+    Variables in fake Config:
         Backup ENABLED.
         Routing ENABLED.
         Linkify disabled.
@@ -257,7 +257,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
 def test_plan_linkify_enabled(tmp_path):
     """Linkify enabled
 
-    Variables in fake ConfigContext:
+    Variables in fake Config:
         Backup disabled.
         Routing disabled.
         Linkify ENABLED.

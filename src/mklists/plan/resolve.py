@@ -1,7 +1,7 @@
 """Plan of a Mklists execution run."""
 
 from datetime import datetime, UTC
-from mklists.config import ConfigContext
+from mklists.config import Config
 from mklists.structure.model import (
     DatadirStructuralContext,
     StartdirStructuralContext,
@@ -18,14 +18,14 @@ from mklists.plan.model import (
 def resolve_run_plan(
     *,
     structural_context: StructuralContext,
-    config_context: ConfigContext,
+    config_context: Config,
     run_id: str,
 ) -> RunPlan:
     """Construct executable plan for this run.
 
     Args:
         structural_context: Execution context for one Mklists run.
-        config_context: Instance of configuration object ConfigContext.
+        config_context: Instance of configuration object Config.
 
     Returns:
         RunPlan object, holding info needed for execution.
@@ -69,13 +69,13 @@ def resolve_run_plan(
 def _resolve_pass_plans(
     *,
     structural_context: StructuralContext,
-    config_context: ConfigContext,
+    config_context: Config,
 ) -> list[PassPlan]:
     """Construct executable plan for this run.
 
     Args:
         structural_context: Execution context for one Mklists run.
-        config_context: Instance of configuration object ConfigContext.
+        config_context: Instance of configuration object Config.
 
     Returns:
         List of PassPlan instances.
