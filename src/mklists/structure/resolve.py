@@ -80,18 +80,6 @@ def _find_datadirs(config_rootdir: Path | str) -> list[Path]:
     return sorted(datadirs, key=attrgetter("name"))
 
 
-def _find_repo_configfile(dirpath: Path) -> Path | None:
-    """Return repo config file if present in dirpath."""
-    candidate = dirpath / REPO_CONFIGFILE_NAME
-    return candidate if candidate.is_file() else None
-
-
-def _find_repo_rulefile(dirpath: Path) -> Path | None:
-    """Return repo rulefile if present in dirpath."""
-    candidate = dirpath / REPO_RULEFILE_NAME
-    return candidate if candidate.is_file() else None
-
-
 def _resolve_datadir_context(datadir: Path) -> DatadirStructuralContext:
     """Resolve execution context for a single datadir.
 
