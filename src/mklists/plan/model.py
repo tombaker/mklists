@@ -20,8 +20,7 @@ class PassPlan:
     """Execution plan for one pass of a Mklists run."""
 
     snapshot_dir: Path | None
-    repo_configfile_found: Path | None
-    repo_rulefile_found: Path | None
+    snapshot_repofiles_to_copy: list[Path]
 
 
 @dataclass(frozen=True, slots=True)

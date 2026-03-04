@@ -1,21 +1,24 @@
-"""Plan of a Mklists execution run.
+"""Plan of a Mklists execution run."""
 
-resolve_run_plan
-├── compute run_id (timestamp)
-├── decide number of passes
-└── produce concrete pass directories
-"""
-
+from datetime import datetime, UTC
 from mklists.config import ConfigContext
-from mklists.structure.model import DatadirStructuralContext, StructuralContext
-from mklists.plan.model import PassPlan, RunPlan
+from mklists.structure.model import (
+    DatadirStructuralContext, 
+    StartdirStructuralContext, 
+    StructuralContext,
+)
+from mklists.plan.model import (
+    DatadirPlan,
+    PassPlan, 
+    SkippedDatadir,
+    RunPlan,
+)
 
 
 def resolve_run_plan(
     *,
     structural_context: StructuralContext,
     config_context: ConfigContext,
-    datadir_contexts: list[DatadirStructuralContext],
     run_id: str,
 ) -> RunPlan:
     """Construct executable plan for this run.
@@ -23,7 +26,6 @@ def resolve_run_plan(
     Args:
         structural_context: Execution context for one Mklists run.
         config_context: Instance of configuration object ConfigContext.
-        datadir_contexts: List of Datadir execution contexts.
         run_id: Timestamp string;.
 
     Returns:
@@ -35,22 +37,11 @@ def resolve_run_plan(
     config_rootdir = structural_context.config_rootdir
 
     # ----- passes ----------------------------------------------------
-    pass_plans: list[PassPlan] = []
 
-    if not config_context.backup.backup_enabled:
-        pass_plans.append(PassPlan(backup_snapshot_dir=None))
-    else:
-        pass_count = 1
-        if config_context.routing.routing_enabled and len(datadir_contexts) > 1:
-            pass_count = 2
-
-        for i in range(pass_count):
-            backup_snapshot_dir = (
-                config_rootdir
-                / config_context.backup.backup_rootdir
-                / f"{run_id}_{i+1:02d}"
-            )
-            pass_plans.append(PassPlan(backup_snapshot_dir=backup_snapshot_dir))
+    pass_plans = _resolve_pass_plans(
+        structural_context=structural_context,
+        config_context=config_context,
+    )
 
     # ----- repo-level config -----------------------------------------
     repo_configfile = None
@@ -80,12 +71,78 @@ def resolve_run_plan(
         htmldir = config_rootdir / config_context.linkify.htmldir
 
     return RunPlan(
-        datadir_contexts=datadir_contexts,
         pass_plans=pass_plans,
-        repo_configfile=repo_configfile,
-        repo_rulefile=repo_rulefile,
-        backup_rootdir=backup_rootdir,
-        backup_depth=backup_depth,
+        datadir_plans=datadir_plans,
+        skipped_datadirs=skipped_datadirs,
         routing_dict=routing_dict,
         htmldir=htmldir,
     )
+
+
+TIMESTAMP = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%f")
+
+
+def _resolve_pass_plans(
+    *,
+    structural_context: StructuralContext,
+    config_context: ConfigContext,
+) -> RunPlan:
+    """Construct executable plan for this run.
+
+    Args:
+        structural_context: Execution context for one Mklists run.
+        config_context: Instance of configuration object ConfigContext.
+        datadir_contexts: List of Datadir execution contexts.
+        run_id: Timestamp string;.
+
+    Returns:
+        RunPlan object, holding info needed for execution.
+
+    Note:
+        Responsible for resolving relative config paths to absolute.
+    """
+    config_rootdir = structural_context.config_rootdir
+
+    pass_plans: list[PassPlan] = []
+
+    if not config_context.backup.backup_enabled:
+        pass_plans.append(
+            PassPlan(
+                snapshot_dir=None,
+                snapshot_repofiles_to_copy=[],
+            )
+        )
+    else:
+        pass_count = 1
+        if config_context.routing.routing_enabled and len(datadir_contexts) > 1:
+            pass_count = 2
+
+        for i in range(pass_count):
+            snapshot_dir = (
+                config_rootdir
+                / config_context.backup.backup_rootdir
+                / f"{TIMESTAMP}_{i+1:02d}"
+            )
+
+            snapshot_repofiles_to_copy = []
+            repo_configfile_found = (
+                structural_context.startdir_context.repo_configfile_found
+            )
+            if repo_configfile_found:
+                snapshot_repofiles_to_copy.append(repo_configfile_found)
+
+            repo_rulefile_found = (
+                structural_context.startdir_context.repo_rulefile_found
+            )
+            if repo_rulefile_found:
+                snapshot_repofiles_to_copy.append(repo_rulefile_found)
+
+            pass_plans.append(
+                PassPlan(
+                    snapshot_dir=snapshot_dir,
+                    snapshot_repofiles_to_copy=snapshot_repofiles_to_copy,
+                )
+            )
+
+    return pass_plans
+
