@@ -16,6 +16,8 @@ from mklists.structure.model import (
 from mklists.structure.resolve import resolve_structural_context
 
 
+# ─── Error conditions ─────────────────────────────────────────
+
 def test_raises_when_startdir_has_no_markers(tmp_path):
     """Raises if startdir has no repo or datadir markers."""
     with pytest.raises(StructureError):
@@ -59,6 +61,9 @@ def test_returns_structural_context_instance(tmp_path):
     assert isinstance(resolve_structural_context(tmp_path), StructuralContext)
 
 
+# ─── Basic return types ───────────────────────────────────────
+
+
 def test_startdir_context_type(tmp_path):
     """startdir_context field is StartdirStructuralContext instance."""
     (tmp_path / DATADIR_RULEFILE_NAME).touch()
@@ -85,6 +90,9 @@ def test_accepts_string_path(tmp_path):
     structural_context = resolve_structural_context(str(tmp_path))
 
     assert isinstance(structural_context, StructuralContext)
+
+
+# ─── Repo root: startdir has mklists.yaml or mklists.rules ───────────────────
 
 
 @pytest.mark.parametrize(
@@ -154,7 +162,7 @@ def test_repo_root_multiple_datadirs_all_included(tmp_path):
     assert len(context.datadir_contexts) == 2
 
 
-def test_repo_root_multiple_datadirs_all_included_even_if_selfcontained(tmp_path):
+def test_repo_root_includes_selfcontained_datadirs(tmp_path):
     """All datadirs under repo root, even if self-contained, listed in context."""
     (tmp_path / REPO_CONFIGFILE_NAME).touch()
     for name in ["alpha", "beta"]:
@@ -220,6 +228,8 @@ def test_repo_root_subdirs_without_rules_are_excluded(tmp_path):
 
     assert len(structural_context.datadir_contexts) == 1
     assert structural_context.datadir_contexts[0].datadir == included
+
+# ─── Standalone datadir behaviour ─────────────────────────────
 
 
 def test_standalone_datadir_returns_single_context(tmp_path):
