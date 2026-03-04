@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from mklists.rules.model import Rule
+from mklists.errors import StructureError
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,25 +26,29 @@ class StartdirStructuralContext:
 
     @property
     def is_repo_root(self) -> bool:
+        """Startdir is root directory of a repository of datadirs."""
         return bool(self.repo_configfile_found or self.repo_rulefile_found)
 
     @property
     def is_datadir_selfcontained(self) -> bool:
+        """Startdir is a self-contained datadir."""
         return bool(self.datadir_rulefile_found and self.datadir_configfile_found)
 
     @property
     def is_datadir_in_repo(self) -> bool:
+        """Startdir is a datadir within a repository of datadirs."""
         return bool(self.datadir_rulefile_found and not self.datadir_configfile_found)
 
     @property
     def config_rootdir(self) -> Path:
-        """Used for resolving relative paths in config universe."""
+        """Base directory for resolving relative paths in config universe."""
         if self.is_repo_root or self.is_datadir_selfcontained:
             return self.startdir
-        elif self.is_datadir_in_repo:
+
+        if self.is_datadir_in_repo:
             return self.startdir.parent
-        else:
-            raise StructureError("Unreachable structural state.")
+
+        raise StructureError("Unreachable structural state.")
 
 
 @dataclass(frozen=True, slots=True)
