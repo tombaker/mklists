@@ -3,7 +3,6 @@
 from operator import attrgetter
 from pathlib import Path
 from mklists.errors import StructureError
-from mklists.rules.load import load_rules_for_datadir
 from mklists.structure.markers import (
     DATADIR_CONFIGFILE_NAME,
     DATADIR_RULEFILE_NAME,
