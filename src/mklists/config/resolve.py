@@ -16,7 +16,7 @@ from mklists.config.model import (
 )
 
 
-def resolve_config_context(
+def resolve_config(
     config_rootdir: Path,
     configfile_used: Path | None,
 ) -> Config:
@@ -33,7 +33,7 @@ def resolve_config_context(
     """
     config_dict = _load_merged_configdict(configfile_used=configfile_used)
 
-    return _make_config_context(
+    return _make_config(
         config_dict=config_dict,
         config_rootdir=config_rootdir,
         configfile_used=configfile_used,
@@ -287,7 +287,7 @@ def _make_linkify_config(
     )
 
 
-def _make_config_context(
+def _make_config(
     *,
     config_dict: dict,
     config_rootdir: Path,

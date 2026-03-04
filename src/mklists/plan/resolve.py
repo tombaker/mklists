@@ -18,14 +18,14 @@ from mklists.plan.model import (
 def resolve_run_plan(
     *,
     structural_context: StructuralContext,
-    config_context: Config,
+    config: Config,
     run_id: str,
 ) -> RunPlan:
     """Construct executable plan for this run.
 
     Args:
         structural_context: Execution context for one Mklists run.
-        config_context: Instance of configuration object Config.
+        config: Instance of configuration object Config.
 
     Returns:
         RunPlan object, holding info needed for execution.
@@ -35,13 +35,13 @@ def resolve_run_plan(
     # ----- pass plans (backup directories) ---------------------------
     pass_plans = _resolve_pass_plans(
         structural_context=structural_context,
-        config_context=config_context,
+        config=config,
     )
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}
-    if config_context.routing.routing_enabled:
-        routing_dict = config_context.routing.routing_dict
+    if config.routing.routing_enabled:
+        routing_dict = config.routing.routing_dict
 
     # ----- repo-level config -----------------------------------------
     repo_configfile = None
@@ -54,8 +54,8 @@ def resolve_run_plan(
 
     # ----- html ------------------------------------------------------
     htmldir = None
-    if config_context.linkify.html_enabled:
-        htmldir = config_rootdir / config_context.linkify.htmldir
+    if config.linkify.html_enabled:
+        htmldir = config_rootdir / config.linkify.htmldir
 
     return RunPlan(
         pass_plans=pass_plans,
@@ -69,13 +69,13 @@ def resolve_run_plan(
 def _resolve_pass_plans(
     *,
     structural_context: StructuralContext,
-    config_context: Config,
+    config: Config,
 ) -> list[PassPlan]:
     """Construct executable plan for this run.
 
     Args:
         structural_context: Execution context for one Mklists run.
-        config_context: Instance of configuration object Config.
+        config: Instance of configuration object Config.
 
     Returns:
         List of PassPlan instances.
@@ -85,11 +85,11 @@ def _resolve_pass_plans(
 
     # Determine pass count.
     pass_count = 1
-    if config_context.routing.routing_enabled and len(datadir_contexts) > 1:
+    if config.routing.routing_enabled and len(datadir_contexts) > 1:
         pass_count = 2
 
     # Determine snapshot fields (None when backup disabled).
-    if not config_context.backup.backup_enabled:
+    if not config.backup.backup_enabled:
         timestamp = None
         snapshot_repofiles_to_copy = []
     else:
@@ -107,7 +107,7 @@ def _resolve_pass_plans(
         PassPlan(
             snapshot_dir=(
                 config_rootdir
-                / config_context.backup.backup_rootdir
+                / config.backup.backup_rootdir
                 / f"{timestamp}_{i+1:02d}"
                 if timestamp
                 else None

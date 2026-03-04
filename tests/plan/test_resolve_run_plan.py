@@ -26,7 +26,7 @@ from mklists.plan.model import (
 #from mklists.plan.resolve import resolve_run_plan
 
 
-def fake_make_config_context(
+def fake_make_config(
     *,
     backup_enabled: bool,
     html_enabled: bool,
@@ -84,7 +84,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         ],
     )
 
-    fake_config_context = fake_make_config_context(
+    fake_config = fake_make_config(
         backup_enabled=False,
         routing_enabled=False,
         linkify_enabled=False,
@@ -92,7 +92,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
 
     actual_execution_context = resolve_run_plan(
         structural_context=structural_context,
-        config_context=fake_config_context,
+        config=fake_config,
         datadir_contexts=structural_context.datadir_contexts,
         run_id="2026-02-22_12341234",
     )
@@ -132,7 +132,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         len(pass_plans) == 1
         pass_plans[0].backup_snapshot_dir is None
     """
-    fake_config_context = fake_make_config_context(
+    fake_config = fake_make_config(
         backup_enabled=True,
         routing_enabled=False,
         linkify_enabled=False,
@@ -156,14 +156,14 @@ def test_plan_backups_enabled_one_pass(tmp_path):
     # resolve_run_plan should make backup_root absolute.
     actual_execution_context = resolve_run_plan(
         structural_context=structural_context,
-        config_context=fake_config_context,
+        config=fake_config,
         datadir_contexts=structural_context.datadir_contexts,  # from above
         run_id="2026-02-22_12341234",
     )
 
     assert len(actual_execution_context.pass_plans) == 1
 
-    expected_backup_rootdir = tmp_path / fake_config_context.backup.backup_rootdir
+    expected_backup_rootdir = tmp_path / fake_config.backup.backup_rootdir
     assert actual_execution_context.backup_rootdir == expected_backup_rootdir
 
     expected_backup_snapshot_dir = expected_backup_rootdir / "2026-02-22_12341234_01"
@@ -205,7 +205,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
         2 passes
         directory created from timestamp
     """
-    fake_config_context = fake_make_config_context(
+    fake_config = fake_make_config(
         backup_enabled=True,
         routing_enabled=True,
         linkify_enabled=False,
@@ -235,7 +235,7 @@ def test_two_passes_when_routing_multiple(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=structural_context,
-        config_context=fake_config_context,
+        config=fake_config,
         datadir_contexts=structural_context.datadir_contexts,  # from above
         run_id="T",
     )
@@ -245,11 +245,11 @@ def test_two_passes_when_routing_multiple(tmp_path):
     # Expected backupdirs
     assert (
         plan.pass_plans[0].backup_snapshot_dir
-        == tmp_path / fake_config_context.backup.backup_rootdir / "T_01"
+        == tmp_path / fake_config.backup.backup_rootdir / "T_01"
     )
     assert (
         plan.pass_plans[1].backup_snapshot_dir
-        == tmp_path / fake_config_context.backup.backup_rootdir / "T_02"
+        == tmp_path / fake_config.backup.backup_rootdir / "T_02"
     )
 
 
@@ -265,7 +265,7 @@ def test_plan_linkify_enabled(tmp_path):
     Expect:
         Correct htmldir path.
     """
-    fake_config_context = fake_make_config_context(
+    fake_config = fake_make_config(
         backup_enabled=False,
         routing_enabled=False,
         linkify_enabled=True,
@@ -288,7 +288,7 @@ def test_plan_linkify_enabled(tmp_path):
 
     actual_execution_context = resolve_run_plan(
         structural_context=structural_context,
-        config_context=fake_config_context,
+        config=fake_config,
         datadir_contexts=structural_context.datadir_contexts,  # from above
         run_id="2026-02-22_12341234",
     )

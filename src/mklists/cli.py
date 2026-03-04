@@ -3,7 +3,7 @@ CLI
   ↓
 resolve_structural_context (pure filesystem resolution)
   ↓
-resolve_config_context (configuration resolution)
+resolve_config (configuration resolution)
   ↓
 resolve_run_plan
   ↓

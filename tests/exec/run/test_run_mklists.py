@@ -41,7 +41,7 @@ from mklists.plan.model import RunPlan, PassPlan
 
 @pytest.mark.skip(reason="config_rootdir must come from StructuralContext")
 def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
-    """Function `resolve_config_context` is called once per unique `configfile_used`."""
+    """Function `resolve_config` is called once per unique `configfile_used`."""
     repo_cfg = Path("/repo/mklists.yaml")
 
     datadir_contexts = [
@@ -76,11 +76,11 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     calls: list[Path | None] = []
 
-    # The real `resolve_config_context` returns a Config object that can be
+    # The real `resolve_config` returns a Config object that can be
     # passed to `process_datadir`.
-    # But we are not testing Config here: `fake_resolve_config_context` can
+    # But we are not testing Config here: `fake_resolve_config` can
     # return a trivial, fake object because that object is never inspected (see below).
-    def fake_resolve_config_context(configfile_used: Path | None):
+    def fake_resolve_config(configfile_used: Path | None):
         calls.append(configfile_used)
         return object()
 
@@ -88,8 +88,8 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     monkeypatch.setattr(
         target=execute_module,
-        name="resolve_config_context",
-        value=fake_resolve_config_context,
+        name="resolve_config",
+        value=fake_resolve_config,
         raising=True,
     )
 
