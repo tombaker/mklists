@@ -58,6 +58,7 @@ def fake_make_structural_context(
     Note:
         Defaults to repo_configfile_found=tmp_path/"mklists.yaml" so that
         is_repo_root=True and config_rootdir=tmp_path (the startdir).
+        Bypasses need for some testing boilerplate.
 
         Pass explicit repo_configfile_found=None only when repo_rulefile_found
         is set (still gives is_repo_root=True).
@@ -86,24 +87,39 @@ def fake_make_structural_context(
 
 # ----- backup disabled -------------------------------------------------------
 
+
 def test_backup_disabled_returns_one_pass(tmp_path):
-    """When backups disabled: one pass."""
+    """Backups disabled: one pass."""
     sc = fake_make_structural_context(tmp_path)
     cc = fake_make_config_context(backup_enabled=False)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
-    assert result == [
-        PassPlan(
-            snapshot_dir=None, 
-            snapshot_repofiles_to_copy=[]
-        )
-    ]
+    assert result == [PassPlan(snapshot_dir=None, snapshot_repofiles_to_copy=[])]
     assert len(result) == 1
+
+
+def test_backup_disabled_routing_enabled_single_datadir_returns_one_pass(tmp_path):
+    """Backups disabled, Routing enabled, one datadir: one pass, snapshot_dir=None."""
+    sc = fake_make_structural_context(tmp_path, num_datadirs=1)
+    cc = fake_make_config_context(backup_enabled=False, routing_enabled=True)
+    result = _resolve_pass_plans(structural_context=sc, config_context=cc)
+    assert result == [PassPlan(snapshot_dir=None, snapshot_repofiles_to_copy=[])]
+
+
+def test_backup_disabled_routing_enabled_multiple_datadirs_returns_two_passes(tmp_path):
+    """Routing enabled, multiple datadirs: two passes, both snapshot_dir=None."""
+    sc = fake_make_structural_context(tmp_path, num_datadirs=2)
+    cc = fake_make_config_context(backup_enabled=False, routing_enabled=True)
+    result = _resolve_pass_plans(structural_context=sc, config_context=cc)
+    assert len(result) == 2
+    assert all(p.snapshot_dir is None for p in result)
+    assert all(p.snapshot_repofiles_to_copy == [] for p in result)
 
 
 # ----- pass count ------------------------------------------------------------
 
+
 def test_backup_enabled_routing_disabled_returns_one_pass(tmp_path):
-    """When backups enabled and one datadir: one pass."""
+    """Backups enabled, one datadir: one pass."""
     sc = fake_make_structural_context(tmp_path)
     cc = fake_make_config_context(backup_enabled=True, routing_enabled=False)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
@@ -111,7 +127,7 @@ def test_backup_enabled_routing_disabled_returns_one_pass(tmp_path):
 
 
 def test_routing_enabled_single_datadir_returns_one_pass(tmp_path):
-    """Routing enabled but only one datadir: still one pass."""
+    """Backups and routing enabled, one datadir: still one pass."""
     sc = fake_make_structural_context(tmp_path, num_datadirs=1)
     cc = fake_make_config_context(backup_enabled=True, routing_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
@@ -119,6 +135,7 @@ def test_routing_enabled_single_datadir_returns_one_pass(tmp_path):
 
 
 def test_routing_enabled_multiple_datadirs_returns_two_passes(tmp_path):
+    """Backups and routing enabled, multiple datadirs: two passes."""
     sc = fake_make_structural_context(tmp_path, num_datadirs=2)
     cc = fake_make_config_context(backup_enabled=True, routing_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
@@ -127,15 +144,17 @@ def test_routing_enabled_multiple_datadirs_returns_two_passes(tmp_path):
 
 # ----- snapshot_dir paths ----------------------------------------------------
 
+
 def test_snapshot_dir_is_under_config_rootdir_and_backup_rootdir(tmp_path):
+    """Backups enabled: config_rootdir (tmp_path) / 'backups' / snapshot_dir."""
     sc = fake_make_structural_context(tmp_path)
     cc = fake_make_config_context(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
-    # config_rootdir=tmp_path (is_repo_root=True), backup_rootdir="backups"
     assert result[0].snapshot_dir.parent == tmp_path / "backups"
 
 
 def test_single_pass_snapshot_dir_name_ends_with_01(tmp_path):
+    """Backups enabled: single-pass snapshot_dir name ends with '_01'."""
     sc = fake_make_structural_context(tmp_path)
     cc = fake_make_config_context(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
@@ -143,6 +162,7 @@ def test_single_pass_snapshot_dir_name_ends_with_01(tmp_path):
 
 
 def test_two_passes_have_01_and_02_suffixes(tmp_path):
+    """Backups enabled: multi-pass snapshot_dir names end with '_01', '_02'."""
     sc = fake_make_structural_context(tmp_path, num_datadirs=2)
     cc = fake_make_config_context(backup_enabled=True, routing_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
@@ -151,32 +171,40 @@ def test_two_passes_have_01_and_02_suffixes(tmp_path):
 
 
 def test_two_passes_share_same_timestamp(tmp_path):
-    """Both snapshot dirs differ only in suffix, proving one timestamp was used."""
+    """Both snapshot dirs differ only in '_01'/'_02' suffix, proving one timestamp."""
     sc = fake_make_structural_context(tmp_path, num_datadirs=2)
     cc = fake_make_config_context(backup_enabled=True, routing_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
-    assert result[0].snapshot_dir.parent == result[1].snapshot_dir.parent
+    name0 = result[0].snapshot_dir.name
+    name1 = result[1].snapshot_dir.name
+    assert name0[:-3] == name1[:-3]
 
 
 # ----- snapshot_repofiles_to_copy --------------------------------------------
 
+
 def test_repo_configfile_included_in_snapshot_repofiles(tmp_path):
+    """If only 'mklists.yaml', then only one repo file to snapshot is listed."""
     repo_cfg = tmp_path / "mklists.yaml"
     sc = fake_make_structural_context(tmp_path, repo_configfile_found=repo_cfg)
     cc = fake_make_config_context(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
     assert repo_cfg in result[0].snapshot_repofiles_to_copy
+    assert len(result[0].snapshot_repofiles_to_copy) == 1
 
 
 def test_repo_rulefile_included_in_snapshot_repofiles(tmp_path):
+    """If only '.rules', then only one repo file to snapshot is listed."""
     repo_rules = tmp_path / ".rules"
     sc = fake_make_structural_context(tmp_path, repo_rulefile_found=repo_rules)
     cc = fake_make_config_context(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
     assert repo_rules in result[0].snapshot_repofiles_to_copy
+    assert len(result[0].snapshot_repofiles_to_copy) == 1
 
 
 def test_both_repo_files_included_in_order(tmp_path):
+    """If both '.rules' and 'mklists.yaml', then two repo files to snapshot listed."""
     repo_cfg = tmp_path / "mklists.yaml"
     repo_rules = tmp_path / ".rules"
     sc = fake_make_structural_context(
@@ -187,3 +215,4 @@ def test_both_repo_files_included_in_order(tmp_path):
     cc = fake_make_config_context(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config_context=cc)
     assert result[0].snapshot_repofiles_to_copy == [repo_cfg, repo_rules]
+    assert len(result[0].snapshot_repofiles_to_copy) == 2

@@ -107,7 +107,7 @@ def _resolve_pass_plans(
         timestamp = None
         snapshot_repofiles_to_copy = []
     else:
-        timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%f")
+        timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H%M_%S%f")
         snapshot_repofiles_to_copy = [
             f for f in [
                 structural_context.startdir_context.repo_configfile_found,

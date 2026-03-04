@@ -23,7 +23,7 @@ from mklists.plan.model import (
     PassPlan,
     RunPlan,
 )
-from mklists.plan.resolve import resolve_run_plan
+#from mklists.plan.resolve import resolve_run_plan
 
 
 def fake_make_config_context(
