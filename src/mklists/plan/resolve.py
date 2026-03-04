@@ -3,13 +3,13 @@
 from datetime import datetime, UTC
 from mklists.config import ConfigContext
 from mklists.structure.model import (
-    DatadirStructuralContext, 
-    StartdirStructuralContext, 
+    DatadirStructuralContext,
+    StartdirStructuralContext,
     StructuralContext,
 )
 from mklists.plan.model import (
     DatadirPlan,
-    PassPlan, 
+    PassPlan,
     SkippedDatadir,
     RunPlan,
 )
@@ -145,4 +145,3 @@ def _resolve_pass_plans(
             )
 
     return pass_plans
-
