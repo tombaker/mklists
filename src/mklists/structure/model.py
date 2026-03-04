@@ -26,17 +26,17 @@ class StartdirStructuralContext:
 
     @property
     def is_repo_root(self) -> bool:
-        """Startdir is root directory of a repository of datadirs."""
+        """True if startdir is the root directory of a repository of datadirs."""
         return bool(self.repo_configfile_found or self.repo_rulefile_found)
 
     @property
     def is_datadir_selfcontained(self) -> bool:
-        """Startdir is a self-contained datadir."""
+        """True if startdir is a self-contained datadir."""
         return bool(self.datadir_rulefile_found and self.datadir_configfile_found)
 
     @property
     def is_datadir_in_repo(self) -> bool:
-        """Startdir is a datadir within a repository of datadirs."""
+        """True if startdir is a datadir within a repository of datadirs."""
         return bool(self.datadir_rulefile_found and not self.datadir_configfile_found)
 
     @property
