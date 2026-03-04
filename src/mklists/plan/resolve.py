@@ -15,69 +15,55 @@ from mklists.plan.model import (
 )
 
 
-# def resolve_run_plan(
-#     *,
-#     structural_context: StructuralContext,
-#     config_context: ConfigContext,
-#     run_id: str,
-# ) -> RunPlan:
-#     """Construct executable plan for this run.
-# 
-#     Args:
-#         structural_context: Execution context for one Mklists run.
-#         config_context: Instance of configuration object ConfigContext.
-# 
-#     Returns:
-#         RunPlan object, holding info needed for execution.
-# 
-#     Note:
-#         Responsible for resolving relative config paths to absolute.
-#     """
-#     config_rootdir = structural_context.startdir_context.config_rootdir
-# 
-#     # ----- passes ----------------------------------------------------
-# 
-#     pass_plans = _resolve_pass_plans(
-#         structural_context=structural_context,
-#         config_context=config_context,
-#     )
-# 
-#     # ----- repo-level config -----------------------------------------
-#     repo_configfile = None
-#     if structural_context.repo_configfile:
-#         repo_configfile = structural_context.repo_configfile
-# 
-#     repo_rulefile = None
-#     if structural_context.repo_rulefile:
-#         repo_rulefile = structural_context.repo_rulefile
-# 
-#     # ----- backup ----------------------------------------------------
-#     backup_rootdir = None
-#     backup_depth = 0
-#     if config_context.backup.backup_enabled:
-#         if config_context.backup.backup_rootdir:
-#             backup_rootdir = config_rootdir / config_context.backup.backup_rootdir
-#             backup_depth = config_context.backup.backup_depth
-# 
-#     # ----- routing ---------------------------------------------------
-#     routing_dict = {}
-#     if config_context.routing.routing_enabled:
-#         routing_dict = config_context.routing.routing_dict
-# 
-#     # ----- html ------------------------------------------------------
-#     htmldir = None
-#     if config_context.linkify.html_enabled:
-#         htmldir = config_rootdir / config_context.linkify.htmldir
-# 
-#     return RunPlan(
-#         pass_plans=pass_plans,
-#         datadir_plans=datadir_plans,
-#         skipped_datadirs=skipped_datadirs,
-#         routing_dict=routing_dict,
-#         htmldir=htmldir,
-#     )
+def resolve_run_plan(
+    *,
+    structural_context: StructuralContext,
+    config_context: ConfigContext,
+    run_id: str,
+) -> RunPlan:
+    """Construct executable plan for this run.
 
+    Args:
+        structural_context: Execution context for one Mklists run.
+        config_context: Instance of configuration object ConfigContext.
 
+    Returns:
+        RunPlan object, holding info needed for execution.
+    """
+    config_rootdir = structural_context.startdir_context.config_rootdir
+
+    # ----- pass plans (backup directories) ---------------------------
+    pass_plans = _resolve_pass_plans(
+        structural_context=structural_context,
+        config_context=config_context,
+    )
+
+    # ----- routing ---------------------------------------------------
+    routing_dict = {}
+    if config_context.routing.routing_enabled:
+        routing_dict = config_context.routing.routing_dict
+
+    # ----- repo-level config -----------------------------------------
+    repo_configfile = None
+    if structural_context.repo_configfile:
+        repo_configfile = structural_context.repo_configfile
+
+    repo_rulefile = None
+    if structural_context.repo_rulefile:
+        repo_rulefile = structural_context.repo_rulefile
+
+    # ----- html ------------------------------------------------------
+    htmldir = None
+    if config_context.linkify.html_enabled:
+        htmldir = config_rootdir / config_context.linkify.htmldir
+
+    return RunPlan(
+        pass_plans=pass_plans,
+        datadir_plans=datadir_plans,
+        skipped_datadirs=skipped_datadirs,
+        routing_dict=routing_dict,
+        htmldir=htmldir,
+    )
 
 
 def _resolve_pass_plans(
@@ -109,10 +95,12 @@ def _resolve_pass_plans(
     else:
         timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H%M_%S%f")
         snapshot_repofiles_to_copy = [
-            f for f in [
+            f
+            for f in [
                 structural_context.startdir_context.repo_configfile_found,
                 structural_context.startdir_context.repo_rulefile_found,
-            ] if f is not None
+            ]
+            if f is not None
         ]
 
     return [
@@ -121,7 +109,8 @@ def _resolve_pass_plans(
                 config_rootdir
                 / config_context.backup.backup_rootdir
                 / f"{timestamp}_{i+1:02d}"
-                if timestamp else None
+                if timestamp
+                else None
             ),
             snapshot_repofiles_to_copy=snapshot_repofiles_to_copy,
         )
