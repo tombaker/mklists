@@ -21,6 +21,30 @@ class StartdirStructuralContext:
     startdir: Path
     repo_configfile_found: Path | None
     repo_rulefile_found: Path | None
+    datadir_configfile_found: Path | None
+    datadir_rulefile_found: Path | None
+
+    @property
+    def is_repo_root(self) -> bool:
+        return bool(self.repo_configfile_found or self.repo_rulefile_found)
+
+    @property
+    def is_datadir_selfcontained(self) -> bool:
+        return bool(self.datadir_rulefile_found and self.datadir_configfile_found)
+
+    @property
+    def is_datadir_in_repo(self) -> bool:
+        return bool(self.datadir_rulefile_found and not self.datadir_configfile_found)
+
+    @property
+    def config_rootdir(self) -> Path:
+        """Used for resolving relative paths in config universe."""
+        if self.is_repo_root or self.is_datadir_selfcontained:
+            return self.startdir
+        elif self.is_datadir_in_repo:
+            return self.startdir.parent
+        else:
+            raise StructureError("Unreachable structural state.")
 
 
 @dataclass(frozen=True, slots=True)

@@ -3,7 +3,7 @@
 from pathlib import Path
 import pytest
 from mklists.errors import StructureError
-from mklists.structure.resolve import _determine_config_rootdir
+# from mklists.structure.resolve import _determine_config_rootdir
 from mklists.structure.markers import DATADIR_RULEFILE_NAME
 
 

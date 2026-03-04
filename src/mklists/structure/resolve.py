@@ -11,8 +11,8 @@ from mklists.structure.markers import (
     REPO_RULEFILE_NAME,
 )
 from mklists.structure.model import (
-    DatadirStructuralContext, 
-    StartdirStructuralContext, 
+    DatadirStructuralContext,
+    StartdirStructuralContext,
     StructuralContext,
 )
 
@@ -21,42 +21,37 @@ def resolve_structural_context(startdir: Path | str) -> StructuralContext:
     """Derive structural context from filesystem layout.
 
     Args:
-        startdir: Path of starting directory: CWD path or override path from CLI option.
+        startdir: Path of starting directory.
 
     Returns:
         Structural context derived from filesystem layout.
+
+    Note:
+        Starting directory is CWD path or override path from CLI option.
     """
     startdir = Path(startdir).resolve()
 
     # 1. Determine startdir context.
+    startdir_context = _resolve_startdir_context(startdir=startdir)
 
-    startdir_context = _resolve_startdir_context(startdir)
-
-    # 2. Determine effective config_rootdir (for resolving relative paths).
-    config_rootdir = _determine_config_rootdir(
-        startdir=startdir_context.startdir,
-        repo_configfile_found=startdir_context.repo_configfile_found,
-        repo_rulefile_found=startdir_context.repo_rulefile_found,
-    )
-
-    # 3. Discover Datadirs
-    datadirs = _find_datadirs(config_rootdir)
+    # 2. Discover datadirs
+    config_rootdir = startdir_context.config_rootdir
+    if startdir_context.is_repo_root:
+        datadirs = _find_datadirs(config_rootdir=config_rootdir)
+    else:
+        datadirs = [startdir]
 
     if not datadirs:
         raise StructureError("No datadirs found under config root directory.")
 
-    # 4. Resolve each DatadirStructuralContext and build list.
+    # 3. Build list of datadir structural contexts.
     datadir_contexts: list[DatadirStructuralContext] = []
 
     for datadir in datadirs:
-        context = _resolve_datadir_context(
-            datadir=datadir,
-            repo_configfile_found=repo_configfile_found,
-            repo_rulefile_found=repo_rulefile_found,
-        )
-        datadir_contexts.append(context)
+        datadir_context = _resolve_datadir_context(datadir=datadir)
+        datadir_contexts.append(datadir_context)
 
-    # 5. Emit fully resolved StructuralContext
+    # 4. Emit fully resolved StructuralContext.
     return StructuralContext(
         startdir_context=startdir_context,
         datadir_contexts=datadir_contexts,
@@ -97,109 +92,27 @@ def _find_repo_rulefile(dirpath: Path) -> Path | None:
     return candidate if candidate.is_file() else None
 
 
-def _determine_config_rootdir(
-    *,
-    startdir: Path,
-    repo_configfile_found: Path | None,
-    repo_rulefile_found: Path | None,
-) -> Path:
-    """Determine directory that serves as configuration root for the run.
-
-    Args:
-        startdir: Path of starting directory.
-        repo_configfile_found: Path of mklists.yaml (if it exists).
-        repo_rulefile_found: Path of mklists.rules (if it exists).
-
-    Returns:
-        Path to directory that anchors config and execution for this run.
-
-    Raises:
-        StructureError if structure is invalid.
-
-    Note:
-        Effective config root directory is either:
-        - a repository root (contains `mklists.yaml` or `mklists.rules`), or
-        - a self-contained datadir (contains `.mklistsrc`)
-
-        Config root directory may be used as:
-        - base for backup directories
-        - base for linkify directories
-        
-
-        if repo_configfile_found    -> is_repo_rootdir is_config_rootdir
-        if repo_rulefile_found      -> is_repo_rootdir is_config_rootdir
-        if config_configfile_found  -> is_datadir      is_config_rootdir is_selfcontained
-        if config_rulefile_found    -> is_datadir
-    """
-    datadir_rulefile = startdir / DATADIR_RULEFILE_NAME
-    is_datadir = datadir_rulefile.is_file()
-    is_repo_root = repo_configfile_found is not None or repo_rulefile_found is not None
-
-    # Structural invariant: cannot be both
-    if is_datadir and is_repo_root:
-        raise StructureError("Directory cannot be both repository root and datadir.")
-
-    # Repo mode
-    if is_repo_root:
-        return startdir
-
-    # Single-datadir convenience mode
-    if is_datadir:
-        return startdir
-
-    raise StructureError("Directory is neither repository root nor datadir.")
-
-
-def _resolve_datadir_context(
-    *,
-    datadir: Path,
-    repo_configfile_found: Path | None,
-    repo_rulefile_found: Path | None,
-) -> DatadirStructuralContext:
+def _resolve_datadir_context(datadir: Path) -> DatadirStructuralContext:
     """Resolve execution context for a single datadir.
 
     Args:
-        datadir:
-        repo_configfile_found:
-        repo_rulefile_found:
+        datadir: Path of datadir.
 
     Returns:
-        DatadirStructuralContext object holding execution context for a single datadir.
+        Execution context object for a single datadir.
     """
 
-    datadir = Path(datadir)
+    def if_file_exists(path: Path) -> Path | None:
+        return path if path.is_file() else None
+
+    # Datadir must have `.rules` file, by definition.
     datadir_rulefile = datadir / DATADIR_RULEFILE_NAME
-    datadir_configfile_found = datadir / DATADIR_CONFIGFILE_NAME
-    is_self_contained = (datadir / DATADIR_CONFIGFILE_NAME).is_file()
-
-    if is_self_contained:
-        configfile_used = datadir_configfile_found
-    else:
-        configfile_used = repo_configfile_found  # As passed in; this could be None.
-
-    # Config rootdir is used for resolving relative paths in the config universe.
-    # It is the directory that contains config file actually used.
-    # When no config file exists, config rootdir defaults to Datadir.
-    if configfile_used is None:
-        config_rootdir = datadir
-    else:
-        config_rootdir = configfile_used.parent
-
-    # If Datadir is self-contained (config root is itself), ignore repo-level rules.
-    if (not is_self_contained) and repo_rulefile_found is not None:
-        rulefiles_used = [repo_rulefile_found, datadir_rulefile]
-    else:
-        rulefiles_used = [datadir_rulefile]
-
-    # Parse rules
-    rules = load_rules_for_datadir(rulefiles_used)
+    datadir_configfile_found = if_file_exists(datadir / DATADIR_CONFIGFILE_NAME)
 
     return DatadirStructuralContext(
         datadir=datadir,
-        configfile_used=configfile_used,
-        config_rootdir=config_rootdir,
-        rulefiles_used=rulefiles_used,
-        rules=rules,
+        datadir_configfile_found=datadir_configfile_found,
+        datadir_rulefile=datadir_rulefile,
     )
 
 
@@ -210,35 +123,35 @@ def _resolve_startdir_context(startdir: Path) -> StartdirStructuralContext:
         startdir: Path of starting directory.
 
     Returns:
-        StartdirStructuralContext instance with resolve structural context of startdir.
+        StartdirStructuralContext instance with resolved structural context of startdir.
+
+        Note:
+        Config root directory is used to resolve paths for backup and HTML directories.
     """
-    startdir_repo_configfile = startdir / REPO_CONFIGFILE_NAME
-    if startdir_repo_configfile.is_file():
-        repo_configfile_found = startdir_repo_configfile
-    else:
-        repo_configfile_found = None
 
-    startdir_repo_rulefile = startdir / REPO_RULEFILE_NAME
-    if startdir_repo_rulefile.is_file():
-        repo_rulefile_found = startdir_repo_rulefile
-    else:
-        repo_rulefile_found = None
+    def if_file_exists(path: Path) -> Path | None:
+        return path if path.is_file() else None
 
-    startdir_datadir_configfile = startdir / DATADIR_CONFIGFILE_NAME
-    if startdir_datadir_configfile.is_file():
-        datadir_configfile_found = startdir_datadir_configfile
-    else:
-        datadir_configfile_found = None
+    repo_configfile_found = if_file_exists(startdir / REPO_CONFIGFILE_NAME)
+    repo_rulefile_found = if_file_exists(startdir / REPO_RULEFILE_NAME)
+    datadir_configfile_found = if_file_exists(startdir / DATADIR_CONFIGFILE_NAME)
+    datadir_rulefile_found = if_file_exists(startdir / DATADIR_RULEFILE_NAME)
 
-    startdir_datadir_rulefile = startdir / DATADIR_RULEFILE_NAME
-    if startdir_datadir_rulefile.is_file():
-        datadir_rulefile_found = startdir_datadir_rulefile
-    else:
-        datadir_rulefile_found = None
+    is_repo_root = bool(repo_configfile_found or repo_rulefile_found)
+    is_datadir = bool(datadir_rulefile_found)
+
+    if is_datadir and is_repo_root:
+        raise StructureError(
+            "Starting directory cannot be both repository root and datadir."
+        )
+
+    if not is_datadir and not is_repo_root:
+        raise StructureError("Starting directory must be repository root or datadir.")
 
     return StartdirStructuralContext(
         startdir=startdir,
         repo_configfile_found=repo_configfile_found,
         repo_rulefile_found=repo_rulefile_found,
+        datadir_configfile_found=datadir_configfile_found,
+        datadir_rulefile_found=datadir_rulefile_found,
     )
-

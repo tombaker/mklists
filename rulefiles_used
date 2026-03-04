@@ -1,0 +1,8 @@
+    # If Datadir is self-contained (config root is itself), ignore repo-level rules.
+    if (not is_self_contained) and repo_rulefile_found is not None:
+        rulefiles_used = [repo_rulefile_found, datadir_rulefile]
+    else:
+        rulefiles_used = [datadir_rulefile]
+    # Parse rules
+    rules = load_rules_for_datadir(rulefiles_used)
+

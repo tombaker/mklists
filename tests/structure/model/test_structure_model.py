@@ -21,12 +21,16 @@ from mklists.structure.model import (
             startdir=Path("/tmp"),
             repo_configfile_found=None,
             repo_rulefile_found=None,
+            datadir_configfile_found=None,
+            datadir_rulefile_found=Path("/tmp/.rules"),
         ),
         StructuralContext(
             startdir_context=StartdirStructuralContext(
                 startdir=Path("/tmp"),
                 repo_configfile_found=None,
                 repo_rulefile_found=None,
+                datadir_configfile_found=None,
+                datadir_rulefile_found=Path("/tmp/.rules"),
             ),
             datadir_contexts=[],
         ),
