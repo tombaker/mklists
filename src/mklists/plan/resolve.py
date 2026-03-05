@@ -20,7 +20,6 @@ def resolve_run_plan(
     *,
     structural_context: StructuralContext,
     config: Config,
-    run_id: str,
 ) -> RunPlan:
     """Construct executable plan for this run.
 
