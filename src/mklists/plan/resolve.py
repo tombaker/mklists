@@ -38,31 +38,22 @@ def resolve_run_plan(
         config=config,
     )
 
+    # ----- linkify ---------------------------------------------------
+    html_dir = None
+    if config.linkify.html_enabled:
+        html_dir = config_rootdir / config.linkify.html_dir
+
     # ----- routing ---------------------------------------------------
     routing_dict = {}
     if config.routing.routing_enabled:
         routing_dict = config.routing.routing_dict
-
-    # ----- repo-level config -----------------------------------------
-    repo_configfile = None
-    if structural_context.repo_configfile:
-        repo_configfile = structural_context.repo_configfile
-
-    repo_rulefile = None
-    if structural_context.repo_rulefile:
-        repo_rulefile = structural_context.repo_rulefile
-
-    # ----- html ------------------------------------------------------
-    htmldir = None
-    if config.linkify.html_enabled:
-        htmldir = config_rootdir / config.linkify.htmldir
 
     return RunPlan(
         pass_plans=pass_plans,
         datadir_plans=datadir_plans,
         skipped_datadirs=skipped_datadirs,
         routing_dict=routing_dict,
-        htmldir=htmldir,
+        html_dir=html_dir,
     )
 
 
