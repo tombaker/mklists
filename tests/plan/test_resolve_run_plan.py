@@ -1,317 +1,170 @@
-"""Tests $MKLMKL/plan.py: test that function resolves relative config paths to absolute.
-- Routing disabled. Expect: routing_dict is empty
-- Linify disabled. Expect: html_dir is None
-- Linify enabled. Expect: correct html_dir path
+"""Tests $MKLMKL/plan/resolve.py
 
-Real filesystem not needed. Rather, tiny factories:
-- fake_run_context
-- fake_config
-- fake_datadir_contexts
+Tests focus on two decisions resolve_run_plan makes directly:
+— routing_dict conditional
+- html_dir conditional
+
+Also:
+- that it returns a RunPlan
+
+Pass-count and snapshot logic are left to test__resolve_pass_plans.py
+Datadir partitioning logic is left to test__resolve_datadir_plans.py.
 """
 
 from pathlib import Path
-import pytest
 from mklists.config.model import (
     BackupConfig,
+    Config,
+    LinkifyConfig,
     RoutingConfig,
     SafetyConfig,
-    LinkifyConfig,
-    Config,
 )
-from mklists.structure.model import DatadirStructuralContext, StructuralContext
-from mklists.plan.model import (
-    PassPlan,
-    RunPlan,
+from mklists.structure.markers import DATADIR_RULEFILE_NAME
+from mklists.structure.model import (
+    DatadirStructuralContext,
+    StartdirStructuralContext,
+    StructuralContext,
 )
-#from mklists.plan.resolve import resolve_run_plan
+from mklists.plan.model import RunPlan
+from mklists.plan.resolve import resolve_run_plan
 
 
-def fake_make_config(
+def make_config(
     *,
-    backup_enabled: bool,
-    html_enabled: bool,
-    routing_enabled: bool,
+    backup_enabled: bool = False,
+    routing_enabled: bool = False,
+    routing_dict: dict | None = None,
+    html_enabled: bool = False,
 ) -> Config:
-    """Fake stand-in makes Config object by varying just three variables."""
+    """Build a minimal Config for testing resolve_run_plan."""
     return Config(
         verbose=False,
-        configfile_used=Path("foo"),
-        config_rootdir=Path("bar"),
+        configfile_used=None,
+        config_rootdir=Path("/unused"),
         backup=BackupConfig(
             backup_enabled=backup_enabled,
-            backup_rootdir=Path("backups"),  # relative - resolved in plan
+            backup_rootdir=Path("backups"),
             backup_depth=2,
         ),
         routing=RoutingConfig(
             routing_enabled=routing_enabled,
-            routing_dict={},
+            routing_dict=routing_dict or {},
         ),
-        safety=SafetyConfig(
-            invalid_filename_patterns=[],
-        ),
+        safety=SafetyConfig(invalid_filename_patterns=[]),
         linkify=LinkifyConfig(
             html_enabled=html_enabled,
-            html_dir=Path("html"),  # relative - resolved in plan
+            html_dir=Path("html"),
         ),
     )
 
 
-@pytest.mark.skip(reason="Tightening RunPlan")
-def test_plan_backups_disabled_one_pass(tmp_path):
-    """One Datadir.
-
-    Variables in fake Config:
-        Backups disabled.
-        Routing disabled.
-        Linkify disabled.
-
-    Expect:
-        len(pass_plans) == 1
-        pass_plans[0].backup_snapshot_dir is None
-    """
-    structural_context = StructuralContext(
-        config_rootdir=tmp_path,
-        repo_configfile=None,
-        repo_rulefile=None,
+def make_structural_context(
+    tmp_path: Path,
+    *,
+    datadir_rulefile: Path,
+) -> StructuralContext:
+    """Build a StructuralContext with one normal datadir rooted at tmp_path."""
+    return StructuralContext(
+        startdir_context=StartdirStructuralContext(
+            startdir=tmp_path,
+            repo_configfile_found=tmp_path / "mklists.yaml",
+            repo_rulefile_found=None,
+            datadir_configfile_found=None,
+            datadir_rulefile_found=None,
+        ),
         datadir_contexts=[
             DatadirStructuralContext(
-                datadir=Path("/path/to/a"),
-                configfile_used=None,
-                config_rootdir=None,
-                rulefiles_used=None,
-                rules=[],
-            ),
+                datadir=datadir_rulefile.parent,
+                datadir_configfile_found=None,
+                datadir_rulefile=datadir_rulefile,
+            )
         ],
     )
 
-    fake_config = fake_make_config(
-        backup_enabled=False,
-        routing_enabled=False,
-        linkify_enabled=False,
-    )
 
-    actual_execution_context = resolve_run_plan(
-        structural_context=structural_context,
-        config=fake_config,
-        datadir_contexts=structural_context.datadir_contexts,
-        run_id="2026-02-22_12341234",
-    )
-
-    assert len(actual_execution_context.pass_plans) == 1
-    assert actual_execution_context.pass_plans[0].backup_snapshot_dir is None
-    assert actual_execution_context == RunPlan(
-        datadir_contexts=[
-            DatadirStructuralContext(
-                datadir=Path("/path/to/a"),
-                configfile_used=None,
-                config_rootdir=None,
-                rulefiles_used=None,
-                rules=[],
-            ),
-        ],
-        pass_plans=[PassPlan(backup_snapshot_dir=None)],
-        repo_configfile=None,
-        repo_rulefile=None,
-        backup_rootdir=None,
-        backup_depth=0,
-        routing_dict={},
-        html_dir=None,
-    )
+# ----- return type -----------------------------------------------------------
 
 
-@pytest.mark.skip(reason="Tightening RunPlan")
-def test_plan_backups_enabled_one_pass(tmp_path):
-    """One Datadir.
-
-    Variables in fake Config:
-        Backup ENABLED.
-        Routing disabled.
-        Linkify disabled.
-
-    Expect:
-        len(pass_plans) == 1
-        pass_plans[0].backup_snapshot_dir is None
-    """
-    fake_config = fake_make_config(
-        backup_enabled=True,
-        routing_enabled=False,
-        linkify_enabled=False,
-    )
-
-    structural_context = StructuralContext(
-        config_rootdir=tmp_path,
-        repo_configfile=None,
-        repo_rulefile=None,
-        datadir_contexts=[
-            DatadirStructuralContext(
-                datadir=Path("/path/to/a"),
-                configfile_used=None,
-                config_rootdir=None,
-                rulefiles_used=None,
-                rules=[],
-            ),
-        ],
-    )
-
-    # resolve_run_plan should make backup_root absolute.
-    actual_execution_context = resolve_run_plan(
-        structural_context=structural_context,
-        config=fake_config,
-        datadir_contexts=structural_context.datadir_contexts,  # from above
-        run_id="2026-02-22_12341234",
-    )
-
-    assert len(actual_execution_context.pass_plans) == 1
-
-    expected_backup_rootdir = tmp_path / fake_config.backup.backup_rootdir
-    assert actual_execution_context.backup_rootdir == expected_backup_rootdir
-
-    expected_backup_snapshot_dir = expected_backup_rootdir / "2026-02-22_12341234_01"
-    assert (
-        actual_execution_context.pass_plans[0].backup_snapshot_dir
-        == expected_backup_snapshot_dir
-    )
-
-    assert actual_execution_context == RunPlan(
-        datadir_contexts=[
-            DatadirStructuralContext(
-                datadir=Path("/path/to/a"),
-                configfile_used=None,
-                config_rootdir=None,
-                rulefiles_used=None,
-                rules=[],
-            ),
-        ],
-        repo_configfile=None,
-        repo_rulefile=None,
-        backup_rootdir=expected_backup_rootdir,
-        backup_depth=2,
-        pass_plans=[PassPlan(backup_snapshot_dir=expected_backup_snapshot_dir)],
-        routing_dict={},
-        html_dir=None,
-    )
-
-
-@pytest.mark.skip(reason="Tightening RunPlan")
-def test_two_passes_when_routing_multiple(tmp_path):
-    """Multiple Datadirs.
-
-    Variables in fake Config:
-        Backup ENABLED.
-        Routing ENABLED.
-        Linkify disabled.
-
-    Expect:
-        2 passes
-        directory created from timestamp
-    """
-    fake_config = fake_make_config(
-        backup_enabled=True,
-        routing_enabled=True,
-        linkify_enabled=False,
-    )
-
-    structural_context = StructuralContext(
-        config_rootdir=tmp_path,
-        repo_configfile=None,
-        repo_rulefile=None,
-        datadir_contexts=[
-            DatadirStructuralContext(
-                datadir=Path("/path/to/a"),
-                configfile_used=None,
-                config_rootdir=None,
-                rulefiles_used=None,
-                rules=[],
-            ),
-            DatadirStructuralContext(
-                datadir=Path("/path/to/b"),
-                configfile_used=None,
-                config_rootdir=None,
-                rulefiles_used=None,
-                rules=[],
-            ),
-        ],
-    )
+def test_returns_runplan_instance(tmp_path):
+    """resolve_run_plan returns a RunPlan."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
 
     plan = resolve_run_plan(
-        structural_context=structural_context,
-        config=fake_config,
-        datadir_contexts=structural_context.datadir_contexts,  # from above
-        run_id="T",
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(),
     )
 
-    # Expected two passes
-    assert len(plan.pass_plans) == 2
-    # Expected backupdirs
-    assert (
-        plan.pass_plans[0].backup_snapshot_dir
-        == tmp_path / fake_config.backup.backup_rootdir / "T_01"
-    )
-    assert (
-        plan.pass_plans[1].backup_snapshot_dir
-        == tmp_path / fake_config.backup.backup_rootdir / "T_02"
-    )
+    assert isinstance(plan, RunPlan)
 
 
-@pytest.mark.skip(reason="Tightening RunPlan")
-def test_plan_linkify_enabled(tmp_path):
-    """Linkify enabled
+# ----- routing_dict ----------------------------------------------------------
 
-    Variables in fake Config:
-        Backup disabled.
-        Routing disabled.
-        Linkify ENABLED.
 
-    Expect:
-        Correct html_dir path.
-    """
-    fake_config = fake_make_config(
-        backup_enabled=False,
-        routing_enabled=False,
-        linkify_enabled=True,
+def test_routing_disabled_routing_dict_is_empty(tmp_path):
+    """routing_enabled=False → routing_dict is {} even when config has entries."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
+
+    plan = resolve_run_plan(
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(
+            routing_enabled=False,
+            routing_dict={"to_a.txt": Path("/some/dir")},
+        ),
     )
 
-    structural_context = StructuralContext(
-        config_rootdir=tmp_path,
-        repo_configfile=None,
-        repo_rulefile=None,
-        datadir_contexts=[
-            DatadirStructuralContext(
-                datadir=Path("/path/to/a"),
-                configfile_used=None,
-                config_rootdir=None,
-                rulefiles_used=None,
-                rules=[],
-            ),
-        ],
+    assert plan.routing_dict == {}
+
+
+def test_routing_enabled_routing_dict_comes_from_config(tmp_path):
+    """routing_enabled=True → routing_dict equals config.routing.routing_dict."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
+
+    expected = {"to_a.txt": Path("/some/dir")}
+    plan = resolve_run_plan(
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(routing_enabled=True, routing_dict=expected),
     )
 
-    actual_execution_context = resolve_run_plan(
-        structural_context=structural_context,
-        config=fake_config,
-        datadir_contexts=structural_context.datadir_contexts,  # from above
-        run_id="2026-02-22_12341234",
+    assert plan.routing_dict == expected
+
+
+# ----- html_dir --------------------------------------------------------------
+
+
+def test_html_disabled_html_dir_is_none(tmp_path):
+    """html_enabled=False → html_dir is None."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
+
+    plan = resolve_run_plan(
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(html_enabled=False),
     )
 
-    # Expected html_dir
-    expected_html_dir = tmp_path / "html"
+    assert plan.html_dir is None
 
-    assert len(actual_execution_context.pass_plans) == 1
-    assert actual_execution_context == RunPlan(
-        datadir_contexts=[
-            DatadirStructuralContext(
-                datadir=Path("/path/to/a"),
-                configfile_used=None,
-                config_rootdir=None,
-                rulefiles_used=None,
-                rules=[],
-            ),
-        ],
-        pass_plans=[PassPlan(backup_snapshot_dir=None)],
-        repo_configfile=None,
-        repo_rulefile=None,
-        backup_rootdir=None,
-        backup_depth=0,
-        routing_dict={},
-        html_dir=expected_html_dir,  # expected html_dir
+
+def test_html_enabled_html_dir_resolves_under_config_rootdir(tmp_path):
+    """html_enabled=True → html_dir is config_rootdir / html_dir."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
+
+    plan = resolve_run_plan(
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(html_enabled=True),
     )
+
+    assert plan.html_dir == tmp_path / "html"
