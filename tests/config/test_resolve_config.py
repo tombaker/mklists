@@ -12,7 +12,11 @@ from mklists.config.model import (
 )
 from mklists.config.resolve import resolve_config
 from mklists.errors import StructureError
-from mklists.structure.markers import REPO_CONFIGFILE_NAME
+from mklists.structure.markers import (
+    DATADIR_CONFIGFILE_NAME,
+    DATADIR_RULEFILE_NAME,
+    REPO_CONFIGFILE_NAME,
+)
 from mklists.structure.model import (
     DatadirStructuralContext,
     StartdirStructuralContext,
@@ -79,9 +83,9 @@ def test_resolve_config_repo_root_rulefile_only_uses_defaults(tmp_path):
 
 def test_resolve_config_selfcontained_datadir_uses_local_configfile(tmp_path):
     """Self-contained datadir uses its own config file."""
-    local_configfile = tmp_path / "mklists.yaml"
+    local_configfile = tmp_path / DATADIR_CONFIGFILE_NAME
     local_configfile.write_text("verbose: true\n")
-    rulefile = tmp_path / "mklists.rules"
+    rulefile = tmp_path / DATADIR_RULEFILE_NAME
     rulefile.touch()
 
     fake_ctx = make_structural_context(
