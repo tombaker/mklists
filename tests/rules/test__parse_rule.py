@@ -28,6 +28,13 @@ def test_source_and_target_are_stripped():
     assert rule.target == "target"
 
 
+def test_negative_source_matchfield_raises_rule_error():
+    """Negative source matchfield raises RuleError."""
+    ruleline_fields = ["-1", ".*", "source", "target", "1"]
+    with pytest.raises(RuleError):
+        _parse_rule(ruleline_fields)
+
+
 def test_non_integer_source_matchfield_raises_rule_validation_error():
     """Non-integer source matchfield raises RuleError."""
     ruleline_fields = ["x", ".*", "source", "target", "1"]
