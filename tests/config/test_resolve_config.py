@@ -187,7 +187,7 @@ def test_resolve_config_default_linkify_values(tmp_path):
     config = resolve_config(fake_ctx)
 
     assert config.linkify.linkify_enabled is False
-    assert config.linkify.linkify_dir == (tmp_path / "html").resolve()
+    assert config.linkify.linkify_dir == (tmp_path / "markdown").resolve()
 
 
 def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):

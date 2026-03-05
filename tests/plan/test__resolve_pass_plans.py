@@ -41,7 +41,7 @@ def fake_make_config(
         ),
         linkify=LinkifyConfig(
             linkify_enabled=False,
-            linkify_dir=Path("html"),
+            linkify_dir=Path("markdown"),
         ),
     )
 

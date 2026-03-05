@@ -53,7 +53,7 @@ def make_config(
         safety=SafetyConfig(invalid_filename_patterns=[]),
         linkify=LinkifyConfig(
             linkify_enabled=linkify_enabled,
-            linkify_dir=Path("html"),
+            linkify_dir=Path("markdown"),
         ),
     )
 
@@ -140,7 +140,7 @@ def test_routing_enabled_routing_dict_comes_from_config(tmp_path):
 # ----- linkify_dir --------------------------------------------------------------
 
 
-def test_html_disabled_linkify_dir_is_none(tmp_path):
+def test_linkify_disabled_linkify_dir_is_none(tmp_path):
     """linkify_enabled=False → linkify_dir is None."""
     datadir = tmp_path / "data"
     datadir.mkdir()
@@ -167,4 +167,4 @@ def test_linkify_enabled_linkify_dir_resolves_under_config_rootdir(tmp_path):
         config=make_config(linkify_enabled=True),
     )
 
-    assert plan.linkify_dir == tmp_path / "html"
+    assert plan.linkify_dir == tmp_path / "markdown"
