@@ -75,7 +75,6 @@ def test_resolve_config_repo_root_rulefile_only_uses_defaults(tmp_path):
     config = resolve_config(fake_ctx)
 
     assert config.configfile_used is None
-    assert config.verbose is False  # default
 
 
 # --- is_datadir_selfcontained ---
@@ -135,7 +134,7 @@ def test_resolve_config_datadir_in_repo_no_parent_configfile_uses_defaults(tmp_p
     config = resolve_config(fake_ctx)
 
     assert config.configfile_used is None
-    assert config.verbose is False
+    assert config.verbose is False  # This will break if default settings change.
 
 
 # --- unreachable structural state ---
@@ -145,7 +144,7 @@ def test_resolve_config_unreachable_state_raises_structure_error(tmp_path):
     """No recognized structural state raises StructureError."""
     fake_ctx = make_structural_context(startdir=tmp_path)
 
-    with pytest.raises(StructureError):
+    with pytest.raises(StructureError, match="Unreachable structural state."):
         resolve_config(fake_ctx)
 
 
@@ -166,7 +165,10 @@ def test_resolve_config_returns_config_with_expected_sub_configs(tmp_path):
 
 
 def test_resolve_config_default_backup_values(tmp_path):
-    """Default config has backup disabled, depth 3, rootdir under config_rootdir."""
+    """Default config has backup disabled, depth 3, rootdir under config_rootdir.
+    
+    This test, and tests below, will fail if DEFAULT_CONFIG_YAML is changed.
+    """
     fake_ctx = make_structural_context(
         startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
     )
