@@ -55,6 +55,7 @@ def resolve_run_plan(
         skipped_datadirs=skipped_datadirs,
         routing_dict=routing_dict,
         linkify_dir=linkify_dir,
+        safety=config.safety,
     )
 
 
@@ -138,8 +139,15 @@ def _resolve_pass_plans(
             if f is not None
         ]
 
+    if config.backup.backup_enabled:
+        backup_rootdir = config.backup.backup_rootdir
+    else:
+        backup_rootdir = None
+
     return [
         PassPlan(
+            backup_rootdir=backup_rootdir,
+            backup_depth=config.backup.backup_depth,
             snapshot_dir=(
                 config_rootdir / config.backup.backup_rootdir / f"{timestamp}_{i+1:02d}"
                 if timestamp

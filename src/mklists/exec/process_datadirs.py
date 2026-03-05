@@ -2,7 +2,7 @@
 
 from operator import attrgetter
 from pathlib import Path
-from mklists.config import Config
+from mklists.config.model import SafetyConfig
 from mklists.plan.model import DatadirPlan
 from mklists.exec.process_datalines import dispatch_datalines_to_targets
 from mklists.exec.safety import run_safety_checks
@@ -11,17 +11,17 @@ from mklists.exec.safety import run_safety_checks
 def process_datadir(
     *,
     datadir_plan: DatadirPlan,
-    config: Config,
+    safety: SafetyConfig,
 ) -> None:
     """
     Args:
         datadir_plan: Execution plan for one datadir, including resolved rules.
-        config: Normalized configuration settings.
+        safety: Safety configuration for filename validation.
 
     Returns:
         None, after safety check, reading data, applying rules, backup, re-writing.
     """
-    run_safety_checks(datadir_plan.datadir, config.safety)
+    run_safety_checks(datadir_plan.datadir, safety)
 
     rules = datadir_plan.rules
 

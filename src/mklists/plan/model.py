@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
+from mklists.config.model import SafetyConfig
 from mklists.rules.model import Rule
 
 
@@ -18,6 +19,8 @@ class DatadirPlan:
 class PassPlan:
     """Execution plan for one pass of a Mklists run."""
 
+    backup_rootdir: Path | None
+    backup_depth: int
     snapshot_dir: Path | None
     snapshot_repofiles_to_copy: list[Path]
 
@@ -39,3 +42,4 @@ class RunPlan:
     skipped_datadirs: list[SkippedDatadir]
     routing_dict: dict
     linkify_dir: Path | None
+    safety: SafetyConfig

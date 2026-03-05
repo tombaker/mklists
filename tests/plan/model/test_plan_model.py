@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import pytest
+from mklists.config.model import SafetyConfig
 from mklists.plan.model import (
     DatadirPlan,
     PassPlan,
@@ -34,6 +35,7 @@ from mklists.plan.model import (
             skipped_datadirs=[],
             routing_dict={},
             linkify_dir=None,
+            safety=SafetyConfig(invalid_filename_patterns=[]),
         ),
     ],
 )

@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Coding style
+
+- Prefer explicit `if/else` blocks to ternary (conditional) expressions.
+
 ## Communication style
 
 - Never use informal contractions (e.g., "it's", "that's", "don't", "isn't"); always use the full form (e.g., "it is", "that is", "do not", "is not")

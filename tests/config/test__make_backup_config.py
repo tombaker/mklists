@@ -48,6 +48,20 @@ def test_make_backup_config_type_coercion():
     assert backup_cfg.backup_depth == 5
 
 
+def test_make_backup_config_null_backup_rootdir_raises(tmp_path):
+    """backup_rootdir configured as null raises ValueError."""
+    config_dict = {
+        "backup": {
+            "backup_enabled": True,
+            "backup_rootdir": None,
+            "backup_depth": 3,
+        }
+    }
+
+    with pytest.raises(ValueError, match="backup_rootdir must not be configured as null"):
+        _make_backup_config(config_dict=config_dict, config_rootdir=tmp_path)
+
+
 def test_make_backup_config_absolute_backup_rootdir_used_as_is(tmp_path):
     """Absolute backup_rootdir is used directly without resolving against config_rootdir."""
     absolute_backup_rootdir = "/absolute/backup/path"

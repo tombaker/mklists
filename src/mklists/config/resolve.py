@@ -191,7 +191,12 @@ def _make_backup_config(
         Assumes all required keys are present.
     """
     backup_raw = config_dict["backup"]
-    backup_rootdir = Path(backup_raw["backup_rootdir"])
+    backup_rootdir_raw = backup_raw["backup_rootdir"]
+
+    if backup_rootdir_raw is None:
+        raise ValueError("backup_rootdir must not be configured as null.")
+
+    backup_rootdir = Path(backup_rootdir_raw)
 
     if not backup_rootdir.is_absolute():
         if len(backup_rootdir.parts) != 1:
@@ -295,8 +300,12 @@ def _make_linkify_config(
         Assumes all required keys are present.
     """
     linkify_raw = config_dict["linkify"]
+    linkify_dir_raw = linkify_raw["linkify_dir"]
+
+    if linkify_dir_raw is None:
+        raise ValueError("linkify_dir must not be configured as null.")
 
     return LinkifyConfig(
         linkify_enabled=bool(linkify_raw["linkify_enabled"]),
-        linkify_dir=(config_rootdir / linkify_raw["linkify_dir"]).resolve(),
+        linkify_dir=(config_rootdir / linkify_dir_raw).resolve(),
     )
