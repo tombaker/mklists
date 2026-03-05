@@ -1,65 +1,6 @@
 """Tests for $MKLMKL/exec/linkify.py"""
 
-from mklists.exec.linkify import _linkify_lines, _replace_url, linkify_datadirs
-
-
-# ---------------------------------------------------------------------------
-# _replace_url
-# ---------------------------------------------------------------------------
-
-
-def test_replace_url_no_punctuation(mocker):
-    """URL with no trailing punctuation is wrapped in an anchor tag."""
-    m = mocker.Mock()
-    m.group.side_effect = lambda n: {1: "https://example.com", 2: ""}[n]
-    assert _replace_url(m) == '<a href="https://example.com">https://example.com</a>'
-
-
-def test_replace_url_trailing_period(mocker):
-    """Trailing period is placed after the anchor tag, not inside the href."""
-    m = mocker.Mock()
-    m.group.side_effect = lambda n: {1: "https://example.com", 2: "."}[n]
-    assert _replace_url(m) == '<a href="https://example.com">https://example.com</a>.'
-
-
-def test_replace_url_trailing_comma(mocker):
-    """Trailing comma is placed after the anchor tag."""
-    m = mocker.Mock()
-    m.group.side_effect = lambda n: {1: "https://example.com", 2: ","}[n]
-    assert _replace_url(m) == '<a href="https://example.com">https://example.com</a>,'
-
-
-# ---------------------------------------------------------------------------
-# _linkify_lines
-# ---------------------------------------------------------------------------
-
-
-def test_linkify_lines_no_urls():
-    """Plain text is wrapped in a single <pre> block."""
-    text = "alpha\nbeta\ngamma\n"
-    result = _linkify_lines(text)
-    assert result == "<pre>\nalpha\nbeta\ngamma\n</pre>\n"
-
-
-def test_linkify_lines_with_url():
-    """URLs inside text are converted to anchor tags."""
-    text = "see https://example.com for details\n"
-    result = _linkify_lines(text)
-    assert '<a href="https://example.com">https://example.com</a>' in result
-    assert result.startswith("<pre>\n")
-    assert result.endswith("\n</pre>\n")
-
-
-def test_linkify_lines_no_trailing_blank_line():
-    """No blank line appears immediately before </pre>."""
-    text = "line one\nline two\n"
-    result = _linkify_lines(text)
-    assert "\n\n</pre>" not in result
-
-
-# ---------------------------------------------------------------------------
-# linkify_datadirs — flat layout (one datadir == config_rootdir)
-# ---------------------------------------------------------------------------
+from mklists.exec.linkify import linkify_datadirs
 
 
 def test_linkify_datadirs_flat_creates_md_files(tmp_path):
