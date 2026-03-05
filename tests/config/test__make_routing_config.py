@@ -1,9 +1,33 @@
 """Tests for $MKLMKL/config.py"""
 
-import re
-import yaml
 from pathlib import Path
 import pytest
 from mklists.config.resolve import _make_routing_config
 
 
+def _config_dict(routing_dict):
+    return {
+        "routing": {
+            "routing_enabled": True,
+            "routing_dict": routing_dict,
+        }
+    }
+
+
+def test_make_routing_config_filename_with_path_separator_raises(tmp_path):
+    """Routing key with a path separator raises ValueError."""
+    with pytest.raises(ValueError, match="must be a single filename, not a path"):
+        _make_routing_config(
+            config_dict=_config_dict({"subdir/file.txt": "dest"}),
+            config_rootdir=tmp_path,
+        )
+
+
+def test_make_routing_config_plain_filename_is_valid(tmp_path):
+    """Routing key that is a plain filename (one part) is accepted."""
+    cfg = _make_routing_config(
+        config_dict=_config_dict({"file.txt": "dest"}),
+        config_rootdir=tmp_path,
+    )
+
+    assert "file.txt" in cfg.routing_dict

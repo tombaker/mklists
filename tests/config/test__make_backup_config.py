@@ -48,6 +48,26 @@ def test_make_backup_config_type_coercion():
     assert backup_cfg.backup_depth == 5
 
 
+def test_make_backup_config_absolute_backup_rootdir_used_as_is(tmp_path):
+    """Absolute backup_rootdir is used directly without resolving against config_rootdir."""
+    absolute_backup_rootdir = "/absolute/backup/path"
+
+    config_dict = {
+        "backup": {
+            "backup_enabled": True,
+            "backup_rootdir": absolute_backup_rootdir,
+            "backup_depth": 3,
+        }
+    }
+
+    backup_cfg = _make_backup_config(
+        config_dict=config_dict,
+        config_rootdir=tmp_path,
+    )
+
+    assert backup_cfg.backup_rootdir == Path(absolute_backup_rootdir)
+
+
 def test_make_backup_config_rejects_nested_relative_backup_rootdir(tmp_path):
     """Relative backup_rootdir with multiple path components is invalid."""
     config_dict = {
