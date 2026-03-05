@@ -40,8 +40,8 @@ def fake_make_config(
             invalid_filename_patterns=[],
         ),
         linkify=LinkifyConfig(
-            html_enabled=False,
-            html_dir=Path("html"),
+            linkify_enabled=False,
+            linkify_dir=Path("html"),
         ),
     )
 

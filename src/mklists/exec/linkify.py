@@ -4,7 +4,7 @@
 def linkify_datadirs(datadirs, linkifydir):
     """@@@"""
     print(datadirs)
-    print(html_dir)
+    print(linkify_dir)
 
 
 import re

@@ -38,4 +38,4 @@ class RunPlan:
     datadir_plans: list[DatadirPlan]
     skipped_datadirs: list[SkippedDatadir]
     routing_dict: dict
-    html_dir: Path | None
+    linkify_dir: Path | None

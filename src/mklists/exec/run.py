@@ -68,5 +68,5 @@ def run_mklists(run_plan: RunPlan) -> None:
                     routing_dict=run_plan.routing_dict,
                 )
 
-    if run_plan.html_dir:
-        linkify_datadirs(datadirs=datadirs, html_dir=run_plan.html_dir)
+    if run_plan.linkify_dir:
+        linkify_datadirs(datadirs=datadirs, linkify_dir=run_plan.linkify_dir)

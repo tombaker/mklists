@@ -35,9 +35,9 @@ def resolve_run_plan(
     )
 
     # ----- linkify ---------------------------------------------------
-    html_dir = None
-    if config.linkify.html_enabled:
-        html_dir = config_rootdir / config.linkify.html_dir
+    linkify_dir = None
+    if config.linkify.linkify_enabled:
+        linkify_dir = config_rootdir / config.linkify.linkify_dir
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}
@@ -54,7 +54,7 @@ def resolve_run_plan(
         datadir_plans=datadir_plans,
         skipped_datadirs=skipped_datadirs,
         routing_dict=routing_dict,
-        html_dir=html_dir,
+        linkify_dir=linkify_dir,
     )
 
 

@@ -2,7 +2,7 @@
 
 Tests focus on two decisions resolve_run_plan makes directly:
 — routing_dict conditional
-- html_dir conditional
+- linkify_dir conditional
 
 Also:
 - that it returns a RunPlan
@@ -34,7 +34,7 @@ def make_config(
     backup_enabled: bool = False,
     routing_enabled: bool = False,
     routing_dict: dict | None = None,
-    html_enabled: bool = False,
+    linkify_enabled: bool = False,
 ) -> Config:
     """Build a minimal Config for testing resolve_run_plan."""
     return Config(
@@ -52,8 +52,8 @@ def make_config(
         ),
         safety=SafetyConfig(invalid_filename_patterns=[]),
         linkify=LinkifyConfig(
-            html_enabled=html_enabled,
-            html_dir=Path("html"),
+            linkify_enabled=linkify_enabled,
+            linkify_dir=Path("html"),
         ),
     )
 
@@ -137,11 +137,11 @@ def test_routing_enabled_routing_dict_comes_from_config(tmp_path):
     assert plan.routing_dict == expected
 
 
-# ----- html_dir --------------------------------------------------------------
+# ----- linkify_dir --------------------------------------------------------------
 
 
-def test_html_disabled_html_dir_is_none(tmp_path):
-    """html_enabled=False → html_dir is None."""
+def test_html_disabled_linkify_dir_is_none(tmp_path):
+    """linkify_enabled=False → linkify_dir is None."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -149,14 +149,14 @@ def test_html_disabled_html_dir_is_none(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(html_enabled=False),
+        config=make_config(linkify_enabled=False),
     )
 
-    assert plan.html_dir is None
+    assert plan.linkify_dir is None
 
 
-def test_html_enabled_html_dir_resolves_under_config_rootdir(tmp_path):
-    """html_enabled=True → html_dir is config_rootdir / html_dir."""
+def test_linkify_enabled_linkify_dir_resolves_under_config_rootdir(tmp_path):
+    """linkify_enabled=True → linkify_dir is config_rootdir / linkify_dir."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -164,7 +164,7 @@ def test_html_enabled_html_dir_resolves_under_config_rootdir(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(html_enabled=True),
+        config=make_config(linkify_enabled=True),
     )
 
-    assert plan.html_dir == tmp_path / "html"
+    assert plan.linkify_dir == tmp_path / "html"

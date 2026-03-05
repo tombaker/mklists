@@ -180,14 +180,14 @@ def test_resolve_config_default_backup_values(tmp_path):
 
 
 def test_resolve_config_default_linkify_values(tmp_path):
-    """Default config has linkify disabled and html_dir under config_rootdir."""
+    """Default config has linkify disabled and linkify_dir under config_rootdir."""
     fake_ctx = make_structural_context(
         startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
-    assert config.linkify.html_enabled is False
-    assert config.linkify.html_dir == (tmp_path / "html").resolve()
+    assert config.linkify.linkify_enabled is False
+    assert config.linkify.linkify_dir == (tmp_path / "html").resolve()
 
 
 def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):

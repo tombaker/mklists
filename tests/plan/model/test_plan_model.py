@@ -31,7 +31,7 @@ from mklists.plan.model import (
             datadir_plans=[],
             skipped_datadirs=[],
             routing_dict={},
-            html_dir=None,
+            linkify_dir=None,
         ),
     ],
 )

@@ -300,6 +300,6 @@ def _make_linkify_config(
     linkify_raw = config_dict["linkify"]
 
     return LinkifyConfig(
-        html_enabled=bool(linkify_raw["html_enabled"]),
-        html_dir=(config_rootdir / linkify_raw["html_dir"]).resolve(),
+        linkify_enabled=bool(linkify_raw["linkify_enabled"]),
+        linkify_dir=(config_rootdir / linkify_raw["linkify_dir"]).resolve(),
     )
