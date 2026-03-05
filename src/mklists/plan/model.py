@@ -37,6 +37,6 @@ class RunPlan:
 
     pass_plans: list[PassPlan]
     datadir_plans: list[DatadirPlan]
-    skipped_datadirs: list[SkippedDatadirPlan]
+    skipped_datadirs: list[SkippedDatadir]
     routing_dict: dict
     htmldir: Path | None
