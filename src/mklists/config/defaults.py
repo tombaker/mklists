@@ -1,6 +1,6 @@
-"""@@@"""
+"""Default configuration settings in YAML."""
 
-# The complete default config schema in YAML; all required keys must appear here.
+
 DEFAULT_CONFIG_YAML = """\
 verbose: False
 

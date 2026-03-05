@@ -3,9 +3,10 @@
 from copy import deepcopy
 from pathlib import Path
 import re
-from typing import Any, Pattern
+from re import Pattern
+from typing import Any
 import yaml
-from mklists.rules.model import Rule
+from mklists.errors import StructureError
 from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.config.model import (
     BackupConfig,
@@ -14,29 +15,52 @@ from mklists.config.model import (
     SafetyConfig,
     Config,
 )
+from mklists.structure.markers import REPO_CONFIGFILE_NAME
+from mklists.structure.model import StructuralContext
 
 
-def resolve_config(
-    config_rootdir: Path,
-    configfile_used: Path | None,
-) -> Config:
+def resolve_config(structural_context: StructuralContext) -> Config:
     """Derive settings from built-in defaults and optional user-defined config file.
 
     Args:
-        configfile_used: Path of user-defined config file to use, if available.
+        structural_context: Resolved execution context for one Mklists run.
 
     Returns:
-        Instance of configuration object Config.
-
-    Note:
-        Is no user-defined config file is found, uses only built-in defaults.
+        Instance of Config.
     """
+    startdir_context = structural_context.startdir_context
+    config_rootdir = startdir_context.config_rootdir
+
+    if startdir_context.is_repo_root:
+        configfile_used = startdir_context.repo_configfile_found
+    elif startdir_context.is_datadir_selfcontained:
+        configfile_used = startdir_context.datadir_configfile_found
+    elif startdir_context.is_datadir_in_repo:
+        # Look up repo config file relative to discovered config root directory.
+        repo_configfile = config_rootdir / REPO_CONFIGFILE_NAME
+        if repo_configfile.is_file():
+            configfile_used = repo_configfile
+        else:
+            configfile_used = None
+    else:
+        raise StructureError("Unreachable structural state.")
+
     config_dict = _load_merged_configdict(configfile_used=configfile_used)
 
-    return _make_config(
-        config_dict=config_dict,
-        config_rootdir=config_rootdir,
+    return Config(
         configfile_used=configfile_used,
+        config_rootdir=config_rootdir,
+        verbose=config_dict["verbose"],
+        backup=_make_backup_config(
+            config_dict=config_dict, config_rootdir=config_rootdir
+        ),
+        linkify=_make_linkify_config(
+            config_dict=config_dict, config_rootdir=config_rootdir
+        ),
+        routing=_make_routing_config(
+            config_dict=config_dict, config_rootdir=config_rootdir
+        ),
+        safety=_make_safety_config(config_dict=config_dict),
     )
 
 
@@ -131,8 +155,8 @@ def _load_yaml_from_string(yamltext: str) -> Any:
 
 
 def _merge_config_dicts(
-    defaults: dict[str, list[Rule]],
-    overrides: dict[str, list[Rule]],
+    defaults: dict[str, Any],
+    overrides: dict[str, Any],
 ) -> dict[str, Any]:
     """Merge overrides config over defaults.
 
@@ -172,7 +196,8 @@ def _make_backup_config(
     if not backup_rootdir.is_absolute():
         if len(backup_rootdir.parts) != 1:
             raise ValueError(
-                "backup_rootdir must be single directory name or absolute pathname."
+                f"{str(backup_rootdir)!r} must be directory name or absolute path, "
+                "not relative."
             )
         backup_rootdir = (config_rootdir / backup_rootdir).resolve()
 
@@ -208,22 +233,19 @@ def _make_routing_config(
 
     for filename, dirname in files2dirs_raw.items():
         # --- Validate filename (key) ---
-        filename = Path(filename)
-
-        if filename.is_absolute() or len(filename.parts) != 1:
+        if len(Path(filename).parts) != 1:
             raise ValueError(
-                f"routing_dict must be single filename, not a path: {filename!r} ."
+                f"filename {filename!r} must be a single filename, not a path."
             )
 
         # --- Validate / normalize dirname (value) ---
-        dirname = Path(dirname)
+        if not Path(dirname).is_absolute() and len(Path(dirname).parts) != 1:
+            raise ValueError(
+                f"{dirname!r} (in `routing_dict`) must be a directory name or "
+                "absolute path, not a relative path."
+            )
 
-        if not dirname.is_absolute():
-            if len(dirname.parts) != 1:
-                raise ValueError(
-                    "routing_dict values must be single directory name "
-                    "or an absolute pathname."
-                )
+        if len(Path(filename).parts) == 1:
             dirname = (config_rootdir / dirname).resolve()
 
         routing_dict[filename] = dirname
@@ -234,15 +256,11 @@ def _make_routing_config(
     )
 
 
-def _make_safety_config(
-    *,
-    config_dict: dict[str, Any],
-) -> SafetyConfig:
+def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
     """Initialize instance of SafetyConfig.
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory of mklists repo.
 
     Returns:
         Instance of SafetyConfig initialized from config dictionary.
@@ -287,37 +305,3 @@ def _make_linkify_config(
     )
 
 
-def _make_config(
-    *,
-    config_dict: dict,
-    config_rootdir: Path,
-    configfile_used: Path | None,
-) -> Config:
-    """Normalize and validate merged config dict into Config.
-
-    Args:
-        config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory for resolving relative paths.
-        configfile_used: Config file actually used.
-
-    Returns:
-        Instance of Config initialized from config dictionary.
-
-    Note:
-        Assumes all required keys are present.
-    """
-    return Config(
-        configfile_used=configfile_used,
-        config_rootdir=config_rootdir,
-        verbose=config_dict["verbose"],
-        backup=_make_backup_config(
-            config_dict=config_dict, config_rootdir=config_rootdir
-        ),
-        routing=_make_routing_config(
-            config_dict=config_dict, config_rootdir=config_rootdir
-        ),
-        safety=_make_safety_config(config_dict=config_dict),
-        linkify=_make_linkify_config(
-            config_dict=config_dict, config_rootdir=config_rootdir
-        ),
-    )

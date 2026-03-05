@@ -60,7 +60,7 @@ def test_make_backup_config_rejects_nested_relative_backup_rootdir(tmp_path):
 
     with pytest.raises(
         ValueError,
-        match="backup_rootdir must be single directory name or absolute pathname.",
+        match=r".+ must be directory name or absolute path, not relative\.",
     ):
         _make_backup_config(
             config_dict=config_dict,
