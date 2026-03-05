@@ -1,15 +1,24 @@
 """@@@"""
 
-
-def linkify_datadirs(datadirs, linkifydir):
-    """@@@"""
-    print(datadirs)
-    print(linkify_dir)
-
-
 import re
 
 URL_RE = re.compile(r"(https?://[^\s<>()]+)([.,;:!?)]?)")
+
+
+def linkify_datadirs(datadirs, linkify_dir):
+    """Linkify datafiles as markdown files in external directories.
+
+    Args:
+        datadirs: List of datadirs.
+        linkify_dir: Path to directory holding copies of datadirs with linkified files.
+    """
+
+
+def _linkify_lines(text: str) -> str:
+    """Wrap lines in <pre> and convert URLs into clickable HTML links."""
+    linked_text = URL_RE.sub(_replace_url, text)
+
+    return "<pre>\n" + linked_text + "\n</pre>\n"
 
 
 def _replace_url(match: re.Match) -> str:
@@ -19,10 +28,3 @@ def _replace_url(match: re.Match) -> str:
 
     link = f'<a href="{url}">{url}</a>'
     return link + punctuation
-
-
-def linkify_lines(text: str) -> str:
-    """Wrap lines in <pre> and convert URLs into clickable HTML links."""
-    linked_text = URL_RE.sub(_replace_url, text)
-
-    return "<pre>\n" + linked_text + "\n</pre>\n"
