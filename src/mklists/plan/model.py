@@ -19,8 +19,6 @@ class DatadirPlan:
 class PassPlan:
     """Execution plan for one pass of a Mklists run."""
 
-    backup_rootdir: Path | None
-    backup_depth: int
     snapshot_dir: Path | None
     snapshot_repofiles_to_copy: list[Path]
 
@@ -43,3 +41,5 @@ class RunPlan:
     routing_dict: dict
     linkify_dir: Path | None
     safety: SafetyConfig
+    backup_rootdir: Path | None
+    backup_depth: int

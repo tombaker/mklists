@@ -93,7 +93,7 @@ def test_backup_disabled_returns_one_pass(tmp_path):
     sc = fake_make_structural_context(tmp_path)
     cc = fake_make_config(backup_enabled=False)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert result == [PassPlan(backup_rootdir=None, backup_depth=2, snapshot_dir=None, snapshot_repofiles_to_copy=[])]
+    assert result == [PassPlan(snapshot_dir=None, snapshot_repofiles_to_copy=[])]
     assert len(result) == 1
 
 
@@ -102,7 +102,7 @@ def test_backup_disabled_routing_enabled_single_datadir_returns_one_pass(tmp_pat
     sc = fake_make_structural_context(tmp_path, num_datadirs=1)
     cc = fake_make_config(backup_enabled=False, routing_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert result == [PassPlan(backup_rootdir=None, backup_depth=2, snapshot_dir=None, snapshot_repofiles_to_copy=[])]
+    assert result == [PassPlan(snapshot_dir=None, snapshot_repofiles_to_copy=[])]
 
 
 def test_backup_disabled_routing_enabled_multiple_datadirs_returns_two_passes(tmp_path):

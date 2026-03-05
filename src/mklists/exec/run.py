@@ -35,11 +35,6 @@ def run_mklists(run_plan: RunPlan) -> None:
                 snapshot_dir=pass_plan.snapshot_dir,
             )
 
-            prune_backupdirs(
-                backup_rootdir=pass_plan.backup_rootdir,
-                backup_depth=pass_plan.backup_depth,
-            )
-
         for datadir_plan in run_plan.datadir_plans:
             process_datadir(
                 datadir_plan=datadir_plan,
@@ -51,6 +46,12 @@ def run_mklists(run_plan: RunPlan) -> None:
                 datadirs=datadirs,
                 routing_dict=run_plan.routing_dict,
             )
+
+    if run_plan.backup_rootdir is not None:
+        prune_backupdirs(
+            backup_rootdir=run_plan.backup_rootdir,
+            backup_depth=run_plan.backup_depth,
+        )
 
     if run_plan.linkify_dir:
         linkify_datadirs(datadirs=datadirs, linkify_dir=run_plan.linkify_dir)
