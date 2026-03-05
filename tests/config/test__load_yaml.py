@@ -177,6 +177,14 @@ def test_load_yamlstr_invalid_yaml_raises_yamlerror(yaml_load_fn):
         yaml_load_fn(yaml_text)
 
 
+def test_load_yaml_from_file_raises_file_not_found_error(tmp_path):
+    """Passing a non-existent path raises FileNotFoundError."""
+    missing = tmp_path / "nonexistent.yaml"
+
+    with pytest.raises(FileNotFoundError, match="YAML file not found"):
+        _load_yaml_from_file(missing)
+
+
 def test_load_yaml_from_string_does_not_mutate_input():
     """Reality check: Loading YAML from string does not mutate input."""
     yaml_text = "backup:\n  enabled: true\n"

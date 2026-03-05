@@ -132,7 +132,7 @@ def _load_yaml_from_file(yamlfile: Path | str) -> Any:
     yamlfile = Path(yamlfile)
 
     if not yamlfile.exists():
-        raise FileNotFoundError(f"YAML file not found: {yamlfile}")
+        raise FileNotFoundError(f"YAML file not found: {yamlfile!r}.")
 
     with yamlfile.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)

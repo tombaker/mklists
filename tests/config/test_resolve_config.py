@@ -148,6 +148,34 @@ def test_resolve_config_unreachable_state_raises_structure_error(tmp_path):
         resolve_config(fake_ctx)
 
 
+def test_resolve_config_else_branch_raises_structure_error(tmp_path, mocker):
+    """The else branch in resolve_config (line 46) raises StructureError.
+
+    This branch is doubly unreachable in normal execution: the config_rootdir
+    property on StartdirStructuralContext performs the same three-way check and
+    raises StructureError before resolve_config can reach its own else clause.
+    The existing test above triggers the property raise (line 32), not line 46.
+
+    To cover line 46 directly, this test mocks startdir_context so that
+    config_rootdir returns a valid Path (preventing the early raise) while all
+    three structural predicates remain False. This documents the contract that
+    resolve_config itself guards against invalid structural state independently
+    of the property, so that if the property guard is ever removed or the
+    if/elif logic is refactored, a StructureError is still raised here.
+    """
+    mock_startdir_ctx = mocker.MagicMock()
+    mock_startdir_ctx.config_rootdir = tmp_path
+    mock_startdir_ctx.is_repo_root = False
+    mock_startdir_ctx.is_datadir_selfcontained = False
+    mock_startdir_ctx.is_datadir_in_repo = False
+
+    mock_ctx = mocker.MagicMock()
+    mock_ctx.startdir_context = mock_startdir_ctx
+
+    with pytest.raises(StructureError, match="Unreachable structural state."):
+        resolve_config(mock_ctx)
+
+
 # --- returned Config contents ---
 
 
