@@ -19,6 +19,8 @@ from mklists.plan.model import (
             rulefiles_used=[],
         ),
         PassPlan(
+            backup_rootdir=Path("/tmp/backups"),
+            backup_depth=3,
             snapshot_dir=Path("/tmp/backups/2026-03-01_123123123_01"),
             snapshot_repofiles_to_copy=[],
         ),
