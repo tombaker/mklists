@@ -303,5 +303,3 @@ def _make_linkify_config(
         html_enabled=bool(linkify_raw["html_enabled"]),
         html_dir=(config_rootdir / linkify_raw["html_dir"]).resolve(),
     )
-
-
