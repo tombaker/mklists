@@ -5,7 +5,7 @@ from mklists.config import resolve_config, Config
 from mklists.plan.model import RunPlan
 from mklists.exec.backups import (
     backup_datadirs,
-    init_backup_snapshot_dir,
+    init_snapshot_dir,
     prune_backupdirs,
 )
 from mklists.exec.process_datadirs import process_datadir
@@ -22,20 +22,19 @@ def run_mklists(run_plan: RunPlan) -> None:
     Returns:
         None, after executing the run plan.
     """
-    datadirs = [ctx.datadir for ctx in run_plan.datadir_contexts]
+    datadirs = [ctx.datadir for ctx in run_plan.datadir_plans]
 
     for pass_plan in run_plan.pass_plans:
-        if pass_plan.backup_snapshot_dir is not None:
+        if pass_plan.snapshot_dir is not None:
 
-            init_backup_snapshot_dir(
-                backup_snapshot_dir=pass_plan.backup_snapshot_dir,
-                repo_configfile=run_plan.repo_configfile,
-                repo_rulefile=run_plan.repo_rulefile,
+            init_snapshot_dir(
+                snapshot_dir=pass_plan.snapshot_dir,
+                snapshot_repofiles_to_copy=pass_plan.snapshot_repofiles_to_copy,
             )
 
             backup_datadirs(
                 datadirs=datadirs,
-                backup_snapshot_dir=pass_plan.backup_snapshot_dir,
+                snapshot_dir=pass_plan.snapshot_dir,
             )
 
             if run_plan.backup_rootdir is not None:
@@ -46,7 +45,7 @@ def run_mklists(run_plan: RunPlan) -> None:
 
         configs_by_path: dict[Path | None, Config] = {}
 
-        for datadir_context in run_plan.datadir_contexts:
+        for datadir_context in run_plan.datadir_plan:
             config_path = datadir_context.configfile_used
 
             if config_path not in configs_by_path:

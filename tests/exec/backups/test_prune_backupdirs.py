@@ -3,9 +3,9 @@
 from mklists.exec.backups import prune_backupdirs
 
 
-def _mk_backupdirs(backup_snapshot_dir, names):
+def _mk_backupdirs(snapshot_dir, names):
     for name in names:
-        (backup_snapshot_dir / name).mkdir()
+        (snapshot_dir / name).mkdir()
 
 
 def test_delete_backupdirs_under_depth(tmp_path):

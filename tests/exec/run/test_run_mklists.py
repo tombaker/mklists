@@ -65,7 +65,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
 
     execution_context = RunPlan(
         datadir_contexts=datadir_contexts,
-        pass_plans=[PassPlan(backup_snapshot_dir=None)],
+        pass_plans=[PassPlan(snapshot_dir=None)],
         repo_configfile=None,
         repo_rulefile=None,
         backup_rootdir=None,
