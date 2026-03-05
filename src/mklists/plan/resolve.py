@@ -2,11 +2,7 @@
 
 from datetime import datetime, UTC
 from mklists.config import Config
-from mklists.structure.model import (
-    DatadirStructuralContext,
-    StartdirStructuralContext,
-    StructuralContext,
-)
+from mklists.structure.model import StructuralContext
 from mklists.plan.model import (
     DatadirPlan,
     PassPlan,
