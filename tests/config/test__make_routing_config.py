@@ -40,3 +40,13 @@ def test_make_routing_config_plain_filename_is_valid(tmp_path):
     )
 
     assert "file.txt" in cfg.routing_dict
+
+
+def test_make_routing_config_dirname_resolved_against_config_rootdir(tmp_path):
+    """Single-part dirname is resolved as config_rootdir / dirname."""
+    cfg = _make_routing_config(
+        config_dict=_config_dict({"file.txt": "dest"}),
+        config_rootdir=tmp_path,
+    )
+
+    assert cfg.routing_dict["file.txt"] == (tmp_path / "dest").resolve()
