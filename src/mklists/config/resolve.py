@@ -245,10 +245,7 @@ def _make_routing_config(
                 "absolute path, not a relative path."
             )
 
-        if len(Path(filename).parts) == 1:
-            dirname = (config_rootdir / dirname).resolve()
-
-        routing_dict[filename] = dirname
+        routing_dict[filename] = (config_rootdir / dirname).resolve()
 
     return RoutingConfig(
         routing_enabled=routing_enabled,
