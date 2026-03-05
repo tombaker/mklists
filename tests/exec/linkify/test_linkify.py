@@ -1,29 +1,192 @@
-"""Tests $MKLRUN/linkify.py
+"""Tests for $MKLMKL/exec/linkify.py"""
 
-After all datadir processing passes are complete, 
-linkify_datadirs should create a parallel mirror of the datadir tree 
-rooted at linkify_dir. 
+from mklists.exec.linkify import _linkify_lines, _replace_url, linkify_datadirs
 
-For each datadir, 
-it creates a corresponding subdirectory under linkify_dir. 
 
-For each plain text data file in a datadir, 
-it writes a .md file 
-in which the lines have wrapped in a single <pre>...</pre> block, 
-with any raw URLs in the text converted to <a href="...">...</a> HTML links. 
+# ---------------------------------------------------------------------------
+# _replace_url
+# ---------------------------------------------------------------------------
 
-The result is a set of .md files
-that GitHub will render as HTML 
-because the <pre> block preserves line structure and whitespace, 
-and the inline <a> tags make URLs clickable when viewed on GitHub.
 
-linkify_datadirs:
+def test_replace_url_no_punctuation(mocker):
+    """URL with no trailing punctuation is wrapped in an anchor tag."""
+    m = mocker.Mock()
+    m.group.side_effect = lambda n: {1: "https://example.com", 2: ""}[n]
+    assert _replace_url(m) == '<a href="https://example.com">https://example.com</a>'
 
-1. Delete all content under linkify_dir (full shutil.rmtree then recreate), to
-   handle renamed/removed datadirs cleanly.
-2. For each datadir, create a corresponding subdirectory under linkify_dir,
-   mirroring the relative path from config_rootdir.
-3. For each visible data file in that datadir, read its full text, pass it
-   through _linkify_lines (one <pre> block, URLs converted to <a> tags), and
-   write the result to linkify_dir/<rel_path>/<filename>.md.
-"""
+
+def test_replace_url_trailing_period(mocker):
+    """Trailing period is placed after the anchor tag, not inside the href."""
+    m = mocker.Mock()
+    m.group.side_effect = lambda n: {1: "https://example.com", 2: "."}[n]
+    assert _replace_url(m) == '<a href="https://example.com">https://example.com</a>.'
+
+
+def test_replace_url_trailing_comma(mocker):
+    """Trailing comma is placed after the anchor tag."""
+    m = mocker.Mock()
+    m.group.side_effect = lambda n: {1: "https://example.com", 2: ","}[n]
+    assert _replace_url(m) == '<a href="https://example.com">https://example.com</a>,'
+
+
+# ---------------------------------------------------------------------------
+# _linkify_lines
+# ---------------------------------------------------------------------------
+
+
+def test_linkify_lines_no_urls():
+    """Plain text is wrapped in a single <pre> block."""
+    text = "alpha\nbeta\ngamma\n"
+    result = _linkify_lines(text)
+    assert result == "<pre>\nalpha\nbeta\ngamma\n</pre>\n"
+
+
+def test_linkify_lines_with_url():
+    """URLs inside text are converted to anchor tags."""
+    text = "see https://example.com for details\n"
+    result = _linkify_lines(text)
+    assert '<a href="https://example.com">https://example.com</a>' in result
+    assert result.startswith("<pre>\n")
+    assert result.endswith("\n</pre>\n")
+
+
+def test_linkify_lines_no_trailing_blank_line():
+    """No blank line appears immediately before </pre>."""
+    text = "line one\nline two\n"
+    result = _linkify_lines(text)
+    assert "\n\n</pre>" not in result
+
+
+# ---------------------------------------------------------------------------
+# linkify_datadirs — flat layout (one datadir == config_rootdir)
+# ---------------------------------------------------------------------------
+
+
+def test_linkify_datadirs_flat_creates_md_files(tmp_path):
+    """Flat layout: .md files are written directly into linkify_dir."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    (datadir / "notes.txt").write_text("alpha\nbeta\n")
+
+    linkify_dir = tmp_path / "linkified"
+    linkify_datadirs(datadirs=[datadir], linkify_dir=linkify_dir)
+
+    assert (linkify_dir / "notes.txt.md").is_file()
+
+
+def test_linkify_datadirs_flat_file_naming(tmp_path):
+    """Original filename gets .md appended, not substituted."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    (datadir / "todo.txt").write_text("one\ntwo\n")
+
+    linkify_dir = tmp_path / "linkified"
+    linkify_datadirs(datadirs=[datadir], linkify_dir=linkify_dir)
+
+    assert (linkify_dir / "todo.txt.md").is_file()
+    assert not (linkify_dir / "todo.md").exists()
+
+
+def test_linkify_datadirs_flat_content_wrapped_in_pre(tmp_path):
+    """Output file contains a <pre> block with the original lines."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    (datadir / "notes.txt").write_text("alpha\nbeta\n")
+
+    linkify_dir = tmp_path / "linkified"
+    linkify_datadirs(datadirs=[datadir], linkify_dir=linkify_dir)
+
+    content = (linkify_dir / "notes.txt.md").read_text()
+    assert "<pre>" in content
+    assert "alpha" in content
+    assert "beta" in content
+    assert "</pre>" in content
+
+
+def test_linkify_datadirs_flat_urls_linkified(tmp_path):
+    """URLs in data files are converted to anchor tags in the .md output."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    (datadir / "links.txt").write_text("see https://example.com today\n")
+
+    linkify_dir = tmp_path / "linkified"
+    linkify_datadirs(datadirs=[datadir], linkify_dir=linkify_dir)
+
+    content = (linkify_dir / "links.txt.md").read_text()
+    assert '<a href="https://example.com">https://example.com</a>' in content
+
+
+def test_linkify_datadirs_flat_hidden_files_skipped(tmp_path):
+    """Hidden files (e.g. .rules) are not mirrored."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    (datadir / ".rules").write_text("hidden\n")
+    (datadir / "visible.txt").write_text("line\n")
+
+    linkify_dir = tmp_path / "linkified"
+    linkify_datadirs(datadirs=[datadir], linkify_dir=linkify_dir)
+
+    assert not (linkify_dir / ".rules.md").exists()
+    assert (linkify_dir / "visible.txt.md").is_file()
+
+
+# ---------------------------------------------------------------------------
+# linkify_datadirs — subdir layout (multiple datadirs one level under root)
+# ---------------------------------------------------------------------------
+
+
+def test_linkify_datadirs_subdir_creates_subdirectories(tmp_path):
+    """Subdir layout: each datadir maps to a subdirectory of linkify_dir."""
+    root = tmp_path / "root"
+    root.mkdir()
+    (root / "work").mkdir()
+    (root / "home").mkdir()
+    (root / "work" / "tasks.txt").write_text("task one\n")
+    (root / "home" / "chores.txt").write_text("chore one\n")
+
+    linkify_dir = tmp_path / "linkified"
+    linkify_datadirs(
+        datadirs=[root / "work", root / "home"],
+        linkify_dir=linkify_dir,
+    )
+
+    assert (linkify_dir / "work" / "tasks.txt.md").is_file()
+    assert (linkify_dir / "home" / "chores.txt.md").is_file()
+
+
+# ---------------------------------------------------------------------------
+# linkify_datadirs — stale content is cleared
+# ---------------------------------------------------------------------------
+
+
+def test_linkify_datadirs_clears_stale_content(tmp_path):
+    """All existing content under linkify_dir is deleted before writing."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    (datadir / "current.txt").write_text("fresh\n")
+
+    linkify_dir = tmp_path / "linkified"
+    linkify_dir.mkdir()
+    stale = linkify_dir / "old_subdir"
+    stale.mkdir()
+    (stale / "stale.txt.md").write_text("stale content\n")
+
+    linkify_datadirs(datadirs=[datadir], linkify_dir=linkify_dir)
+
+    assert not stale.exists()
+    assert (linkify_dir / "current.txt.md").is_file()
+
+
+def test_linkify_datadirs_works_when_linkify_dir_absent(tmp_path):
+    """linkify_dir is created if it does not yet exist."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    (datadir / "notes.txt").write_text("line\n")
+
+    linkify_dir = tmp_path / "linkified"
+    assert not linkify_dir.exists()
+
+    linkify_datadirs(datadirs=[datadir], linkify_dir=linkify_dir)
+
+    assert linkify_dir.is_dir()
+    assert (linkify_dir / "notes.txt.md").is_file()
