@@ -2,7 +2,6 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from mklists.config import Config
 from mklists.rules.model import Rule
 
 
@@ -39,4 +38,4 @@ class RunPlan:
     datadir_plans: list[DatadirPlan]
     skipped_datadirs: list[SkippedDatadir]
     routing_dict: dict
-    htmldir: Path | None
+    html_dir: Path | None

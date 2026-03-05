@@ -71,7 +71,7 @@ def test_run_mklists_loads_config_per_unique_configfile(monkeypatch):
         backup_rootdir=None,
         backup_depth=None,
         routing_dict={},
-        htmldir=None,
+        html_dir=None,
     )
 
     calls: list[Path | None] = []

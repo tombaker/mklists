@@ -1,7 +1,7 @@
 """Tests $MKLMKL/plan.py: test that function resolves relative config paths to absolute.
 - Routing disabled. Expect: routing_dict is empty
-- Linify disabled. Expect: htmldir is None
-- Linify enabled. Expect: correct htmldir path
+- Linify disabled. Expect: html_dir is None
+- Linify enabled. Expect: correct html_dir path
 
 Real filesystem not needed. Rather, tiny factories:
 - fake_run_context
@@ -115,7 +115,7 @@ def test_plan_backups_disabled_one_pass(tmp_path):
         backup_rootdir=None,
         backup_depth=0,
         routing_dict={},
-        htmldir=None,
+        html_dir=None,
     )
 
 
@@ -188,7 +188,7 @@ def test_plan_backups_enabled_one_pass(tmp_path):
         backup_depth=2,
         pass_plans=[PassPlan(backup_snapshot_dir=expected_backup_snapshot_dir)],
         routing_dict={},
-        htmldir=None,
+        html_dir=None,
     )
 
 
@@ -263,7 +263,7 @@ def test_plan_linkify_enabled(tmp_path):
         Linkify ENABLED.
 
     Expect:
-        Correct htmldir path.
+        Correct html_dir path.
     """
     fake_config = fake_make_config(
         backup_enabled=False,
@@ -293,8 +293,8 @@ def test_plan_linkify_enabled(tmp_path):
         run_id="2026-02-22_12341234",
     )
 
-    # Expected htmldir
-    expected_htmldir = tmp_path / "html"
+    # Expected html_dir
+    expected_html_dir = tmp_path / "html"
 
     assert len(actual_execution_context.pass_plans) == 1
     assert actual_execution_context == RunPlan(
@@ -313,5 +313,5 @@ def test_plan_linkify_enabled(tmp_path):
         backup_rootdir=None,
         backup_depth=0,
         routing_dict={},
-        htmldir=expected_htmldir,  # expected htmldir
+        html_dir=expected_html_dir,  # expected html_dir
     )

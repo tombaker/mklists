@@ -58,8 +58,51 @@ def resolve_run_plan(
         datadir_plans=datadir_plans,
         skipped_datadirs=skipped_datadirs,
         routing_dict=routing_dict,
-        htmldir=html_dir,
+        html_dir=html_dir,
     )
+
+
+def _resolve_datadir_plans(
+    *,
+    structural_context: StructuralContext,
+) -> tuple[list[DatadirPlan], list[SkippedDatadir]]:
+    """Partition datadir contexts into executable plans and skipped datadirs.
+
+    Args:
+        structural_context: Execution context for one Mklists run.
+
+    Returns:
+        Tuple of (datadir_plans, skipped_datadirs).
+    """
+    repo_rulefile = structural_context.startdir_context.repo_rulefile_found
+
+    datadir_plans: list[DatadirPlan] = []
+    skipped_datadirs: list[SkippedDatadir] = []
+
+    for datadir_ctx in structural_context.datadir_contexts:
+        if datadir_ctx.datadir_configfile_found is not None:
+            skipped_datadirs.append(
+                SkippedDatadir(
+                    datadir=datadir_ctx.datadir,
+                    datadir_configfile_found=datadir_ctx.datadir_configfile_found,
+                )
+            )
+        else:
+            rulefiles_used = [
+                f
+                for f in [repo_rulefile, datadir_ctx.datadir_rulefile]
+                if f is not None
+            ]
+            rules = load_rules_for_datadir(rulefiles_used)
+            datadir_plans.append(
+                DatadirPlan(
+                    datadir=datadir_ctx.datadir,
+                    rules=rules,
+                    rulefiles_used=rulefiles_used,
+                )
+            )
+
+    return datadir_plans, skipped_datadirs
 
 
 def _resolve_pass_plans(
@@ -102,9 +145,7 @@ def _resolve_pass_plans(
     return [
         PassPlan(
             snapshot_dir=(
-                config_rootdir
-                / config.backup.backup_rootdir
-                / f"{timestamp}_{i+1:02d}"
+                config_rootdir / config.backup.backup_rootdir / f"{timestamp}_{i+1:02d}"
                 if timestamp
                 else None
             ),
@@ -112,44 +153,3 @@ def _resolve_pass_plans(
         )
         for i in range(pass_count)
     ]
-
-
-def _resolve_datadir_plans(
-    *,
-    structural_context: StructuralContext,
-) -> tuple[list[DatadirPlan], list[SkippedDatadir]]:
-    """Partition datadir contexts into executable plans and skipped self-contained datadirs.
-
-    Args:
-        structural_context: Execution context for one Mklists run.
-
-    Returns:
-        Tuple of (datadir_plans, skipped_datadirs).
-    """
-    repo_rulefile = structural_context.startdir_context.repo_rulefile_found
-
-    datadir_plans: list[DatadirPlan] = []
-    skipped_datadirs: list[SkippedDatadir] = []
-
-    for datadir_ctx in structural_context.datadir_contexts:
-        if datadir_ctx.datadir_configfile_found is not None:
-            skipped_datadirs.append(
-                SkippedDatadir(
-                    datadir=datadir_ctx.datadir,
-                    datadir_configfile_found=datadir_ctx.datadir_configfile_found,
-                )
-            )
-        else:
-            rulefiles_used = [
-                f for f in [repo_rulefile, datadir_ctx.datadir_rulefile] if f is not None
-            ]
-            rules = load_rules_for_datadir(rulefiles_used)
-            datadir_plans.append(
-                DatadirPlan(
-                    datadir=datadir_ctx.datadir,
-                    rules=rules,
-                    rulefiles_used=rulefiles_used,
-                )
-            )
-
-    return datadir_plans, skipped_datadirs
