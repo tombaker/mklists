@@ -58,7 +58,7 @@ def run_mklists(run_plan: RunPlan) -> None:
             config = configs_by_path[config_path]
 
             process_datadir(
-                datadir_context=datadir_context,
+                datadir_plan=datadir_context,
                 config=config,
             )
 
