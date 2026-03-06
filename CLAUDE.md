@@ -5,6 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Coding style
 
 - Prefer explicit `if/else` blocks to ternary (conditional) expressions.
+- Use [Click](https://click.palletsprojects.com/) for the CLI (`cli.py`).
 
 ## Communication style
 
