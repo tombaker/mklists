@@ -168,3 +168,36 @@ def test_linkify_enabled_linkify_dir_resolves_under_config_rootdir(tmp_path):
     )
 
     assert plan.linkify_dir == tmp_path / "markdown"
+
+
+# ----- backup_rootdir --------------------------------------------------------
+
+
+def test_backup_disabled_backup_rootdir_is_none(tmp_path):
+    """backup_enabled=False → backup_rootdir is None."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
+
+    plan = resolve_run_plan(
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(backup_enabled=False),
+    )
+
+    assert plan.backup_rootdir is None
+
+
+def test_backup_enabled_backup_rootdir_comes_from_config(tmp_path):
+    """backup_enabled=True → backup_rootdir equals config.backup.backup_rootdir."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
+
+    plan = resolve_run_plan(
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(backup_enabled=True),
+    )
+
+    assert plan.backup_rootdir == Path("backups")
