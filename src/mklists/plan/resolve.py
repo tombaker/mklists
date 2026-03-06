@@ -4,6 +4,7 @@ from datetime import datetime, UTC
 from mklists.config import Config
 from mklists.structure.model import StructuralContext
 from mklists.plan.model import (
+    BackupPlan,
     DatadirPlan,
     PassPlan,
     SkippedDatadir,
@@ -50,9 +51,12 @@ def resolve_run_plan(
     )
 
     if config.backup.backup_enabled:
-        backup_rootdir = config.backup.backup_rootdir
+        backup = BackupPlan(
+            backup_rootdir=config.backup.backup_rootdir,
+            backup_depth=config.backup.backup_depth,
+        )
     else:
-        backup_rootdir = None
+        backup = None
 
     return RunPlan(
         pass_plans=pass_plans,
@@ -61,8 +65,7 @@ def resolve_run_plan(
         routing_dict=routing_dict,
         linkify_dir=linkify_dir,
         safety=config.safety,
-        backup_rootdir=backup_rootdir,
-        backup_depth=config.backup.backup_depth,
+        backup=backup,
     )
 
 

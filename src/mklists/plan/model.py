@@ -32,6 +32,14 @@ class SkippedDatadir:
 
 
 @dataclass(frozen=True, slots=True)
+class BackupPlan:
+    """Backup parameters for one Mklists run."""
+
+    backup_rootdir: Path
+    backup_depth: int
+
+
+@dataclass(frozen=True, slots=True)
 class RunPlan:
     """Execution plan for one Mklists run."""
 
@@ -41,5 +49,4 @@ class RunPlan:
     routing_dict: dict
     linkify_dir: Path | None
     safety: SafetyConfig
-    backup_rootdir: Path | None
-    backup_depth: int
+    backup: BackupPlan | None

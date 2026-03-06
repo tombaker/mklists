@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 from mklists.config.model import SafetyConfig
 from mklists.plan.model import (
+    BackupPlan,
     DatadirPlan,
     PassPlan,
     SkippedDatadir,
@@ -34,8 +35,7 @@ from mklists.plan.model import (
             routing_dict={},
             linkify_dir=None,
             safety=SafetyConfig(invalid_filename_patterns=[]),
-            backup_rootdir=None,
-            backup_depth=0,
+            backup=None,
         ),
     ],
 )

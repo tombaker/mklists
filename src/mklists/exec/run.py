@@ -47,10 +47,10 @@ def run_mklists(run_plan: RunPlan) -> None:
                 routing_dict=run_plan.routing_dict,
             )
 
-    if run_plan.backup_rootdir is not None:
+    if run_plan.backup is not None:
         prune_backupdirs(
-            backup_rootdir=run_plan.backup_rootdir,
-            backup_depth=run_plan.backup_depth,
+            backup_rootdir=run_plan.backup.backup_rootdir,
+            backup_depth=run_plan.backup.backup_depth,
         )
 
     if run_plan.linkify_dir:

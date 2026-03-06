@@ -170,11 +170,11 @@ def test_linkify_enabled_linkify_dir_resolves_under_config_rootdir(tmp_path):
     assert plan.linkify_dir == tmp_path / "markdown"
 
 
-# ----- backup_rootdir --------------------------------------------------------
+# ----- backup ----------------------------------------------------------------
 
 
-def test_backup_disabled_backup_rootdir_is_none(tmp_path):
-    """backup_enabled=False → backup_rootdir is None."""
+def test_backup_disabled_backup_is_none(tmp_path):
+    """backup_enabled=False → backup is None."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -185,11 +185,11 @@ def test_backup_disabled_backup_rootdir_is_none(tmp_path):
         config=make_config(backup_enabled=False),
     )
 
-    assert plan.backup_rootdir is None
+    assert plan.backup is None
 
 
 def test_backup_enabled_backup_rootdir_comes_from_config(tmp_path):
-    """backup_enabled=True → backup_rootdir equals config.backup.backup_rootdir."""
+    """backup_enabled=True → backup.backup_rootdir equals config.backup.backup_rootdir."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -200,4 +200,4 @@ def test_backup_enabled_backup_rootdir_comes_from_config(tmp_path):
         config=make_config(backup_enabled=True),
     )
 
-    assert plan.backup_rootdir == Path("backups")
+    assert plan.backup.backup_rootdir == Path("backups")
