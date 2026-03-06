@@ -5,6 +5,18 @@ import pytest
 from mklists.exec.safety import _check_is_regular_file
 
 
+def test_nonexistent_path_raises_value_error(tmp_path):
+    """Non-existent path causes lstat() to raise OSError, which is re-raised as ValueError."""
+    missing = tmp_path / "nonexistent.txt"
+
+    with pytest.raises(ValueError) as exc:
+        _check_is_regular_file(pathname=missing)
+
+    err = exc.value.args[0]
+    assert err["category"] == "metadata"
+    assert err["reason"] == "cannot stat directory entry"
+
+
 def test_regular_readable_file_passes(tmp_path):
     """File is a regular file."""
     a_file = tmp_path / "a.txt"

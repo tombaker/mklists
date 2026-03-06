@@ -1,6 +1,6 @@
 $MKLMKL/config/defaults.py        - DEFAULT_CONFIG_YAML
-$MKLMKL/config/model.py           - dataclasses: BackupConfig RoutingConfig SafetyConfig UrlifyConfig ConfigContext
-$MKLMKL/config/resolve.py         - resolve: resolve_config_context
+$MKLMKL/config/model.py           - dataclasses: BackupConfig RoutingConfig SafetyConfig UrlifyConfig Config
+$MKLMKL/config/resolve.py         - resolve: resolve_config
 $MKLMKL/exec/backups.py           - backup_datadirs init_backup_snapshot_dir prune_backupdirs
 $MKLMKL/exec/process_datadirs.py  - process_datadir
 $MKLMKL/exec/process_datalines.py - dispatch_datalines_to_targets

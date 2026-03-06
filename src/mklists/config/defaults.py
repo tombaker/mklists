@@ -1,6 +1,6 @@
-"""@@@"""
+"""Default configuration settings in YAML."""
 
-# The complete default config schema in YAML; all required keys must appear here.
+
 DEFAULT_CONFIG_YAML = """\
 verbose: False
 
@@ -12,8 +12,8 @@ backup:
 
 # Linkification: After processing, data files can be written in HTML to given directory.
 linkify:
-  html_enabled: False
-  html_dir: html
+  linkify_enabled: False
+  linkify_dir: markdown
 
 # Routing: Newly generated files with special names can be moved to given directories.
 routing:

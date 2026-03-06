@@ -16,40 +16,38 @@ from loguru import logger
 def backup_datadirs(
     *,
     datadirs: Iterable[Path],
-    backup_snapshot_dir: Path,
+    snapshot_dir: Path,
 ) -> None:
     """Copy datadirs into already-initialized snapshot directory.
 
     Args:
-        datadirs: Iterable of Datadirs to snapshot.
-        backup_snapshot_dir: Root directory for snapshots of Datadirs.
+        datadirs: Datadirs to snapshot.
+        snapshot_dir: Directory for snapshots of datadirs.
 
     Raises:
-        FileExistsError: If backup_snapshot_dir already exists.
+        FileExistsError: If snapshot_dir already exists.
     """
-    if not backup_snapshot_dir.exists() or not backup_snapshot_dir.is_dir():
+    if not snapshot_dir.exists() or not snapshot_dir.is_dir():
         raise FileNotFoundError(
-            f"Backup snapshot directory does not exist: {backup_snapshot_dir}"
+            f"Backup snapshot directory does not exist: {snapshot_dir}"
         )
 
-    logger.info(f"Backup {backup_snapshot_dir}")
+    logger.info(f"Backup {snapshot_dir}")
 
     for datadir in datadirs:
-        target = backup_snapshot_dir / datadir.name
+        target = snapshot_dir / datadir.name
         shutil.copytree(src=datadir, dst=target)
 
 
-def init_backup_snapshot_dir(
-    backup_snapshot_dir: Path,
-    repo_configfile: Path | None,
-    repo_rulefile: Path | None = None,
+def init_snapshot_dir(
+    snapshot_dir: Path,
+    snapshot_repofiles_to_copy: list[Path],
 ) -> None:
     """Initialize directory for backup of one pass of a mklists run.
 
     Args:
-        backup_snapshot_dir: Backup directory to initialize.
-        repo_configfile: Path of repo-level config file (or None if none exists).
-        repo_rulefile: Path of repo-level rule file (or None if none exists).
+        snapshot_dir: Backup directory to initialize.
+        snapshot_repofiles_to_copy: List of repo-level config files to back up.
 
     Returns:
         None, after creating and initializing the backup root directory.
@@ -57,13 +55,10 @@ def init_backup_snapshot_dir(
     Raises:
         FileExistsError: If backup root directory already exists.
     """
-    backup_snapshot_dir.mkdir(parents=True, exist_ok=False)
+    snapshot_dir.mkdir(parents=True, exist_ok=False)
 
-    if repo_configfile is not None and repo_configfile.is_file():
-        shutil.copy2(src=repo_configfile, dst=backup_snapshot_dir)
-
-    if repo_rulefile is not None and repo_rulefile.is_file():
-        shutil.copy2(src=repo_rulefile, dst=backup_snapshot_dir)
+    for repofile_to_snapshot in snapshot_repofiles_to_copy:
+        shutil.copy2(src=repofile_to_snapshot, dst=snapshot_dir)
 
 
 def prune_backupdirs(backup_rootdir: Path, backup_depth: int) -> None:

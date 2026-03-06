@@ -1,1 +1,0 @@
-"""Tests $MKLRUN/linkify.py"""

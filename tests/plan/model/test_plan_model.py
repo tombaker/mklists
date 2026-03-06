@@ -2,7 +2,9 @@
 
 from pathlib import Path
 import pytest
+from mklists.config.model import SafetyConfig
 from mklists.plan.model import (
+    BackupPlan,
     DatadirPlan,
     PassPlan,
     SkippedDatadir,
@@ -20,8 +22,7 @@ from mklists.plan.model import (
         ),
         PassPlan(
             snapshot_dir=Path("/tmp/backups/2026-03-01_123123123_01"),
-            repo_configfile_found=None,
-            repo_rulefile_found=None,
+            snapshot_repofiles_to_copy=[],
         ),
         SkippedDatadir(
             datadir=Path("/tmp/datadirb"),
@@ -32,7 +33,9 @@ from mklists.plan.model import (
             datadir_plans=[],
             skipped_datadirs=[],
             routing_dict={},
-            htmldir=None,
+            linkify_dir=None,
+            safety=SafetyConfig(invalid_filename_patterns=[]),
+            backup=None,
         ),
     ],
 )

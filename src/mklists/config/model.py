@@ -33,12 +33,12 @@ class SafetyConfig:
 class LinkifyConfig:
     """Settings about writing data files in HTML to a desination directory."""
 
-    html_enabled: bool
-    html_dir: Path
+    linkify_enabled: bool
+    linkify_dir: Path
 
 
 @dataclass(frozen=True, slots=True)
-class ConfigContext:
+class Config:
     """Normalized, validated settings for processing one or more datadirs."""
 
     # Provenance

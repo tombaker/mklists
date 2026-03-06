@@ -2,34 +2,34 @@
 
 from operator import attrgetter
 from pathlib import Path
-from mklists.config import ConfigContext
-from mklists.structure.model import DatadirStructuralContext
+from mklists.config.model import SafetyConfig
+from mklists.plan.model import DatadirPlan
 from mklists.exec.process_datalines import dispatch_datalines_to_targets
 from mklists.exec.safety import run_safety_checks
 
 
 def process_datadir(
     *,
-    datadir_ctx: DatadirStructuralContext,
-    config_context: ConfigContext,
+    datadir_plan: DatadirPlan,
+    safety: SafetyConfig,
 ) -> None:
     """
     Args:
-        datadir:
-        config_context:
+        datadir_plan: Execution plan for one datadir, including resolved rules.
+        safety: Safety configuration for filename validation.
 
     Returns:
         None, after safety check, reading data, applying rules, backup, re-writing.
     """
-    run_safety_checks(datadir_ctx.datadir, config_context.safety)
+    run_safety_checks(datadir_plan.datadir, safety)
 
-    rules = datadir_ctx.rules
+    rules = datadir_plan.rules
 
-    datafiles: list[Path] = list(_find_datafiles(datadir_ctx.datadir))
+    datafiles: list[Path] = list(_find_datafiles(datadir_plan.datadir))
     datalines: list[str] = _read_datafiles(datafiles)
     datalines_dict = dispatch_datalines_to_targets(rules, datalines)
     _delete_datafiles(datafiles=datafiles)
-    _write_datafiles(datadir=datadir_ctx.datadir, datalines_dict=datalines_dict)
+    _write_datafiles(datadir=datadir_plan.datadir, datalines_dict=datalines_dict)
 
 
 def _delete_datafiles(datafiles: list[Path]) -> None:

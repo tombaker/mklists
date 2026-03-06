@@ -18,7 +18,7 @@ class StructuralContext
 ---------------------------------------------------------
 $MKLMKL/config/model.py
 
-class ConfigContext
+class Config
     configfile_used: Path | None
     config_rootdir: Path
     verbose: bool
@@ -49,4 +49,4 @@ class RunPlan
     datadir_plans: list[DatadirPlan]
     skipped_datadirs: list[SkippedDatadirPlan]
     routing_dict: dict
-    htmldir: Path | None
+    linkify_dir: Path | None

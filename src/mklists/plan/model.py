@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
-from mklists.config import ConfigContext
+from mklists.config.model import SafetyConfig
 from mklists.rules.model import Rule
 
 
@@ -20,8 +20,7 @@ class PassPlan:
     """Execution plan for one pass of a Mklists run."""
 
     snapshot_dir: Path | None
-    repo_configfile_found: Path | None
-    repo_rulefile_found: Path | None
+    snapshot_repofiles_to_copy: list[Path]
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,11 +32,21 @@ class SkippedDatadir:
 
 
 @dataclass(frozen=True, slots=True)
+class BackupPlan:
+    """Backup parameters for one Mklists run."""
+
+    backup_rootdir: Path
+    backup_depth: int
+
+
+@dataclass(frozen=True, slots=True)
 class RunPlan:
     """Execution plan for one Mklists run."""
 
     pass_plans: list[PassPlan]
     datadir_plans: list[DatadirPlan]
-    skipped_datadirs: list[SkippedDatadirPlan]
+    skipped_datadirs: list[SkippedDatadir]
     routing_dict: dict
-    htmldir: Path | None
+    linkify_dir: Path | None
+    safety: SafetyConfig
+    backup: BackupPlan | None
