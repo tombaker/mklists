@@ -5,7 +5,7 @@ import click
 
 @click.group()
 def cli() -> None:
-    """Rules-based file transformation tool."""
+    """Rule-based transformation of plain-text lists."""
 
 
 @cli.command()

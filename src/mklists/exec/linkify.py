@@ -4,28 +4,31 @@ import re
 import shutil
 from pathlib import Path
 
-URL_RE = re.compile(r"(https?://[^\s<>()]+)([.,;:!?)]?)")
+URL_RE = re.compile(r"(https?://[^\s<>()]*[^\s<>().,;:!?)])([.,;:!?)]?)")
 
 
 def linkify_datadirs(datadirs: list[Path], linkify_dir: Path) -> None:
     """Mirror datadirs to linkify_dir with URL-linkified .md files.
 
     For each datadir, a corresponding subdirectory is created under linkify_dir.
-    Each visible data file is written as <filename>.md whose content is the
-    original text wrapped in a single <pre> block with URLs converted to
+    Each visible data file is written as <filename>.md, the content of which is 
+    the original text wrapped in a single <pre> block with URLs converted to
     clickable <a> tags, suitable for rendering on GitHub.
 
     Supported layouts (no deeper nesting):
-        - Flat: one datadir that is config_rootdir; files land in linkify_dir directly.
-        - Subdir: multiple datadirs one level under config_rootdir; each maps to
-          linkify_dir/<datadir_name>/.
+    - Flat: one datadir that is config_rootdir; files land in linkify_dir directly.
+    - Subdir: multiple datadirs one level under config_rootdir; each maps to
+      linkify_dir/<datadir_name>/.
 
     All existing content under linkify_dir is deleted before writing, so stale
     files and directories from previous runs are always removed.
 
     Args:
         datadirs: List of datadir paths.
-        linkify_dir: Root of the mirror directory tree.
+        linkify_dir: Root of mirror directory tree.
+
+    Returns:
+        None, after mirroring datadirs under linkify_dir with linkified datafiles.
     """
     if linkify_dir.exists():
         shutil.rmtree(linkify_dir)
@@ -43,17 +46,55 @@ def linkify_datadirs(datadirs: list[Path], linkify_dir: Path) -> None:
                 continue
             text = datafile.read_text(encoding="utf-8")
             md_content = _linkify_lines(text)
-            (mirror_dir / (datafile.name + ".md")).write_text(md_content, encoding="utf-8")
+            (mirror_dir / (datafile.name + ".md")).write_text(
+                md_content, encoding="utf-8"
+            )
 
 
 def _linkify_lines(text: str) -> str:
-    """Wrap text in <pre> and convert URLs into clickable HTML links."""
+    """Wrap text in <pre> and convert URLs into clickable HTML links.
+
+    Args:
+        text: Plain text, possibly containing URLs and trailing newlines.
+
+    Returns:
+        Text wrapped in a ``<pre>`` block with URLs converted to ``<a>`` tags.
+        
+    Note:
+        URLs that genuinely end with ``.,;:!?)`` will have that character
+        incorrectly stripped; this is rare compared with prose punctuation
+        following a URL. Example:
+        https://en.wikipedia.org/wiki/DOT_(graph_description_language)
+
+    Examples:
+        >>> _linkify_lines("See https://foo.com details.")
+        '<pre>\\nSee <a href="https://foo.com">https://foo.com</a> details.\\n</pre>\\n'
+
+        >>> _linkify_lines("No URLs here.")
+        '<pre>\\nNo URLs here.\\n</pre>\\n'
+    """
     linked_text = URL_RE.sub(_replace_url, text)
     return "<pre>\n" + linked_text.rstrip("\n") + "\n</pre>\n"
 
 
 def _replace_url(match: re.Match) -> str:
-    """Convert a detected URL into an HTML link while preserving punctuation."""
+    """Convert a detected URL into an HTML link while preserving punctuation.
+
+    Args:
+        match: A `re.Match` object.
+
+    Returns:
+        String in which URL has been wrapped in <a> tags.
+
+    Examples:
+        >>> m = URL_RE.match("https://foo.com.")
+        >>> _replace_url(m)
+        '<a href="https://foo.com">https://foo.com</a>.'
+
+        >>> m = URL_RE.match("https://foo.com/path")
+        >>> _replace_url(m)
+        '<a href="https://foo.com/path">https://foo.com/path</a>'
+    """
     url = match.group(1)
     punctuation = match.group(2)
     return f'<a href="{url}">{url}</a>' + punctuation
