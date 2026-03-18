@@ -26,7 +26,7 @@ def resolve_structural_context(startdir: Path | str) -> StructuralContext:
         Structural context derived from filesystem layout.
 
     Note:
-        Starting directory is CWD path or override path from CLI option.
+        Execution begins in work tree unless CLI-specified.
     """
     startdir = Path(startdir).resolve()
 
@@ -41,7 +41,7 @@ def resolve_structural_context(startdir: Path | str) -> StructuralContext:
         datadirs = [startdir]
 
     if not datadirs:
-        raise StructureError("No datadirs found under config root directory.")
+        raise StructureError("No datadirs found in work tree.")
 
     # 3. Build list of datadir structural contexts.
     datadir_contexts: list[DatadirStructuralContext] = []
