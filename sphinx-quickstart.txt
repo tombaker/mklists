@@ -1,0 +1,94 @@
+sphinx-quickstart
+Welcome to the Sphinx 8.2.1 quickstart utility.
+
+Please enter values for the following settings (just press Enter to
+accept a default value, if one is given in brackets).
+
+Selected root path: .
+
+The project name will occur in several places in the built documentation.
+> Project name:
+> Author name(s):
+> Project release []:
+
+If the documents are to be written in a language other than English,
+you can select a language here by its language code. Sphinx will then
+translate text that it generates into that language.
+
+For a list of supported codes, see
+https://www.sphinx-doc.org/en/master/usage/configuration.html#confval-language.
+> Project language [en]:
+
+Creating file /private/tmp/conf.py.
+Creating file /private/tmp/index.rst.
+Creating file /private/tmp/Makefile.
+
+Finished: An initial directory structure has been created.
+
+You should now populate your master file /private/tmp/index.rst and create other documentation
+source files. Use the Makefile to build the docs, like so:
+   make builder
+where "builder" is one of the supported builders, e.g. html, latex or linkcheck.
+
+
+
+usage: sphinx-quickstart [OPTIONS] <PROJECT_DIR>
+
+Generate required files for a Sphinx project. sphinx-quickstart is an
+interactive tool that asks some questions about your project and then
+generates a complete documentation directory and sample Makefile to be used
+with sphinx-build.
+
+positional arguments:
+  PROJECT_DIR           project root
+
+options:
+  -h, --help            show this help message and exit
+  -q, --quiet           quiet mode
+  --version             show program's version number and exit
+
+Structure options:
+  --sep                 if specified, separate source and build dirs
+  --no-sep              if specified, create build dir under source dir
+  --dot DOT             replacement for dot in _templates etc.
+
+Project basic options:
+  -p, --project PROJECT
+                        project name
+  -a, --author AUTHOR   author names
+  -v VERSION            version of project
+  -r, --release RELEASE
+                        release of project
+  -l, --language LANGUAGE
+                        document language
+  --suffix SUFFIX       source file suffix
+  --master MASTER       master document name
+  --epub                use epub
+
+Extension options:
+  --ext-autodoc         enable autodoc extension
+  --ext-doctest         enable doctest extension
+  --ext-intersphinx     enable intersphinx extension
+  --ext-todo            enable todo extension
+  --ext-coverage        enable coverage extension
+  --ext-imgmath         enable imgmath extension
+  --ext-mathjax         enable mathjax extension
+  --ext-ifconfig        enable ifconfig extension
+  --ext-viewcode        enable viewcode extension
+  --ext-githubpages     enable githubpages extension
+  --extensions EXTENSIONS
+                        enable arbitrary extensions
+
+Makefile and Batchfile creation:
+  --makefile            create makefile
+  --no-makefile         do not create makefile
+  --batchfile           create batchfile
+  --no-batchfile        do not create batchfile
+  -m, --use-make-mode   use make-mode for Makefile/make.bat
+
+Project templating:
+  -t, --templatedir TEMPLATEDIR
+                        template directory for template files
+  -d NAME=VALUE         define a template variable
+
+For more information, visit <https://www.sphinx-doc.org/>.
