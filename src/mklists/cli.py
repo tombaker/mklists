@@ -1,6 +1,14 @@
 """CLI entry point for mklists."""
 
+from pathlib import Path
+
 import click
+
+from mklists.config.resolve import resolve_config
+from mklists.errors import MklistsError
+from mklists.exec.run import run_mklists
+from mklists.plan.resolve import resolve_run_plan
+from mklists.structure.resolve import resolve_structural_context
 
 
 @click.group()
@@ -56,4 +64,11 @@ def datadir(ctx: click.Context) -> None:
 )
 def run(directory: str | None, quiet: bool) -> None:
     """Run mklists against the current directory."""
-    click.echo("Running mklists run.")
+    startdir = Path(directory).resolve() if directory else Path.cwd()
+    try:
+        structural_context = resolve_structural_context(startdir)
+        config = resolve_config(structural_context)
+        run_plan = resolve_run_plan(structural_context=structural_context, config=config)
+        run_mklists(run_plan)
+    except MklistsError as e:
+        raise click.ClickException(str(e)) from e
