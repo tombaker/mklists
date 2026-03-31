@@ -55,14 +55,7 @@ def datadir(ctx: click.Context) -> None:
     metavar="<path>",
     help="Run as if started in <path> instead of current directory.",
 )
-@click.option(
-    "-q",
-    "--quiet",
-    is_flag=True,
-    default=False,
-    help="Print only errors and warnings; suppress all else.",
-)
-def run(directory: str | None, quiet: bool) -> None:
+def run(directory: str | None) -> None:
     """Run mklists against the current directory."""
     startdir = Path(directory).resolve() if directory else Path.cwd()
     try:
