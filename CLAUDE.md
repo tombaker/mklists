@@ -98,3 +98,7 @@ Three context dataclasses thread state through the pipeline:
 | `src/mklists/errors.py` | Exception hierarchy |
 
 Tests mirror source structure under `tests/`.
+
+### Binary file detection heuristic
+
+`_check_file_contents` in `exec/safety.py` reads the first 8192 bytes of each file and raises an error if a NUL byte (`\x00`) is found. This is the same heuristic used by ripgrep: both treat NUL-byte presence in the leading 8192-byte window as the signal for binary content. The practical difference is purpose — ripgrep uses the result to suppress output, while mklists uses it to abort processing.
