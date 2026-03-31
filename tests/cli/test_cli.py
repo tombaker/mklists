@@ -22,7 +22,7 @@ def test_run_exits_cleanly_on_valid_datadir(tmp_path):
     Minimal setup: a .rules file with one identity rule (all lines stay in
     input.txt), and an input.txt file with one line of content.
     """
-    (tmp_path / ".rules").write_text("0|.|input.txt|input.txt|\n")
+    (tmp_path / ".rules").write_text("0|.|input.txt|output.txt|\n")
     (tmp_path / "input.txt").write_text("hello\n")
 
     result = CliRunner().invoke(cli, ["run", "-C", str(tmp_path)])
@@ -31,7 +31,7 @@ def test_run_exits_cleanly_on_valid_datadir(tmp_path):
 
 def test_run_exits_cleanly_without_C_option(tmp_path, monkeypatch):
     """mklists run with no -C uses the current working directory."""
-    (tmp_path / ".rules").write_text("0|.|input.txt|input.txt|\n")
+    (tmp_path / ".rules").write_text("0|.|input.txt|output.txt|\n")
     (tmp_path / "input.txt").write_text("hello\n")
     monkeypatch.chdir(tmp_path)
 
