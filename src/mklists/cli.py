@@ -35,14 +35,14 @@ def init(ctx: click.Context, directory: str | None) -> None:
 
 @init.command()
 @click.pass_context
-def repo(ctx: click.Context) -> None:
+def repo(_ctx: click.Context) -> None:
     """Initialize a new mklists repo (where datadirs share rules)."""
     click.echo("Running mklists init repo.")
 
 
 @init.command()
 @click.pass_context
-def datadir(ctx: click.Context) -> None:
+def datadir(_ctx: click.Context) -> None:
     """Initialize new datadir (with own rules)."""
     click.echo("Running mklists init datadir.")
 
