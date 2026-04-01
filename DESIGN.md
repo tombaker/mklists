@@ -81,29 +81,24 @@ This separation exists to make per-pass invariants (such as backups and logging)
 #### High-level call graph
 
 ```
-cli.main()
-├── parse CLI arguments (e.g. verbosity)
+cli.run()  (cli.py)
+├── resolve_structural_context()   # filesystem discovery
+├── resolve_config()               # merge defaults + user YAML
+├── resolve_run_plan()             # build execution blueprint
 └── run_mklists()
-    ├── load configuration
-    ├── discover data directories
-    ├── generate run-level timestamp
-    └── for pass_number in passes (default: 2):
-        └── run_pass()
-            ├── if backups_enabled:
-            │   ├── compute pass_backupdir
-            │   ├── initialize pass_backupdir
-            │   └── initialize per-pass logging
-            ├── for datadir in datadirs:
-            │   └── process_datadir()
-            │       ├── run safety checks
-            │       ├── load effective rules
-            │       ├── read datafiles
-            │       ├── apply rules
-            │       ├── if backups_enabled:
-            │       │   └── back up datadir
-            │       ├── delete old datafiles
-            │       └── write new datafiles
-            └── perform routing (if enabled)
+    └── for each pass:
+        ├── init_snapshot_dir()    # if backup enabled
+        ├── backup_datadirs()      # if backup enabled
+        └── for each datadir:
+            └── process_datadir()
+                ├── run_safety_checks()
+                ├── read datafiles          # rules pre-loaded via datadir_plan.rules
+                ├── dispatch_datalines_to_targets()
+                ├── delete old datafiles
+                └── write new datafiles
+        └── redistribute_datafiles()       # if routing enabled
+    ├── prune_backupdirs()         # if backup enabled
+    └── linkify_datadirs()         # if linkify enabled
 ```
 
 #### Design principles
@@ -121,13 +116,3 @@ cli.main()
   Backup helpers assume validated paths and copy filesystem state exactly; policy decisions (whether backups are enabled, retention depth, etc.) are handled at higher levels.
 
 This structure keeps responsibilities clear, avoids redundant computation, and makes the execution flow of `mklists` easy to reason about and test.
-Worth codifying as a convention:
-- *_found → filesystem discovery result (may be None)
-- *_used → a decision (effective inputs)
-- *_to_snapshot → planned side-effect inputs
-- *_dir / *_path → derived locations
-sets `config_rootdir` as follows:
-- If configfile found in startdir, config_rootdir is startdir.
-- Or if configfile found in parent of startdir, config_rootdir is parent of startdir.
-- Or if no configfile is found, config_rootdir is startdir.
-
