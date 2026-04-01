@@ -38,7 +38,6 @@ line-length = 88
 
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "W", "I"]
 
 # Match flake8 excludes
 exclude = [
@@ -55,6 +54,7 @@ exclude = [
 ]
 
 [tool.ruff.lint]
+select = ["E", "F", "W", "I"]
 # Match flake8 ignores (Black-compatible)
 extend-ignore = [
     "E203",  # whitespace before ":"
