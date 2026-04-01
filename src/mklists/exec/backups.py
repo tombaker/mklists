@@ -10,7 +10,8 @@ Run layer:
 import shutil
 from pathlib import Path
 from typing import Iterable
-from loguru import logger
+
+from mklists.logging import logger
 
 
 def backup_datadirs(

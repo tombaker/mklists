@@ -1,9 +1,10 @@
 """About redistributing files among datadirs according to a routing map."""
 
-from datetime import datetime, UTC
-from pathlib import Path
 import shutil
-from loguru import logger
+from datetime import UTC, datetime
+from pathlib import Path
+
+from mklists.logging import logger
 
 
 def redistribute_datafiles(
