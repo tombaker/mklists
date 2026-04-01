@@ -38,14 +38,13 @@ but its presence signals that intent.
 | `a/.rules` | Always (empty — structural invariant for each datadir) |
 | `b/.rules` | Always (empty — structural invariant for each datadir) |
 | `mklists.yaml` | Always (empty — marker identifying the datatree root) |
-| `mklists.rules` | `--rules` flag (optional shared rules; populated with example content) |
+| `mklists.rules` | Always (empty — shows users where shared rules go) |
 
-`mklists.yaml` is not required by the engine for a valid datatree, but
-`mklists init datatree` creates it unconditionally as a footprint that
-makes the root recognisable to conflict detection and to users.
-
-`mklists.rules` is genuinely optional. It is created only when `--rules`
-is passed, populated with commented example content.
+Neither `mklists.yaml` nor `mklists.rules` is required by the engine for
+a valid datatree, but both are created unconditionally: `mklists.yaml` as
+a recognisable marker for conflict detection and users, `mklists.rules` as
+a self-documenting placeholder showing where shared rules belong. Their
+presence does no harm and costs nothing.
 
 Every datadir must have a `.rules` file. `mklists init` always creates
 these as empty markers. The `--rules` flag (datadir mode) populates `.rules`
@@ -115,7 +114,7 @@ Options for datadir:
   --self-contained   Write .mklistsrc, marking the datadir as self-contained
 
 Options for datatree:
-  --rules            Populate rule files with commented example content;
-                     also creates mklists.rules
+  --rules            Populate all rule files (mklists.rules, a/.rules, b/.rules)
+                     with commented example content
   --subdirs TEXT     Comma-separated subdir names [default: a,b]
 ```
