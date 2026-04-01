@@ -33,7 +33,7 @@ Note: `pytest.ini` enables `--doctest-modules`, so doctests in source modules ar
 
 1. **Run** — a single invocation; loads config, discovers directories, generates a timestamp
 2. **Pass** — one complete sweep over all data directories (default: 2 passes); owns per-pass invariants like the backup directory
-3. **Datadir** — processes a single directory: safety checks → load rules → read files → apply rules → backup → delete old files → write new files
+3. **Datadir** — processes a single directory: safety checks → read files → apply rules (pre-loaded in plan) → delete old files → write new files
 
 High-level call graph:
 ```
@@ -48,8 +48,7 @@ mklists run  (cli.py)
         └── for each datadir:
             └── process_datadir()
                 ├── run_safety_checks()
-                ├── load_rules_for_datadir()
-                ├── read datafiles
+                ├── read datafiles          # rules pre-loaded via datadir_plan.rules
                 ├── dispatch_datalines_to_targets()
                 └── write new datafiles
         └── redistribute_datafiles()  # if routing enabled
