@@ -2,6 +2,7 @@
 
 import pytest
 
+from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.errors import InitError
 from mklists.init.datadir import EXAMPLE_RULES, init_datadir
 
@@ -42,10 +43,10 @@ def test_self_contained_creates_mklistsrc(tmp_path):
     assert (tmp_path / ".mklistsrc").exists()
 
 
-def test_self_contained_mklistsrc_is_empty(tmp_path):
-    """Created .mklistsrc is empty."""
+def test_self_contained_mklistsrc_contains_default_config(tmp_path):
+    """Created .mklistsrc is populated with DEFAULT_CONFIG_YAML."""
     init_datadir(tmp_path, self_contained=True)
-    assert (tmp_path / ".mklistsrc").read_text() == ""
+    assert (tmp_path / ".mklistsrc").read_text() == DEFAULT_CONFIG_YAML
 
 
 # ── path creation ─────────────────────────────────────────────────────────────

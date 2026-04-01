@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.errors import InitError
 from mklists.init.datadir import EXAMPLE_RULES
 
@@ -33,7 +34,7 @@ def init_datatree(
     _check_no_conflicts(path, subdirs)
     path.mkdir(parents=True, exist_ok=True)
     rules_content = EXAMPLE_RULES if rules else ""
-    (path / "mklists.yaml").write_text("")
+    (path / "mklists.yaml").write_text(DEFAULT_CONFIG_YAML)
     (path / "mklists.rules").write_text(rules_content)
     for subdir in subdirs:
         subdir_path = path / subdir

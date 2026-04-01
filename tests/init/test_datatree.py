@@ -2,6 +2,7 @@
 
 import pytest
 
+from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.errors import InitError
 from mklists.init.datadir import EXAMPLE_RULES
 from mklists.init.datatree import init_datatree
@@ -41,10 +42,10 @@ def test_creates_mklists_yaml(tmp_path):
     assert (tmp_path / "mklists.yaml").exists()
 
 
-def test_mklists_yaml_is_empty(tmp_path):
-    """mklists.yaml is always empty."""
+def test_mklists_yaml_contains_default_config(tmp_path):
+    """mklists.yaml is always populated with DEFAULT_CONFIG_YAML."""
     init_datatree(tmp_path)
-    assert (tmp_path / "mklists.yaml").read_text() == ""
+    assert (tmp_path / "mklists.yaml").read_text() == DEFAULT_CONFIG_YAML
 
 
 # ── mklists.rules ─────────────────────────────────────────────────────────────

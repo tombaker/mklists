@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.errors import InitError
 
 EXAMPLE_RULES = """\
@@ -46,4 +47,4 @@ def init_datadir(
     rules_content = EXAMPLE_RULES if rules else ""
     (path / ".rules").write_text(rules_content)
     if self_contained:
-        (path / ".mklistsrc").write_text("")
+        (path / ".mklistsrc").write_text(DEFAULT_CONFIG_YAML)
