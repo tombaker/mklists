@@ -65,7 +65,7 @@ def _find_datadirs(config_rootdir: Path | str) -> list[Path]:
         config_rootdir: Path of config root directory.
 
     Yields:
-        Paths of directories directly under repository root that hold a `.rules` file.
+        Paths of directories directly under datatree root that hold a `.rules` file.
     """
     datadirs: list[Path] = []
 

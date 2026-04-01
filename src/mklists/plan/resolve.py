@@ -81,7 +81,7 @@ def _resolve_datadir_plans(
     Returns:
         Tuple of (datadir_plans, skipped_datadirs).
     """
-    repo_rulefile = structural_context.startdir_context.datatree_rulefile_found
+    datatree_rulefile = structural_context.startdir_context.datatree_rulefile_found
 
     datadir_plans: list[DatadirPlan] = []
     skipped_datadirs: list[SkippedDatadir] = []
@@ -97,7 +97,7 @@ def _resolve_datadir_plans(
         else:
             rulefiles_used = [
                 f
-                for f in [repo_rulefile, datadir_ctx.datadir_rulefile]
+                for f in [datatree_rulefile, datadir_ctx.datadir_rulefile]
                 if f is not None
             ]
             rules = load_rules_for_datadir(rulefiles_used)

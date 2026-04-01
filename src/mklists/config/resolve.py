@@ -36,10 +36,10 @@ def resolve_config(structural_context: StructuralContext) -> Config:
     elif startdir_context.is_datadir_selfcontained:
         configfile_used = startdir_context.datadir_configfile_found
     elif startdir_context.is_datadir_in_datatree:
-        # Look up repo config file relative to discovered config root directory.
-        repo_configfile = config_rootdir / DATATREE_CONFIGFILE_NAME
-        if repo_configfile.is_file():
-            configfile_used = repo_configfile
+        # Look up datatree config file relative to discovered config root directory.
+        datatree_configfile = config_rootdir / DATATREE_CONFIGFILE_NAME
+        if datatree_configfile.is_file():
+            configfile_used = datatree_configfile
         else:
             configfile_used = None
     else:
@@ -182,7 +182,7 @@ def _make_backup_config(
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists datatree.
 
     Returns:
         Instance of BackupConfig initialized from config dictionary.
@@ -222,7 +222,7 @@ def _make_routing_config(
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists datatree.
 
     Returns:
         Instance of RoutingConfig initialized from config dictionary.
@@ -291,7 +291,7 @@ def _make_linkify_config(
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists datatree.
 
     Returns:
         Instance of LinkifyConfig initialized from config dictionary.
