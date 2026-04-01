@@ -15,7 +15,7 @@ from mklists.errors import StructureError
 from mklists.structure.markers import (
     DATADIR_CONFIGFILE_NAME,
     DATADIR_RULEFILE_NAME,
-    REPO_CONFIGFILE_NAME,
+    DATATREE_CONFIGFILE_NAME,
 )
 from mklists.structure.model import (
     DatadirStructuralContext,
@@ -51,7 +51,7 @@ def make_structural_context(
 
 def test_resolve_config_repo_root_with_configfile_returns_config(tmp_path):
     """Repo root with config file uses that file and returns a Config."""
-    configfile = tmp_path / REPO_CONFIGFILE_NAME
+    configfile = tmp_path / DATATREE_CONFIGFILE_NAME
     configfile.write_text("verbose: true\n")
 
     fake_ctx = make_structural_context(
@@ -106,7 +106,7 @@ def test_resolve_config_datadir_in_repo_finds_parent_configfile(tmp_path):
     """Datadir in repo uses repo config file found in its parent directory."""
     datadir = tmp_path / "data"
     datadir.mkdir()
-    repo_configfile = tmp_path / REPO_CONFIGFILE_NAME
+    repo_configfile = tmp_path / DATATREE_CONFIGFILE_NAME
     repo_configfile.write_text("verbose: true\n")
     rulefile = datadir / "mklists.rules"
     rulefile.touch()
@@ -234,7 +234,7 @@ def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):
 
 def test_resolve_config_user_yaml_overrides_defaults(tmp_path):
     """User config values override defaults while unset values stay at defaults."""
-    configfile = tmp_path / REPO_CONFIGFILE_NAME
+    configfile = tmp_path / DATATREE_CONFIGFILE_NAME
     configfile.write_text("backup:\n  backup_enabled: true\n  backup_depth: 5\n")
 
     fake_ctx = make_structural_context(
@@ -249,7 +249,7 @@ def test_resolve_config_user_yaml_overrides_defaults(tmp_path):
 
 def test_resolve_config_invalid_regex_in_user_configfile_raises_value_error(tmp_path):
     """Invalid regex in user config file raises ValueError."""
-    configfile = tmp_path / REPO_CONFIGFILE_NAME
+    configfile = tmp_path / DATATREE_CONFIGFILE_NAME
     configfile.write_text("safety:\n  invalid_filename_patterns:\n    - '['\n")
 
     fake_ctx = make_structural_context(

@@ -134,3 +134,18 @@ what will need to be changed in the codebase to completely implement this name c
   - The exception rename snapshot_repofiles_to_copy → snapshot_datatree_files (avoiding the unreadable snapshot_datatreefiles_to_copy).
 
 ✻ Crunched for 1m 13s
+
+
+⏺ datatree.md is written. It follows the same structure as dataspace_datadir.md with two small differences from the dataspace plan:
+
+  - is_datadir_in_repo → is_datadir_in_datatree is explicitly listed (it was present in the dataspace plan but easy to miss).
+  - The exception rename snapshot_repofiles_to_copy → snapshot_datatree_files (avoiding the unreadable snapshot_datatreefiles_to_copy).
+
+✻ Crunched for 1m 13s
+
+❯ This is great. I'm making one edit to datatree.md - `snapshot_datatree_configfiles` (instead of `snapshot_datatree_files`, which made even me think that it was snapshotting all of the files
+of the datatree instead of just the config files. Also, we should rename the example in the fixture, as you pointed out, to `tmp_path / "datatree" / "a"`. Please make this change in
+datatree.md. Let's start, then, by renaming the constants and fixing any broken tests.
+
+⏺ First, let me update datatree.md with both changes.
+

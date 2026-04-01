@@ -22,8 +22,8 @@ root directory is preserved via `datatree_rootdir` and friends.
 
 `datadir`, `datadirs`, `DATADIR`, `Datadir` are **not changed**.
 
-One deliberate exception: `snapshot_repofiles_to_copy` → `snapshot_datatree_files`
-(not `snapshot_datatreefiles_to_copy`, which would be unreadably long).
+One deliberate exception: `snapshot_repofiles_to_copy` → `snapshot_datatree_configfiles`
+(not `snapshot_datatreeconfigfiles_to_copy`, which would be unreadably long).
 
 ---
 
@@ -82,7 +82,7 @@ Property docstring changes:
 
 | Old | New |
 |---|---|
-| `snapshot_repofiles_to_copy` | `snapshot_datatree_files` |
+| `snapshot_repofiles_to_copy` | `snapshot_datatree_configfiles` |
 
 ---
 
@@ -127,8 +127,8 @@ and `exec/run.py` (if applicable).
 | Old | New |
 |---|---|
 | `repo_rulefile` (local) | `datatree_rulefile` |
-| `snapshot_repofiles_to_copy` (local) | `snapshot_datatree_files` |
-| `snapshot_repofiles_to_copy=` (keyword arg to `PassPlan(...)`) | `snapshot_datatree_files=` |
+| `snapshot_repofiles_to_copy` (local) | `snapshot_datatree_configfiles` |
+| `snapshot_repofiles_to_copy=` (keyword arg to `PassPlan(...)`) | `snapshot_datatree_configfiles=` |
 | `startdir_context.repo_rulefile_found` (access) | `startdir_context.datatree_rulefile_found` |
 | `startdir_context.repo_configfile_found` (access) | `startdir_context.datatree_configfile_found` |
 
@@ -147,7 +147,7 @@ Parameter docstrings that read `Root directory of mklists repo.` become
 
 | Old | New |
 |---|---|
-| `snapshot_repofiles_to_copy` (parameter) | `snapshot_datatree_files` |
+| `snapshot_repofiles_to_copy` (parameter) | `snapshot_datatree_configfiles` |
 | `repofile_to_snapshot` (loop variable) | `datatree_file_to_snapshot` |
 
 Docstring: `List of repo-level config files to back up.`
@@ -157,8 +157,8 @@ Docstring: `List of repo-level config files to back up.`
 
 | Old | New |
 |---|---|
-| `pass_plan.snapshot_repofiles_to_copy` (access) | `pass_plan.snapshot_datatree_files` |
-| keyword arg `snapshot_repofiles_to_copy=` (call to `init_snapshot_dir`) | `snapshot_datatree_files=` |
+| `pass_plan.snapshot_repofiles_to_copy` (access) | `pass_plan.snapshot_datatree_configfiles` |
+| keyword arg `snapshot_repofiles_to_copy=` (call to `init_snapshot_dir`) | `snapshot_datatree_configfiles=` |
 
 ### Test files
 
@@ -228,7 +228,7 @@ prose noun needs updating. The highest-density files are:
 - `structure/markers.py` — module docstring defines the term
 - `structure/model.py` — property docstrings on `is_datatree_root`, `is_datadir_in_datatree`
 - `structure/resolve.py` — inline comments and error-message strings
-- `plan/model.py` — field docstring for `snapshot_datatree_files`
+- `plan/model.py` — field docstring for `snapshot_datatree_configfiles`
 - `plan/resolve.py` — inline comments referencing `datatree_rulefile`
 - `exec/backups.py` — parameter docstring
 - `config/resolve.py` — parameter docstrings (`config_rootdir: Root directory of mklists repo.`)
@@ -290,8 +290,6 @@ grep -r "repo_\|REPO_\|is_repo\|repository\b" src/ tests/
 The only expected survivors are:
 
 - Occurrences of `repo` as an arbitrary path component in test fixtures
-  (e.g., `tmp_path / "repo" / "a"` used as an unrelated directory name) —
-  these may be left as-is or renamed to `tmp_path / "datatree" / "a"` for
-  consistency.
+  (e.g., `tmp_path / "repo" / "a"`) must be renamed to `tmp_path / "datatree" / "a"`.
 - Any occurrence of `repo` inside string literals that represent actual filesystem
   paths or user-visible CLI output (search separately with `grep -F repo`).

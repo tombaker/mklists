@@ -6,8 +6,8 @@ from mklists.errors import StructureError
 from mklists.structure.markers import (
     DATADIR_CONFIGFILE_NAME,
     DATADIR_RULEFILE_NAME,
-    REPO_CONFIGFILE_NAME,
-    REPO_RULEFILE_NAME,
+    DATATREE_CONFIGFILE_NAME,
+    DATATREE_RULEFILE_NAME,
 )
 from mklists.structure.model import (
     DatadirStructuralContext,
@@ -119,8 +119,8 @@ def _resolve_startdir_context(startdir: Path) -> StartdirStructuralContext:
     def if_file_exists(path: Path) -> Path | None:
         return path if path.is_file() else None
 
-    repo_configfile_found = if_file_exists(startdir / REPO_CONFIGFILE_NAME)
-    repo_rulefile_found = if_file_exists(startdir / REPO_RULEFILE_NAME)
+    repo_configfile_found = if_file_exists(startdir / DATATREE_CONFIGFILE_NAME)
+    repo_rulefile_found = if_file_exists(startdir / DATATREE_RULEFILE_NAME)
     datadir_configfile_found = if_file_exists(startdir / DATADIR_CONFIGFILE_NAME)
     datadir_rulefile_found = if_file_exists(startdir / DATADIR_RULEFILE_NAME)
 

@@ -15,7 +15,7 @@ from mklists.config.model import (
     SafetyConfig,
     Config,
 )
-from mklists.structure.markers import REPO_CONFIGFILE_NAME
+from mklists.structure.markers import DATATREE_CONFIGFILE_NAME
 from mklists.structure.model import StructuralContext
 
 
@@ -37,7 +37,7 @@ def resolve_config(structural_context: StructuralContext) -> Config:
         configfile_used = startdir_context.datadir_configfile_found
     elif startdir_context.is_datadir_in_repo:
         # Look up repo config file relative to discovered config root directory.
-        repo_configfile = config_rootdir / REPO_CONFIGFILE_NAME
+        repo_configfile = config_rootdir / DATATREE_CONFIGFILE_NAME
         if repo_configfile.is_file():
             configfile_used = repo_configfile
         else:
