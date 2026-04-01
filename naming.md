@@ -149,3 +149,34 @@ datatree.md. Let's start, then, by renaming the constants and fixing any broken 
 
 ⏺ First, let me update datatree.md with both changes.
 
+
+
+❯ Let's do the documentation now - DESIGN.md and CLAUDE.md.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ The results show readiness_checklist.md also has repo references. Let me check DESIGN.md and CLAUDE.md specifically, plus quickly assess readiness_checklist.md.
+
+  Searched for 2 patterns (ctrl+o to expand)
+
+⏺ Both DESIGN.md and CLAUDE.md are already clean — they were updated earlier in the session when we corrected the call graphs. Step 8 requires no further changes.
+
+  readiness_checklist.md has three repo references (mklists init repo in two places, and mklists init repo in an enumerated list). That file is outside the scope of the rename plan as written —
+  it is a project tracking document, not architecture or API documentation. Would you like to update it as well, or leave it for now?
+
+❯ Let's update it please - thank you for noticing.
+
+  Read 1 file (ctrl+o to expand)
+
+ Now verify no repo or repository remains in any .md file other than the plan documents (datatree.md and dataspace_datadir.md, which intentionally preserve the old terms for reference):
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+⏺ Two unexpected files have matches — let me check them.
+
+  Searched for 2 patterns (ctrl+o to expand)
+
+⏺ Both naming.md and listspace_listfolder.md are historical planning documents that use repo as the "old" term — the same as datatree.md and dataspace_datadir.md. They are correct as-is; their
+  repo references are not live code references but historical documentation of what was renamed. No changes needed.
+
+  All documentation is clean. The rename is now complete across all eight steps.

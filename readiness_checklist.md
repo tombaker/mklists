@@ -15,7 +15,7 @@ Readiness Checklist
 
   - `mklists run` — stub only (click.echo("Running mklists run."))
     - Needs to call `resolve_structural_context()` → `resolve_config()` → `resolve_run_plan()` → `run_mklists()`
-  - `mklists init repo` — stub only (`click.echo("Running mklists init repo.")`)
+  - `mklists init datatree` — stub only (`click.echo("Running mklists init datatree.")`)
     - Needs to create `mklists.yaml` and/or `mklists.rules` in the target directory
   - `mklists init datadir` — stub only (`click.echo("Running mklists init datadir.")`)
     - Needs to create `.rules` (and optionally `.mklistsrc`) in the target directory
@@ -28,7 +28,7 @@ Missing module
 How init is supposed to work
 
 The marker files defined in `structure/markers.py` are the canonical answer:
-- `mklists init repo`:  `mklists.yaml` (config) and/or `mklists.rules` (shared rules)
+- `mklists init datatree`:  `mklists.yaml` (config) and/or `mklists.rules` (shared rules)
 - `mklists init datadir`: `.rules` (required); optionally `.mklistsrc` for a self-contained datadir
  
 There is no existing init module — it needs to be written from scratch. The tests in tests/cli/test_cli.py currently only verify that the stubs exit cleanly and echo something containing "init"/"run", so they are not a guide to the intended behavior.
@@ -38,4 +38,4 @@ There is no existing init module — it needs to be written from scratch. The te
 Bottom line: The tool cannot actually be used yet. `mklists run` does nothing real, and `mklists init` creates no files. The two tasks needed to make it usable are:
 
   1. Wire `mklists run` in `cli.py` to the existing pipeline
-  2. Write and wire `mklists init repo` / `mklists init datadir` to create the appropriate marker files
+  2. Write and wire `mklists init datatree` / `mklists init datadir` to create the appropriate marker files
