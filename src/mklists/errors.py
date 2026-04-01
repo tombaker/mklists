@@ -23,3 +23,7 @@ class DataNotFoundError(MklistsError):
 
 class RulesNotFoundError(MklistsError):
     """Expected rules not found."""
+
+
+class InitError(MklistsError):
+    """Cannot initialize: conflicting files or directories already exist."""

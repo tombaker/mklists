@@ -97,6 +97,46 @@ The following files act as mode markers:
 Each abort produces an informative error message identifying the conflicting
 file or directory.
 
+## Implementation plan
+
+### New module: `src/mklists/init/`
+
+Init logic belongs in a dedicated concept module, not in `cli.py`. Structure:
+
+```
+src/mklists/init/
+    __init__.py
+    datadir.py    # init_datadir(path, rules, self_contained)
+    datatree.py   # init_datatree(path, rules, subdirs)
+```
+
+Tests mirror source structure:
+
+```
+tests/init/
+    __init__.py
+    test_datadir.py
+    test_datatree.py
+```
+
+### Order of implementation
+
+1. **Conflict detection** — pure functions, no side effects, immediately testable.
+   A shared helper (or per-module function) raises a specific `MklistsError`
+   subclass (e.g., `InitConflictError`) for each conflict case, checking all
+   conditions before writing anything (all-or-nothing semantics).
+
+2. **File-writing logic** — depends on conflict detection passing cleanly.
+
+3. **CLI wiring** — update `cli.py` to add `PATH` argument, flags, and calls
+   into the new module. Done last, once the underlying logic is solid.
+
+### Starting point
+
+Implement `src/mklists/init/datadir.py` and `tests/init/test_datadir.py` first.
+`datadir` mode is simpler (no subdirectory creation) and establishes the
+conflict-detection and file-writing patterns that `datatree.py` will reuse.
+
 ## What to avoid: interactive prompts
 
 `sphinx-quickstart`-style interactive prompts are noisy and hostile to
