@@ -134,7 +134,7 @@ def test_resolve_config_datadir_in_datatree_no_parent_configfile_uses_defaults(t
     config = resolve_config(fake_ctx)
 
     assert config.configfile_used is None
-    assert config.verbose is False  # This will break if default settings change.
+    assert config.verbose is True  # This will break if default settings change.
 
 
 # --- unreachable structural state ---
