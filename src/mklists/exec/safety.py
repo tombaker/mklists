@@ -2,8 +2,8 @@
 
 import stat
 from pathlib import Path
-from mklists.config.model import SafetyConfig
 
+from mklists.config.model import SafetyConfig
 
 CATEGORY_FILENAME = "filename"
 CATEGORY_METADATA = "metadata"
@@ -29,6 +29,8 @@ def run_safety_checks(datadir: Path, safety_cfg: SafetyConfig) -> None:
         - Files do not have binary content or blank lines.
     """
     for entry in datadir.iterdir():
+        if entry.name.startswith("."):
+            continue
         _check_is_regular_file(entry)
         _check_is_valid_name(entry.name, safety_cfg)
         _check_file_contents(entry)
