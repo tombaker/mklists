@@ -9,6 +9,7 @@ from mklists.errors import MklistsError
 from mklists.exec.run import run_mklists
 from mklists.init.datadir import init_datadir
 from mklists.init.datatree import init_datatree
+from mklists.logging import init_logger
 from mklists.plan.resolve import resolve_run_plan
 from mklists.structure.resolve import resolve_structural_context
 
@@ -96,6 +97,7 @@ def run(directory: str | None) -> None:
     try:
         structural_context = resolve_structural_context(startdir)
         config = resolve_config(structural_context)
+        init_logger(logfile=None, verbose=config.verbose)
         run_plan = resolve_run_plan(
             structural_context=structural_context, config=config
         )

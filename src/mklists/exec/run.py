@@ -1,14 +1,15 @@
 """Orchestration of a Mklists execution run."""
 
-from mklists.plan.model import RunPlan
 from mklists.exec.backups import (
     backup_datadirs,
     init_snapshot_dir,
     prune_backupdirs,
 )
+from mklists.exec.linkify import linkify_datadirs
 from mklists.exec.process_datadirs import process_datadir
 from mklists.exec.routing import redistribute_datafiles
-from mklists.exec.linkify import linkify_datadirs
+from mklists.logging import logger
+from mklists.plan.model import RunPlan
 
 
 def run_mklists(run_plan: RunPlan) -> None:
@@ -36,6 +37,7 @@ def run_mklists(run_plan: RunPlan) -> None:
             )
 
         for datadir_plan in run_plan.datadir_plans:
+            logger.info(str(datadir_plan.datadir))
             process_datadir(
                 datadir_plan=datadir_plan,
                 safety=run_plan.safety,

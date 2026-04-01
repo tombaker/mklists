@@ -2,7 +2,7 @@
 
 
 DEFAULT_CONFIG_YAML = """\
-verbose: False
+verbose: True
 
 # Backup: Snapshot data directory for each pass to a time-stamped backup directory.
 backup:
