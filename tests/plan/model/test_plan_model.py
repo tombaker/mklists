@@ -22,7 +22,7 @@ from mklists.plan.model import (
         ),
         PassPlan(
             snapshot_dir=Path("/tmp/backups/2026-03-01_123123123_01"),
-            snapshot_repofiles_to_copy=[],
+            snapshot_datatree_configfiles=[],
         ),
         SkippedDatadir(
             datadir=Path("/tmp/datadirb"),

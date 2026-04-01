@@ -27,7 +27,7 @@ def run_mklists(run_plan: RunPlan) -> None:
 
             init_snapshot_dir(
                 snapshot_dir=pass_plan.snapshot_dir,
-                snapshot_repofiles_to_copy=pass_plan.snapshot_repofiles_to_copy,
+                snapshot_datatree_configfiles=pass_plan.snapshot_datatree_configfiles,
             )
 
             backup_datadirs(

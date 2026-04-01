@@ -137,10 +137,10 @@ def _resolve_pass_plans(
     # Determine snapshot fields (None when backup disabled).
     if not config.backup.backup_enabled:
         timestamp = None
-        snapshot_repofiles_to_copy = []
+        snapshot_datatree_configfiles = []
     else:
         timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H%M_%S%f")
-        snapshot_repofiles_to_copy = [
+        snapshot_datatree_configfiles = [
             f
             for f in [
                 structural_context.startdir_context.datatree_configfile_found,
@@ -156,7 +156,7 @@ def _resolve_pass_plans(
                 if timestamp
                 else None
             ),
-            snapshot_repofiles_to_copy=snapshot_repofiles_to_copy,
+            snapshot_datatree_configfiles=snapshot_datatree_configfiles,
         )
         for i in range(pass_count)
     ]

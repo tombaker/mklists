@@ -93,7 +93,7 @@ def test_backup_disabled_returns_one_pass(tmp_path):
     sc = fake_make_structural_context(tmp_path)
     cc = fake_make_config(backup_enabled=False)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert result == [PassPlan(snapshot_dir=None, snapshot_repofiles_to_copy=[])]
+    assert result == [PassPlan(snapshot_dir=None, snapshot_datatree_configfiles=[])]
     assert len(result) == 1
 
 
@@ -102,7 +102,7 @@ def test_backup_disabled_routing_enabled_single_datadir_returns_one_pass(tmp_pat
     sc = fake_make_structural_context(tmp_path, num_datadirs=1)
     cc = fake_make_config(backup_enabled=False, routing_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert result == [PassPlan(snapshot_dir=None, snapshot_repofiles_to_copy=[])]
+    assert result == [PassPlan(snapshot_dir=None, snapshot_datatree_configfiles=[])]
 
 
 def test_backup_disabled_routing_enabled_multiple_datadirs_returns_two_passes(tmp_path):
@@ -112,7 +112,7 @@ def test_backup_disabled_routing_enabled_multiple_datadirs_returns_two_passes(tm
     result = _resolve_pass_plans(structural_context=sc, config=cc)
     assert len(result) == 2
     assert all(p.snapshot_dir is None for p in result)
-    assert all(p.snapshot_repofiles_to_copy == [] for p in result)
+    assert all(p.snapshot_datatree_configfiles == [] for p in result)
 
 
 # ----- pass count ------------------------------------------------------------
@@ -180,7 +180,7 @@ def test_two_passes_share_same_timestamp(tmp_path):
     assert name0[:-3] == name1[:-3]
 
 
-# ----- snapshot_repofiles_to_copy --------------------------------------------
+# ----- snapshot_datatree_configfiles --------------------------------------------
 
 
 def test_repo_configfile_included_in_snapshot_repofiles(tmp_path):
@@ -189,8 +189,8 @@ def test_repo_configfile_included_in_snapshot_repofiles(tmp_path):
     sc = fake_make_structural_context(tmp_path, datatree_configfile_found=repo_cfg)
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert repo_cfg in result[0].snapshot_repofiles_to_copy
-    assert len(result[0].snapshot_repofiles_to_copy) == 1
+    assert repo_cfg in result[0].snapshot_datatree_configfiles
+    assert len(result[0].snapshot_datatree_configfiles) == 1
 
 
 def test_repo_rulefile_included_in_snapshot_repofiles(tmp_path):
@@ -199,8 +199,8 @@ def test_repo_rulefile_included_in_snapshot_repofiles(tmp_path):
     sc = fake_make_structural_context(tmp_path, datatree_rulefile_found=repo_rules)
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert repo_rules in result[0].snapshot_repofiles_to_copy
-    assert len(result[0].snapshot_repofiles_to_copy) == 1
+    assert repo_rules in result[0].snapshot_datatree_configfiles
+    assert len(result[0].snapshot_datatree_configfiles) == 1
 
 
 def test_both_repo_files_included_in_order(tmp_path):
@@ -214,5 +214,5 @@ def test_both_repo_files_included_in_order(tmp_path):
     )
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert result[0].snapshot_repofiles_to_copy == [repo_cfg, repo_rules]
-    assert len(result[0].snapshot_repofiles_to_copy) == 2
+    assert result[0].snapshot_datatree_configfiles == [repo_cfg, repo_rules]
+    assert len(result[0].snapshot_datatree_configfiles) == 2

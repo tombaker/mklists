@@ -9,8 +9,8 @@ def test_write_backup_copies_all_datadirs(tmp_path):
     snapshot_dir = tmp_path / "backups" / "2026-02-01_162616893737_pass01"
     snapshot_dir.mkdir(parents=True)
 
-    datadir_a = tmp_path / "repo" / "a"
-    datadir_b = tmp_path / "repo" / "b"
+    datadir_a = tmp_path / "datatree" / "a"
+    datadir_b = tmp_path / "datatree" / "b"
     datadir_a.mkdir(parents=True)
     datadir_b.mkdir(parents=True)
 
@@ -30,7 +30,7 @@ def test_write_backup_raises_if_backupdir_not_exist(tmp_path):
     """Raise FileNotFoundError if backup snapshot directory does not already exist."""
     snapshot_dir = tmp_path / "backups" / "pass01"
 
-    datadir = tmp_path / "repo" / "a"
+    datadir = tmp_path / "datatree" / "a"
     datadir.mkdir(parents=True)
 
     with pytest.raises(FileNotFoundError):
@@ -44,24 +44,24 @@ def test_integration_with_init_snapshot_dir(tmp_path):
     """Integration of init_snapshot_dir and backup_datadirs."""
     snapshot_dir = tmp_path / "backups" / "pass01"
 
-    repo_configfile = tmp_path / "mklists.yaml"
-    repo_configfile.write_text("config\n")
+    datatree_configfile = tmp_path / "mklists.yaml"
+    datatree_configfile.write_text("config\n")
 
-    repo_rulefile = tmp_path / "mklists.rules"
-    repo_rulefile.write_text("rules\n")
+    datatree_rulefile = tmp_path / "mklists.rules"
+    datatree_rulefile.write_text("rules\n")
 
-    snapshot_repofiles_to_copy = [repo_configfile, repo_rulefile]
+    snapshot_datatree_configfiles = [datatree_configfile, datatree_rulefile]
 
     init_snapshot_dir(
         snapshot_dir=snapshot_dir,
-        snapshot_repofiles_to_copy=snapshot_repofiles_to_copy,
+        snapshot_datatree_configfiles=snapshot_datatree_configfiles,
     )
 
     assert (snapshot_dir / "mklists.yaml").read_text() == "config\n"
     assert (snapshot_dir / "mklists.rules").read_text() == "rules\n"
 
-    datadir_a = tmp_path / "repo" / "a"
-    datadir_b = tmp_path / "repo" / "b"
+    datadir_a = tmp_path / "datatree" / "a"
+    datadir_b = tmp_path / "datatree" / "b"
     datadir_a.mkdir(parents=True)
     datadir_b.mkdir(parents=True)
 
