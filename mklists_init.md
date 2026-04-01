@@ -25,38 +25,48 @@ established by `git init [directory]`.
 | File | Created when |
 |---|---|
 | `.rules` | Always (empty — structural invariant) |
-| `.mklistsrc` | `--config` flag |
+| `.mklistsrc` | `--self-contained` flag (marks datadir as self-contained) |
+
+A self-contained datadir carries its own config. `.mklistsrc` may be empty
+but its presence signals that intent.
 
 ### datatree mode
 
 | File | Created when |
 |---|---|
-| `a/` and `b/` | Always (subdirectory structure) |
-| `mklists.rules` | Always (empty — structural invariant for datatree root) |
+| `a/` and `b/` subdirs | Always |
 | `a/.rules` | Always (empty — structural invariant for each datadir) |
 | `b/.rules` | Always (empty — structural invariant for each datadir) |
-| `mklists.yaml` | `--config` flag |
+| `mklists.yaml` | Always (empty — marker identifying the datatree root) |
+| `mklists.rules` | `--rules` flag (optional shared rules; populated with example content) |
 
-Every datadir must have a `.rules` file. `mklists init` always creates it as an
-empty marker, unconditionally. The `--rules` flag populates it with commented
-example content for users who want a template to edit.
+`mklists.yaml` is not required by the engine for a valid datatree, but
+`mklists init datatree` creates it unconditionally as a footprint that
+makes the root recognisable to conflict detection and to users.
+
+`mklists.rules` is genuinely optional. It is created only when `--rules`
+is passed, populated with commented example content.
+
+Every datadir must have a `.rules` file. `mklists init` always creates
+these as empty markers. The `--rules` flag (datadir mode) populates `.rules`
+with commented example content instead of leaving it empty.
 
 ## Flags
 
 | Flag | Applies to | Effect |
 |---|---|---|
-| `--rules` | Both | Populate rule file(s) with commented example content instead of leaving them empty |
-| `--config` | Both | Write default config file |
+| `--rules` | Both | Populate rule file(s) with commented example content |
+| `--self-contained` | datadir only | Write `.mklistsrc`, marking the datadir as self-contained |
 | `--subdirs TEXT` | datatree only | Comma-separated subdir names (default: `a,b`) |
 
-`--rules` and `--config` are init-time flags only. They do not support
-post-init population: running `mklists init` a second time will hit the
-"never overwrite" invariant and abort. Users who want example content after
-the fact should consult the documentation.
+`--rules` and `--self-contained` are init-time flags only. Running
+`mklists init` a second time will hit the "never overwrite" invariant
+and abort. Users who want example content after the fact should consult
+the documentation.
 
-Sample data (`--sample`) has been dropped from the design. Users can create
-their own data files and consult documentation for examples. Generating sample
-data inside `mklists init` is conceptually fraught and unnecessary.
+Sample data has been deliberately excluded. Users can create their own
+data files; generating sample data inside `mklists init` is conceptually
+fraught and unnecessary.
 
 ## Hard invariant: never overwrite
 
@@ -66,22 +76,27 @@ file. This is not a flag — it is unconditional.
 
 ## Error detection: mode markers and cross-mode conflicts
 
-Certain files act as mode markers that signal an existing initialization:
+The following files act as mode markers:
 
-- `.rules` in a directory → signals "this directory is already a datadir"
-- `mklists.yaml` or `mklists.rules` in a directory → signals "this directory is already a datatree root"
+- `.rules` in a directory → this directory is already a datadir
+- `.mklistsrc` in a directory → this directory is already a self-contained datadir
+- `mklists.yaml` or `mklists.rules` in a directory → this directory is already a datatree root
 
-`mklists init` checks for conflicts before writing anything:
+`mklists init` checks for all conflicts before writing anything
+(all-or-nothing semantics):
 
-| Command | Abort condition | Message |
-|---|---|---|
-| `init datadir PATH` | `.rules` already exists in PATH | Directory already initialized as a datadir |
-| `init datadir PATH` | `mklists.yaml` or `mklists.rules` exists in PATH | Directory already initialized as a datatree root |
-| `init datatree PATH` | `.rules` already exists in PATH | Directory already initialized as a datadir |
-| `init datatree PATH` | `mklists.yaml` or `mklists.rules` already exists in PATH | Directory already initialized as a datatree root |
-| `init datatree PATH` | Named subdir (`a`, `b`) already exists in PATH | Subdir conflict — abort with informative message |
+| Command | Abort condition |
+|---|---|
+| `init datadir PATH` | `.rules` already exists in PATH |
+| `init datadir PATH` | `.mklistsrc` already exists in PATH |
+| `init datadir PATH` | `mklists.yaml` or `mklists.rules` exists in PATH |
+| `init datatree PATH` | `.rules` already exists in PATH |
+| `init datatree PATH` | `.mklistsrc` already exists in PATH |
+| `init datatree PATH` | `mklists.yaml` or `mklists.rules` already exists in PATH |
+| `init datatree PATH` | Any named subdir (`a`, `b`) already exists in PATH |
 
-All checks run before any files are written (all-or-nothing semantics).
+Each abort produces an informative error message identifying the conflicting
+file or directory.
 
 ## What to avoid: interactive prompts
 
@@ -96,11 +111,11 @@ mklists init datadir [PATH]               # initialize a single datadir
 mklists init datatree [PATH]              # initialize a datatree with subdirs
 
 Options for datadir:
-  --rules          Populate .rules with commented example content
-  --config         Write default .mklistsrc
+  --rules            Populate .rules with commented example content
+  --self-contained   Write .mklistsrc, marking the datadir as self-contained
 
 Options for datatree:
-  --rules          Populate rule files with commented example content
-  --config         Write default mklists.yaml
-  --subdirs TEXT   Comma-separated subdir names [default: a,b]
+  --rules            Populate rule files with commented example content;
+                     also creates mklists.rules
+  --subdirs TEXT     Comma-separated subdir names [default: a,b]
 ```
