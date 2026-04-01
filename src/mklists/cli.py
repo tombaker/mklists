@@ -7,6 +7,8 @@ import click
 from mklists.config.resolve import resolve_config
 from mklists.errors import MklistsError
 from mklists.exec.run import run_mklists
+from mklists.init.datadir import init_datadir
+from mklists.init.datatree import init_datatree
 from mklists.plan.resolve import resolve_run_plan
 from mklists.structure.resolve import resolve_structural_context
 
@@ -34,17 +36,50 @@ def init(ctx: click.Context, directory: str | None) -> None:
 
 
 @init.command()
-@click.pass_context
-def datatree(_ctx: click.Context) -> None:
+@click.argument("path", default=".", metavar="[PATH]")
+@click.option(
+    "--rules",
+    is_flag=True,
+    default=False,
+    help="Populate rule files with commented example content.",
+)
+@click.option(
+    "--subdirs",
+    default="a,b",
+    metavar="<names>",
+    help="Comma-separated subdir names (default: a,b).",
+)
+def datatree(path: str, rules: bool, subdirs: str) -> None:
     """Initialize a new mklists datatree (where datadirs share rules)."""
-    click.echo("Running mklists init datatree.")
+    resolved = Path(path).resolve()
+    subdir_tuple = tuple(s.strip() for s in subdirs.split(",") if s.strip())
+    try:
+        init_datatree(resolved, rules=rules, subdirs=subdir_tuple)
+    except MklistsError as e:
+        raise click.ClickException(str(e)) from e
 
 
 @init.command()
-@click.pass_context
-def datadir(_ctx: click.Context) -> None:
-    """Initialize new datadir (with own rules)."""
-    click.echo("Running mklists init datadir.")
+@click.argument("path", default=".", metavar="[PATH]")
+@click.option(
+    "--rules",
+    is_flag=True,
+    default=False,
+    help="Populate .rules with commented example content.",
+)
+@click.option(
+    "--self-contained",
+    is_flag=True,
+    default=False,
+    help="Write .mklistsrc, marking the datadir as self-contained.",
+)
+def datadir(path: str, rules: bool, self_contained: bool) -> None:
+    """Initialize a new mklists datadir (with its own rules)."""
+    resolved = Path(path).resolve()
+    try:
+        init_datadir(resolved, rules=rules, self_contained=self_contained)
+    except MklistsError as e:
+        raise click.ClickException(str(e)) from e
 
 
 @cli.command()
@@ -61,7 +96,9 @@ def run(directory: str | None) -> None:
     try:
         structural_context = resolve_structural_context(startdir)
         config = resolve_config(structural_context)
-        run_plan = resolve_run_plan(structural_context=structural_context, config=config)
+        run_plan = resolve_run_plan(
+            structural_context=structural_context, config=config
+        )
         run_mklists(run_plan)
     except MklistsError as e:
         raise click.ClickException(str(e)) from e
