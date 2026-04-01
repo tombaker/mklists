@@ -15,7 +15,7 @@ def test_config_rootdir_raises_on_all_none_discovery_fields():
 
     This test does not represent a state that arises from normal filesystem discovery.
     Upstream resolution logic guarantees that at least one of the four discovery fields
-    (repo_configfile_found, repo_rulefile_found, datadir_configfile_found,
+    (datatree_configfile_found, datatree_rulefile_found, datadir_configfile_found,
     datadir_rulefile_found) will be set before config_rootdir is ever accessed.
 
     The guard in config_rootdir — `raise StructureError("Unreachable structural state.")`
@@ -26,8 +26,8 @@ def test_config_rootdir_raises_on_all_none_discovery_fields():
     """
     ctx = StartdirStructuralContext(
         startdir=Path("/tmp"),
-        repo_configfile_found=None,
-        repo_rulefile_found=None,
+        datatree_configfile_found=None,
+        datatree_rulefile_found=None,
         datadir_configfile_found=None,
         datadir_rulefile_found=None,
     )
@@ -46,16 +46,16 @@ def test_config_rootdir_raises_on_all_none_discovery_fields():
         ),
         StartdirStructuralContext(
             startdir=Path("/tmp"),
-            repo_configfile_found=None,
-            repo_rulefile_found=None,
+            datatree_configfile_found=None,
+            datatree_rulefile_found=None,
             datadir_configfile_found=None,
             datadir_rulefile_found=Path("/tmp/.rules"),
         ),
         StructuralContext(
             startdir_context=StartdirStructuralContext(
                 startdir=Path("/tmp"),
-                repo_configfile_found=None,
-                repo_rulefile_found=None,
+                datatree_configfile_found=None,
+                datatree_rulefile_found=None,
                 datadir_configfile_found=None,
                 datadir_rulefile_found=Path("/tmp/.rules"),
             ),

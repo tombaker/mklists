@@ -112,8 +112,8 @@ def test_repo_root_with_one_datadir(tmp_path, datatree_marker):
     assert structural_context.datadir_contexts[0].datadir == d
 
 
-def test_repo_root_is_repo_root(tmp_path):
-    """If repo root, is_repo_root is True."""
+def test_repo_root_is_datatree_root(tmp_path):
+    """If repo root, is_datatree_root is True."""
     (tmp_path / DATATREE_CONFIGFILE_NAME).touch()
     d = tmp_path / "data"
     d.mkdir()
@@ -121,7 +121,7 @@ def test_repo_root_is_repo_root(tmp_path):
 
     structural_context = resolve_structural_context(tmp_path)
 
-    assert structural_context.startdir_context.is_repo_root is True
+    assert structural_context.startdir_context.is_datatree_root is True
 
 
 def test_repo_root_config_rootdir_is_startdir(tmp_path):
@@ -243,12 +243,12 @@ def test_standalone_datadir_returns_single_context(tmp_path):
 
 
 def test_standalone_datadir_is_not_repo_root(tmp_path):
-    """If startdir is datadir, is_repo_root is False."""
+    """If startdir is datadir, is_datatree_root is False."""
     (tmp_path / DATADIR_RULEFILE_NAME).touch()
 
     structural_context = resolve_structural_context(tmp_path)
 
-    assert structural_context.startdir_context.is_repo_root is False
+    assert structural_context.startdir_context.is_datatree_root is False
 
 
 def test_datadir_in_repo_config_rootdir_is_parent(tmp_path):

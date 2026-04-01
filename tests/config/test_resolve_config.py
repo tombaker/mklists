@@ -27,8 +27,8 @@ from mklists.structure.model import (
 def make_structural_context(
     startdir: Path,
     *,
-    repo_configfile_found: Path | None = None,
-    repo_rulefile_found: Path | None = None,
+    datatree_configfile_found: Path | None = None,
+    datatree_rulefile_found: Path | None = None,
     datadir_configfile_found: Path | None = None,
     datadir_rulefile_found: Path | None = None,
     datadir_contexts: list[DatadirStructuralContext] | None = None,
@@ -37,8 +37,8 @@ def make_structural_context(
     return StructuralContext(
         startdir_context=StartdirStructuralContext(
             startdir=startdir,
-            repo_configfile_found=repo_configfile_found,
-            repo_rulefile_found=repo_rulefile_found,
+            datatree_configfile_found=datatree_configfile_found,
+            datatree_rulefile_found=datatree_rulefile_found,
             datadir_configfile_found=datadir_configfile_found,
             datadir_rulefile_found=datadir_rulefile_found,
         ),
@@ -46,7 +46,7 @@ def make_structural_context(
     )
 
 
-# --- is_repo_root ---
+# --- is_datatree_root ---
 
 
 def test_resolve_config_repo_root_with_configfile_returns_config(tmp_path):
@@ -56,7 +56,7 @@ def test_resolve_config_repo_root_with_configfile_returns_config(tmp_path):
 
     fake_ctx = make_structural_context(
         startdir=tmp_path,
-        repo_configfile_found=configfile,
+        datatree_configfile_found=configfile,
     )
     config = resolve_config(fake_ctx)
 
@@ -71,7 +71,7 @@ def test_resolve_config_repo_root_rulefile_only_uses_defaults(tmp_path):
     rulefile = tmp_path / "mklists.rules"
     rulefile.touch()
 
-    fake_ctx = make_structural_context(startdir=tmp_path, repo_rulefile_found=rulefile)
+    fake_ctx = make_structural_context(startdir=tmp_path, datatree_rulefile_found=rulefile)
     config = resolve_config(fake_ctx)
 
     assert config.configfile_used is None
@@ -99,7 +99,7 @@ def test_resolve_config_selfcontained_datadir_uses_local_configfile(tmp_path):
     assert config.verbose is True
 
 
-# --- is_datadir_in_repo ---
+# --- is_datadir_in_datatree ---
 
 
 def test_resolve_config_datadir_in_repo_finds_parent_configfile(tmp_path):
@@ -165,9 +165,9 @@ def test_resolve_config_else_branch_raises_structure_error(tmp_path, mocker):
     """
     mock_startdir_ctx = mocker.MagicMock()
     mock_startdir_ctx.config_rootdir = tmp_path
-    mock_startdir_ctx.is_repo_root = False
+    mock_startdir_ctx.is_datatree_root = False
     mock_startdir_ctx.is_datadir_selfcontained = False
-    mock_startdir_ctx.is_datadir_in_repo = False
+    mock_startdir_ctx.is_datadir_in_datatree = False
 
     mock_ctx = mocker.MagicMock()
     mock_ctx.startdir_context = mock_startdir_ctx
@@ -182,7 +182,7 @@ def test_resolve_config_else_branch_raises_structure_error(tmp_path, mocker):
 def test_resolve_config_returns_config_with_expected_sub_configs(tmp_path):
     """Returned Config has the expected sub-config types."""
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
+        startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
@@ -198,7 +198,7 @@ def test_resolve_config_default_backup_values(tmp_path):
     This test, and tests below, will fail if DEFAULT_CONFIG_YAML is changed.
     """
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
+        startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
@@ -210,7 +210,7 @@ def test_resolve_config_default_backup_values(tmp_path):
 def test_resolve_config_default_linkify_values(tmp_path):
     """Default config has linkify disabled and linkify_dir under config_rootdir."""
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
+        startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
@@ -221,7 +221,7 @@ def test_resolve_config_default_linkify_values(tmp_path):
 def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):
     """Default safety patterns are compiled into re.Pattern instances."""
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
+        startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
@@ -238,7 +238,7 @@ def test_resolve_config_user_yaml_overrides_defaults(tmp_path):
     configfile.write_text("backup:\n  backup_enabled: true\n  backup_depth: 5\n")
 
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_configfile_found=configfile
+        startdir=tmp_path, datatree_configfile_found=configfile
     )
     config = resolve_config(fake_ctx)
 
@@ -253,7 +253,7 @@ def test_resolve_config_invalid_regex_in_user_configfile_raises_value_error(tmp_
     configfile.write_text("safety:\n  invalid_filename_patterns:\n    - '['\n")
 
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_configfile_found=configfile
+        startdir=tmp_path, datatree_configfile_found=configfile
     )
 
     with pytest.raises(ValueError, match="Invalid regex in config"):

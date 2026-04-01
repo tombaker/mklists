@@ -50,27 +50,27 @@ def fake_make_structural_context(
     tmp_path: Path,
     *,
     num_datadirs: int = 1,
-    repo_configfile_found: Path | None = None,
-    repo_rulefile_found: Path | None = None,
+    datatree_configfile_found: Path | None = None,
+    datatree_rulefile_found: Path | None = None,
 ) -> StructuralContext:
     """Creates a StructuralContext with a valid config_rootdir.
 
     Note:
-        Defaults to repo_configfile_found=tmp_path/"mklists.yaml" so that
-        is_repo_root=True and config_rootdir=tmp_path (the startdir).
+        Defaults to datatree_configfile_found=tmp_path/"mklists.yaml" so that
+        is_datatree_root=True and config_rootdir=tmp_path (the startdir).
         Bypasses need for some testing boilerplate.
 
-        Pass explicit repo_configfile_found=None only when repo_rulefile_found
-        is set (still gives is_repo_root=True).
+        Pass explicit datatree_configfile_found=None only when datatree_rulefile_found
+        is set (still gives is_datatree_root=True).
     """
-    if repo_configfile_found is None and repo_rulefile_found is None:
-        repo_configfile_found = tmp_path / "mklists.yaml"
+    if datatree_configfile_found is None and datatree_rulefile_found is None:
+        datatree_configfile_found = tmp_path / "mklists.yaml"
 
     return StructuralContext(
         startdir_context=StartdirStructuralContext(
             startdir=tmp_path,
-            repo_configfile_found=repo_configfile_found,
-            repo_rulefile_found=repo_rulefile_found,
+            datatree_configfile_found=datatree_configfile_found,
+            datatree_rulefile_found=datatree_rulefile_found,
             datadir_configfile_found=None,
             datadir_rulefile_found=None,
         ),
@@ -186,7 +186,7 @@ def test_two_passes_share_same_timestamp(tmp_path):
 def test_repo_configfile_included_in_snapshot_repofiles(tmp_path):
     """If only 'mklists.yaml', then only one repo file to snapshot is listed."""
     repo_cfg = tmp_path / "mklists.yaml"
-    sc = fake_make_structural_context(tmp_path, repo_configfile_found=repo_cfg)
+    sc = fake_make_structural_context(tmp_path, datatree_configfile_found=repo_cfg)
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
     assert repo_cfg in result[0].snapshot_repofiles_to_copy
@@ -196,7 +196,7 @@ def test_repo_configfile_included_in_snapshot_repofiles(tmp_path):
 def test_repo_rulefile_included_in_snapshot_repofiles(tmp_path):
     """If only '.rules', then only one repo file to snapshot is listed."""
     repo_rules = tmp_path / ".rules"
-    sc = fake_make_structural_context(tmp_path, repo_rulefile_found=repo_rules)
+    sc = fake_make_structural_context(tmp_path, datatree_rulefile_found=repo_rules)
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
     assert repo_rules in result[0].snapshot_repofiles_to_copy
@@ -209,8 +209,8 @@ def test_both_repo_files_included_in_order(tmp_path):
     repo_rules = tmp_path / ".rules"
     sc = fake_make_structural_context(
         tmp_path,
-        repo_configfile_found=repo_cfg,
-        repo_rulefile_found=repo_rules,
+        datatree_configfile_found=repo_cfg,
+        datatree_rulefile_found=repo_rules,
     )
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)

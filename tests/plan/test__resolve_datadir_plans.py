@@ -14,21 +14,21 @@ from mklists.plan.resolve import _resolve_datadir_plans
 def make_structural_context(
     startdir: Path,
     *,
-    repo_rulefile_found: Path | None = None,
+    datatree_rulefile_found: Path | None = None,
     datadir_contexts: list[DatadirStructuralContext] | None = None,
 ) -> StructuralContext:
     """Build a StructuralContext for testing _resolve_datadir_plans.
 
     Note:
-        Sets repo_configfile_found so that is_repo_root=True and
+        Sets datatree_configfile_found so that is_datatree_root=True and
         config_rootdir=startdir, avoiding StructureError from the
         config_rootdir property.
     """
     return StructuralContext(
         startdir_context=StartdirStructuralContext(
             startdir=startdir,
-            repo_configfile_found=startdir / "mklists.yaml",
-            repo_rulefile_found=repo_rulefile_found,
+            datatree_configfile_found=startdir / "mklists.yaml",
+            datatree_rulefile_found=datatree_rulefile_found,
             datadir_configfile_found=None,
             datadir_rulefile_found=None,
         ),
@@ -76,7 +76,7 @@ def test_normal_datadir_with_repo_rulefile_puts_it_first(tmp_path):
 
     ctx = make_structural_context(
         startdir=tmp_path,
-        repo_rulefile_found=repo_rulefile,
+        datatree_rulefile_found=repo_rulefile,
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=datadir,

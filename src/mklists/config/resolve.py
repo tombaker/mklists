@@ -31,11 +31,11 @@ def resolve_config(structural_context: StructuralContext) -> Config:
     startdir_context = structural_context.startdir_context
     config_rootdir = startdir_context.config_rootdir
 
-    if startdir_context.is_repo_root:
-        configfile_used = startdir_context.repo_configfile_found
+    if startdir_context.is_datatree_root:
+        configfile_used = startdir_context.datatree_configfile_found
     elif startdir_context.is_datadir_selfcontained:
         configfile_used = startdir_context.datadir_configfile_found
-    elif startdir_context.is_datadir_in_repo:
+    elif startdir_context.is_datadir_in_datatree:
         # Look up repo config file relative to discovered config root directory.
         repo_configfile = config_rootdir / DATATREE_CONFIGFILE_NAME
         if repo_configfile.is_file():

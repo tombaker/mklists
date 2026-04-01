@@ -81,7 +81,7 @@ def _resolve_datadir_plans(
     Returns:
         Tuple of (datadir_plans, skipped_datadirs).
     """
-    repo_rulefile = structural_context.startdir_context.repo_rulefile_found
+    repo_rulefile = structural_context.startdir_context.datatree_rulefile_found
 
     datadir_plans: list[DatadirPlan] = []
     skipped_datadirs: list[SkippedDatadir] = []
@@ -143,8 +143,8 @@ def _resolve_pass_plans(
         snapshot_repofiles_to_copy = [
             f
             for f in [
-                structural_context.startdir_context.repo_configfile_found,
-                structural_context.startdir_context.repo_rulefile_found,
+                structural_context.startdir_context.datatree_configfile_found,
+                structural_context.startdir_context.datatree_rulefile_found,
             ]
             if f is not None
         ]

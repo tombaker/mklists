@@ -67,8 +67,8 @@ def make_structural_context(
     return StructuralContext(
         startdir_context=StartdirStructuralContext(
             startdir=tmp_path,
-            repo_configfile_found=tmp_path / "mklists.yaml",
-            repo_rulefile_found=None,
+            datatree_configfile_found=tmp_path / "mklists.yaml",
+            datatree_rulefile_found=None,
             datadir_configfile_found=None,
             datadir_rulefile_found=None,
         ),
