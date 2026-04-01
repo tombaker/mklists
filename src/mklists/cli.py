@@ -26,7 +26,7 @@ def cli() -> None:
 )
 @click.pass_context
 def init(ctx: click.Context, directory: str | None) -> None:
-    """Initialize a new mklists repo or datadir (data directory)."""
+    """Initialize a new mklists datatree or datadir (data directory)."""
     ctx.ensure_object(dict)
     ctx.obj["directory"] = directory
     if ctx.invoked_subcommand is None:
@@ -35,9 +35,9 @@ def init(ctx: click.Context, directory: str | None) -> None:
 
 @init.command()
 @click.pass_context
-def repo(_ctx: click.Context) -> None:
-    """Initialize a new mklists repo (where datadirs share rules)."""
-    click.echo("Running mklists init repo.")
+def datatree(_ctx: click.Context) -> None:
+    """Initialize a new mklists datatree (where datadirs share rules)."""
+    click.echo("Running mklists init datatree.")
 
 
 @init.command()

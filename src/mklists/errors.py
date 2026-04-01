@@ -6,7 +6,7 @@ class MklistsError(Exception):
 
 
 class StructureError(MklistsError):
-    """Invalid repository or datadir structure."""
+    """Invalid datatree or datadir structure."""
 
 
 class RuleError(ValueError):
