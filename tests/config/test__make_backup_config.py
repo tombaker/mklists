@@ -7,7 +7,7 @@ from mklists.config.resolve import _make_backup_config
 
 def test_make_backup_config_given_relative_return_relative():
     """Given relative directory name, return absolute pathname."""
-    config_rootdir = Path("/repo/root")
+    config_rootdir = Path("/datatree/root")
 
     config_dict = {
         "backup": {
@@ -30,7 +30,7 @@ def test_make_backup_config_given_relative_return_relative():
 
 def test_make_backup_config_type_coercion():
     """Tests type coercion."""
-    config_rootdir = Path("/repo/root")
+    config_rootdir = Path("/datatree/root")
 
     config_dict = {
         "backup": {

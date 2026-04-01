@@ -39,13 +39,13 @@ def test_single_rulefile(tmp_path):
 
 def test_multiple_rulefiles_merge_in_order(tmp_path):
     """Rulefiles are processed and merged in order."""
-    repo = tmp_path / "mklists.rules"
+    datatree_rulefile = tmp_path / "mklists.rules"
     local = tmp_path / ".rules"
 
-    write_rulefile(repo, ["0|foo|A|B|"])
+    write_rulefile(datatree_rulefile, ["0|foo|A|B|"])
     write_rulefile(local, ["0|bar|B|C|"])
 
-    rules = load_rules_for_datadir([repo, local])
+    rules = load_rules_for_datadir([datatree_rulefile, local])
 
     assert rules == [
         Rule(
@@ -67,25 +67,25 @@ def test_multiple_rulefiles_merge_in_order(tmp_path):
 
 def test_rule_order_matters(tmp_path):
     """Rules are out of order, fail chain validation, RuleError is raised."""
-    repo = tmp_path / "mklists.rules"
+    datatree_rulefile = tmp_path / "mklists.rules"
     local = tmp_path / ".rules"
 
-    write_rulefile(repo, ["0|foo|A|B|"])
+    write_rulefile(datatree_rulefile, ["0|foo|A|B|"])
     write_rulefile(local, ["0|bar|B|C|"])
 
     with pytest.raises(RuleError):
-        load_rules_for_datadir([local, repo])
+        load_rules_for_datadir([local, datatree_rulefile])
 
 
 def test_empty_rulefile_ok(tmp_path):
     """Empty rulefile is okay."""
-    repo = tmp_path / "mklists.rules"
+    datatree_rulefile = tmp_path / "mklists.rules"
     local = tmp_path / ".rules"
 
-    write_rulefile(repo, [])
+    write_rulefile(datatree_rulefile, [])
     write_rulefile(local, ["0|bar|A|B|"])
 
-    rules = load_rules_for_datadir([repo, local])
+    rules = load_rules_for_datadir([datatree_rulefile, local])
 
     assert rules == [
         Rule(

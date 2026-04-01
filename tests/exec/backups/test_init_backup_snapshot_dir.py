@@ -3,8 +3,8 @@
 from mklists.exec.backups import init_snapshot_dir
 
 
-def test_create_directory_outside_repo(tmp_path):
-    """Backup directories may be created outside mklists repo.
+def test_create_directory_outside_datatree(tmp_path):
+    """Backup directories may be created outside the mklists datatree.
 
     Note: init_snapshot_dir does not care whether "mklists.yaml" or
     "mklists.rules" are valid names for the mklists config settings and global rules.

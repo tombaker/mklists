@@ -49,7 +49,7 @@ def make_structural_context(
 # --- is_datatree_root ---
 
 
-def test_resolve_config_repo_root_with_configfile_returns_config(tmp_path):
+def test_resolve_config_datatree_root_with_configfile_returns_config(tmp_path):
     """Repo root with config file uses that file and returns a Config."""
     configfile = tmp_path / DATATREE_CONFIGFILE_NAME
     configfile.write_text("verbose: true\n")
@@ -66,7 +66,7 @@ def test_resolve_config_repo_root_with_configfile_returns_config(tmp_path):
     assert config.verbose is True
 
 
-def test_resolve_config_repo_root_rulefile_only_uses_defaults(tmp_path):
+def test_resolve_config_datatree_root_rulefile_only_uses_defaults(tmp_path):
     """Repo root with only a rule file has configfile_used=None and uses defaults."""
     rulefile = tmp_path / "mklists.rules"
     rulefile.touch()
@@ -102,12 +102,12 @@ def test_resolve_config_selfcontained_datadir_uses_local_configfile(tmp_path):
 # --- is_datadir_in_datatree ---
 
 
-def test_resolve_config_datadir_in_repo_finds_parent_configfile(tmp_path):
-    """Datadir in repo uses repo config file found in its parent directory."""
+def test_resolve_config_datadir_in_datatree_finds_parent_configfile(tmp_path):
+    """Datadir in datatree uses datatree config file found in its parent directory."""
     datadir = tmp_path / "data"
     datadir.mkdir()
-    repo_configfile = tmp_path / DATATREE_CONFIGFILE_NAME
-    repo_configfile.write_text("verbose: true\n")
+    datatree_configfile = tmp_path / DATATREE_CONFIGFILE_NAME
+    datatree_configfile.write_text("verbose: true\n")
     rulefile = datadir / "mklists.rules"
     rulefile.touch()
 
@@ -116,13 +116,13 @@ def test_resolve_config_datadir_in_repo_finds_parent_configfile(tmp_path):
     )
     config = resolve_config(fake_ctx)
 
-    assert config.configfile_used == repo_configfile
+    assert config.configfile_used == datatree_configfile
     assert config.config_rootdir == tmp_path  # startdir.parent
     assert config.verbose is True
 
 
-def test_resolve_config_datadir_in_repo_no_parent_configfile_uses_defaults(tmp_path):
-    """Datadir in repo with no parent config file uses defaults."""
+def test_resolve_config_datadir_in_datatree_no_parent_configfile_uses_defaults(tmp_path):
+    """Datadir in datatree with no parent config file uses defaults."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / "mklists.rules"

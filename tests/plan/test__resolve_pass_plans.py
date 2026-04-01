@@ -183,36 +183,36 @@ def test_two_passes_share_same_timestamp(tmp_path):
 # ----- snapshot_datatree_configfiles --------------------------------------------
 
 
-def test_repo_configfile_included_in_snapshot_repofiles(tmp_path):
-    """If only 'mklists.yaml', then only one repo file to snapshot is listed."""
-    repo_cfg = tmp_path / "mklists.yaml"
-    sc = fake_make_structural_context(tmp_path, datatree_configfile_found=repo_cfg)
+def test_datatree_configfile_included_in_snapshot_datatree_configfiles(tmp_path):
+    """If only 'mklists.yaml', then only one datatree config file to snapshot is listed."""
+    datatree_cfg = tmp_path / "mklists.yaml"
+    sc = fake_make_structural_context(tmp_path, datatree_configfile_found=datatree_cfg)
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert repo_cfg in result[0].snapshot_datatree_configfiles
+    assert datatree_cfg in result[0].snapshot_datatree_configfiles
     assert len(result[0].snapshot_datatree_configfiles) == 1
 
 
-def test_repo_rulefile_included_in_snapshot_repofiles(tmp_path):
-    """If only '.rules', then only one repo file to snapshot is listed."""
-    repo_rules = tmp_path / ".rules"
-    sc = fake_make_structural_context(tmp_path, datatree_rulefile_found=repo_rules)
+def test_datatree_rulefile_included_in_snapshot_datatree_configfiles(tmp_path):
+    """If only '.rules', then only one datatree config file to snapshot is listed."""
+    datatree_rules = tmp_path / ".rules"
+    sc = fake_make_structural_context(tmp_path, datatree_rulefile_found=datatree_rules)
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert repo_rules in result[0].snapshot_datatree_configfiles
+    assert datatree_rules in result[0].snapshot_datatree_configfiles
     assert len(result[0].snapshot_datatree_configfiles) == 1
 
 
-def test_both_repo_files_included_in_order(tmp_path):
-    """If both '.rules' and 'mklists.yaml', then two repo files to snapshot listed."""
-    repo_cfg = tmp_path / "mklists.yaml"
-    repo_rules = tmp_path / ".rules"
+def test_both_datatree_configfiles_included_in_order(tmp_path):
+    """If both '.rules' and 'mklists.yaml', then two datatree config files to snapshot listed."""
+    datatree_cfg = tmp_path / "mklists.yaml"
+    datatree_rules = tmp_path / ".rules"
     sc = fake_make_structural_context(
         tmp_path,
-        datatree_configfile_found=repo_cfg,
-        datatree_rulefile_found=repo_rules,
+        datatree_configfile_found=datatree_cfg,
+        datatree_rulefile_found=datatree_rules,
     )
     cc = fake_make_config(backup_enabled=True)
     result = _resolve_pass_plans(structural_context=sc, config=cc)
-    assert result[0].snapshot_datatree_configfiles == [repo_cfg, repo_rules]
+    assert result[0].snapshot_datatree_configfiles == [datatree_cfg, datatree_rules]
     assert len(result[0].snapshot_datatree_configfiles) == 2

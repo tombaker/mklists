@@ -39,8 +39,8 @@ def make_structural_context(
 # ----- normal datadirs (no configfile_found) ---------------------------------
 
 
-def test_normal_datadir_without_repo_rulefile_creates_plan(tmp_path):
-    """Normal datadir with no repo rulefile → DatadirPlan with only the datadir rulefile."""
+def test_normal_datadir_without_datatree_rulefile_creates_plan(tmp_path):
+    """Normal datadir with no datatree rulefile → DatadirPlan with only the datadir rulefile."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -65,10 +65,10 @@ def test_normal_datadir_without_repo_rulefile_creates_plan(tmp_path):
     assert plans[0].rules == []
 
 
-def test_normal_datadir_with_repo_rulefile_puts_it_first(tmp_path):
+def test_normal_datadir_with_datatree_rulefile_puts_it_first(tmp_path):
     """Repo rulefile is prepended to rulefiles_used before the datadir rulefile."""
-    repo_rulefile = tmp_path / DATADIR_RULEFILE_NAME
-    repo_rulefile.touch()
+    datatree_rulefile = tmp_path / DATADIR_RULEFILE_NAME
+    datatree_rulefile.touch()
     datadir = tmp_path / "data"
     datadir.mkdir()
     datadir_rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -76,7 +76,7 @@ def test_normal_datadir_with_repo_rulefile_puts_it_first(tmp_path):
 
     ctx = make_structural_context(
         startdir=tmp_path,
-        datatree_rulefile_found=repo_rulefile,
+        datatree_rulefile_found=datatree_rulefile,
         datadir_contexts=[
             DatadirStructuralContext(
                 datadir=datadir,
@@ -89,7 +89,7 @@ def test_normal_datadir_with_repo_rulefile_puts_it_first(tmp_path):
 
     assert skipped == []
     assert len(plans) == 1
-    assert plans[0].rulefiles_used == [repo_rulefile, datadir_rulefile]
+    assert plans[0].rulefiles_used == [datatree_rulefile, datadir_rulefile]
 
 
 # ----- self-contained datadirs (configfile_found set) ------------------------
