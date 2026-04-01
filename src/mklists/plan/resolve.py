@@ -1,16 +1,18 @@
 """Plan of a Mklists execution run."""
 
-from datetime import datetime, UTC
+from datetime import UTC, datetime
+
 from mklists.config import Config
-from mklists.structure.model import StructuralContext
 from mklists.plan.model import (
     BackupPlan,
     DatadirPlan,
     PassPlan,
-    SkippedDatadir,
     RunPlan,
+    SkippedDatadir,
 )
 from mklists.rules.load import load_rules_for_datadir
+from mklists.structure.markers import DATATREE_RULEFILE_NAME
+from mklists.structure.model import StructuralContext
 
 
 def resolve_run_plan(
@@ -81,7 +83,16 @@ def _resolve_datadir_plans(
     Returns:
         Tuple of (datadir_plans, skipped_datadirs).
     """
-    datatree_rulefile = structural_context.startdir_context.datatree_rulefile_found
+    startdir_context = structural_context.startdir_context
+    datatree_rulefile = startdir_context.datatree_rulefile_found
+
+    # When running from a datadir-in-datatree, datatree markers live in the
+    # parent directory (config_rootdir), not in startdir itself.  resolve_config
+    # handles the config file the same way.
+    if datatree_rulefile is None and startdir_context.is_datadir_in_datatree:
+        candidate = startdir_context.config_rootdir / DATATREE_RULEFILE_NAME
+        if candidate.is_file():
+            datatree_rulefile = candidate
 
     datadir_plans: list[DatadirPlan] = []
     skipped_datadirs: list[SkippedDatadir] = []
