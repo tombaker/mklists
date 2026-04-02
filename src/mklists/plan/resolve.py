@@ -29,8 +29,6 @@ def resolve_run_plan(
     Returns:
         RunPlan object, holding info needed for execution.
     """
-    config_rootdir = structural_context.startdir_context.config_rootdir
-
     # ----- pass plans (backup directories) ---------------------------
     pass_plans = _resolve_pass_plans(
         structural_context=structural_context,
