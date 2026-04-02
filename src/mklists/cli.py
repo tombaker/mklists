@@ -29,7 +29,11 @@ def cli() -> None:
 )
 @click.pass_context
 def init(ctx: click.Context, directory: str | None) -> None:
-    """Initialize a new mklists datatree or datadir (data directory)."""
+    """Initialize a new Mklists datatree or datadir.
+
+    Running `mklists init` in an existing Mklists datatree or datadir
+    is safe. It will not overwrite things that are already there.
+    """
     ctx.ensure_object(dict)
     ctx.obj["directory"] = directory
     if ctx.invoked_subcommand is None:
@@ -50,9 +54,16 @@ def init(ctx: click.Context, directory: str | None) -> None:
     metavar="<names>",
     help="Comma-separated subdir names (default: a,b).",
 )
-def datatree(path: str, rules: bool, subdirs: str) -> None:
+@click.pass_context
+def datatree(ctx: click.Context, path: str, rules: bool, subdirs: str) -> None:
     """Initialize a new mklists datatree (where datadirs share rules)."""
-    resolved = Path(path).resolve()
+    directory = ctx.obj.get("directory")
+    if directory is not None and path != ".":
+        raise click.UsageError("-C and PATH are mutually exclusive.")
+    if directory is not None:
+        resolved = Path(directory).resolve()
+    else:
+        resolved = Path(path).resolve()
     subdir_tuple = tuple(s.strip() for s in subdirs.split(",") if s.strip())
     try:
         init_datatree(resolved, rules=rules, subdirs=subdir_tuple)
@@ -74,9 +85,16 @@ def datatree(path: str, rules: bool, subdirs: str) -> None:
     default=False,
     help="Write .mklistsrc, marking the datadir as self-contained.",
 )
-def datadir(path: str, rules: bool, self_contained: bool) -> None:
+@click.pass_context
+def datadir(ctx: click.Context, path: str, rules: bool, self_contained: bool) -> None:
     """Initialize a new mklists datadir (with its own rules)."""
-    resolved = Path(path).resolve()
+    directory = ctx.obj.get("directory")
+    if directory is not None and path != ".":
+        raise click.UsageError("-C and PATH are mutually exclusive.")
+    if directory is not None:
+        resolved = Path(directory).resolve()
+    else:
+        resolved = Path(path).resolve()
     try:
         init_datadir(resolved, rules=rules, self_contained=self_contained)
     except MklistsError as e:

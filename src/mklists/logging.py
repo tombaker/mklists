@@ -40,7 +40,4 @@ def init_logger(
         file_handler.setLevel(logging.INFO)
         logger.addHandler(file_handler)
 
-    if logger.handlers:
-        logger.info("Start mklists run.")
-
     return logger

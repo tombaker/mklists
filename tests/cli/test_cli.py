@@ -116,6 +116,36 @@ def test_init_datatree_conflict_exits_with_error(tmp_path):
     assert result.exit_code == 1
 
 
+# ── mklists init -C ───────────────────────────────────────────────────────────
+
+
+def test_init_datadir_C_uses_given_directory(tmp_path):
+    """mklists init -C <path> datadir initializes the given directory."""
+    result = CliRunner().invoke(cli, ["init", "-C", str(tmp_path), "datadir"])
+    assert result.exit_code == 0
+    assert (tmp_path / ".rules").exists()
+
+
+def test_init_datadir_C_and_path_are_mutually_exclusive(tmp_path):
+    """-C and PATH together exit with a usage error."""
+    result = CliRunner().invoke(cli, ["init", "-C", str(tmp_path), "datadir", str(tmp_path)])
+    assert result.exit_code != 0
+
+
+def test_init_datatree_C_uses_given_directory(tmp_path):
+    """mklists init -C <path> datatree initializes the given directory."""
+    result = CliRunner().invoke(cli, ["init", "-C", str(tmp_path), "datatree"])
+    assert result.exit_code == 0
+    assert (tmp_path / "mklists.yaml").exists()
+    assert (tmp_path / "a").is_dir()
+
+
+def test_init_datatree_C_and_path_are_mutually_exclusive(tmp_path):
+    """-C and PATH together exit with a usage error."""
+    result = CliRunner().invoke(cli, ["init", "-C", str(tmp_path), "datatree", str(tmp_path)])
+    assert result.exit_code != 0
+
+
 def test_run_exits_cleanly_on_valid_datadir(tmp_path):
     """mklists run exits with code 0 when given a valid datadir.
 
