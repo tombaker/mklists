@@ -18,15 +18,6 @@ distinction explicit.
 `PATH` defaults to `.` (current working directory), matching the convention
 established by `git init [directory]`.
 
-The `-C <path>` option on the `init` group is an alternative way to name
-the target directory. It is mutually exclusive with the `PATH` argument:
-providing both is a usage error. `-C` is useful in scripted contexts where
-the path must appear before the subcommand name.
-
-```
-mklists init -C /data datadir    # initializes /data (equivalent to: mklists init datadir /data)
-mklists init -C /data datatree   # initializes /data (equivalent to: mklists init datatree /data)
-```
 
 ## Files created
 
@@ -156,10 +147,8 @@ scripting. `mklists init` should be purely flag-driven.
 
 ```
 mklists init                              # shows help / usage error
-mklists init [-C PATH] datadir [PATH]     # initialize a single datadir
-mklists init [-C PATH] datatree [PATH]    # initialize a datatree with subdirs
-
-  -C PATH            Target directory (mutually exclusive with PATH argument)
+mklists init datadir [PATH]               # initialize a single datadir
+mklists init datatree [PATH]              # initialize a datatree with subdirs
 
 Options for datadir:
   --rules            Populate .rules with commented example content
