@@ -44,7 +44,8 @@ def fake_make_config(
             invalid_filename_patterns=[],
         ),
         linkify=LinkifyConfig(
-            linkify_dir=None,
+            linkify_md_dir=None,
+            linkify_html_dir=None,
         ),
     )
 

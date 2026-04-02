@@ -28,7 +28,8 @@ def make_run_plan(datadir_plan: DatadirPlan) -> RunPlan:
         datadir_plans=[datadir_plan],
         skipped_datadirs=[],
         routing_dict={},
-        linkify_dir=None,
+        linkify_md_dir=None,
+        linkify_html_dir=None,
         safety=SafetyConfig(invalid_filename_patterns=[]),
         backup=None,
     )
@@ -74,7 +75,8 @@ def test_run_mklists_logs_each_datadir_path(tmp_path, caplog):
         ],
         skipped_datadirs=[],
         routing_dict={},
-        linkify_dir=None,
+        linkify_md_dir=None,
+        linkify_html_dir=None,
         safety=SafetyConfig(invalid_filename_patterns=[re.compile(r"\.swp$")]),
         backup=None,
     )

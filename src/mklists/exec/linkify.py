@@ -1,4 +1,4 @@
-"""Mirror datadirs as URL-linkified Markdown files for GitHub rendering."""
+"""Mirror datadirs as URL-linkified files for browsing on GitHub or a web server."""
 
 import re
 import shutil
@@ -7,48 +7,77 @@ from pathlib import Path
 URL_RE = re.compile(r"(https?://[^\s<>()]*[^\s<>().,;:!?)])([.,;:!?)]?)")
 
 
-def linkify_datadirs(datadirs: list[Path], linkify_dir: Path) -> None:
-    """Mirror datadirs to linkify_dir with URL-linkified .md files.
+def linkify_md_datadirs(datadirs: list[Path], linkify_md_dir: Path) -> None:
+    """Mirror datadirs to linkify_md_dir with URL-linkified .md files.
 
-    For each datadir, a corresponding subdirectory is created under linkify_dir.
-    Each visible data file is written as <filename>.md, the content of which is
-    the original text wrapped in a single <pre> block with URLs converted to
-    clickable <a> tags, suitable for rendering on GitHub.
+    Each visible data file is written as <filename>.md — HTML-in-Markdown
+    wrapped in a <pre> block with URLs as <a> tags. GitHub renders .md files
+    and passes through these tags, making links clickable when browsing the
+    repository.
+
+    Args:
+        datadirs: List of datadir paths.
+        linkify_md_dir: Root of mirror directory tree for .md output.
+
+    Returns:
+        None, after mirroring datadirs under linkify_md_dir.
+    """
+    _mirror_datadirs(datadirs=datadirs, output_dir=linkify_md_dir, suffix=".md")
+
+
+def linkify_html_datadirs(datadirs: list[Path], linkify_html_dir: Path) -> None:
+    """Mirror datadirs to linkify_html_dir with URL-linkified .html files.
+
+    Each visible data file is written as <filename>.html — a <pre> block with
+    URLs as <a> tags. Any web server (including Dropbox) will serve these as
+    rendered HTML with clickable links.
+
+    Args:
+        datadirs: List of datadir paths.
+        linkify_html_dir: Root of mirror directory tree for .html output.
+
+    Returns:
+        None, after mirroring datadirs under linkify_html_dir.
+    """
+    _mirror_datadirs(datadirs=datadirs, output_dir=linkify_html_dir, suffix=".html")
+
+
+def _mirror_datadirs(datadirs: list[Path], output_dir: Path, suffix: str) -> None:
+    """Write URL-linkified copies of all datafiles under output_dir.
 
     Supported layouts (no deeper nesting):
-    - Flat: one datadir that is config_rootdir; files land in linkify_dir directly.
+    - Flat: one datadir that is config_rootdir; files land in output_dir directly.
     - Subdir: multiple datadirs one level under config_rootdir; each maps to
-      linkify_dir/<datadir_name>/.
+      output_dir/<datadir_name>/.
 
-    All existing content under linkify_dir is deleted before writing, so stale
+    All existing content under output_dir is deleted before writing, so stale
     files and directories from previous runs are always removed.
 
     Args:
         datadirs: List of datadir paths.
-        linkify_dir: Root of mirror directory tree.
+        output_dir: Root of mirror directory tree.
+        suffix: File extension to append to each mirrored filename (.md or .html).
 
     Returns:
-        None, after mirroring datadirs under linkify_dir with linkified datafiles.
+        None, after mirroring datadirs under output_dir with linkified datafiles.
     """
-    if linkify_dir.exists():
-        shutil.rmtree(linkify_dir)
-    linkify_dir.mkdir(parents=True)
+    if output_dir.exists():
+        shutil.rmtree(output_dir)
+    output_dir.mkdir(parents=True)
 
     config_rootdir = datadirs[0] if len(datadirs) == 1 else datadirs[0].parent
 
     for datadir in datadirs:
         rel = datadir.relative_to(config_rootdir)
-        mirror_dir = linkify_dir / rel
+        mirror_dir = output_dir / rel
         mirror_dir.mkdir(parents=True, exist_ok=True)
 
         for datafile in sorted(datadir.iterdir()):
             if datafile.name.startswith(".") or not datafile.is_file():
                 continue
             text = datafile.read_text(encoding="utf-8")
-            md_content = _linkify_lines(text)
-            (mirror_dir / (datafile.name + ".md")).write_text(
-                md_content, encoding="utf-8"
-            )
+            content = _linkify_lines(text)
+            (mirror_dir / (datafile.name + suffix)).write_text(content, encoding="utf-8")
 
 
 def _linkify_lines(text: str) -> str:
@@ -59,7 +88,7 @@ def _linkify_lines(text: str) -> str:
 
     Returns:
         Text wrapped in a ``<pre>`` block with URLs converted to ``<a>`` tags.
-        
+
     Note:
         URLs that genuinely end with ``.,;:!?)`` will have that character
         incorrectly stripped; this is rare compared with prose punctuation

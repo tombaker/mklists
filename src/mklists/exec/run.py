@@ -5,7 +5,7 @@ from mklists.exec.backups import (
     init_snapshot_dir,
     prune_backupdirs,
 )
-from mklists.exec.linkify import linkify_datadirs
+from mklists.exec.linkify import linkify_html_datadirs, linkify_md_datadirs
 from mklists.exec.process_datadirs import process_datadir
 from mklists.exec.routing import redistribute_datafiles
 from mklists.logging import logger
@@ -58,5 +58,8 @@ def run_mklists(run_plan: RunPlan) -> None:
             backup_depth=run_plan.backup.backup_depth,
         )
 
-    if run_plan.linkify_dir:
-        linkify_datadirs(datadirs=datadirs, linkify_dir=run_plan.linkify_dir)
+    if run_plan.linkify_md_dir:
+        linkify_md_datadirs(datadirs=datadirs, linkify_md_dir=run_plan.linkify_md_dir)
+
+    if run_plan.linkify_html_dir:
+        linkify_html_datadirs(datadirs=datadirs, linkify_html_dir=run_plan.linkify_html_dir)

@@ -33,16 +33,19 @@ def make_config(
     *,
     backup_rootdir: Path | None = None,
     routing_dict: dict | None = None,
-    linkify_dir: Path | None = None,
+    linkify_md_dir: Path | None = None,
+    linkify_html_dir: Path | None = None,
 ) -> Config:
     """Build a minimal Config for testing resolve_run_plan.
 
-    backup_rootdir=None   → backup disabled (backup_rootdir is None)
-    backup_rootdir=Path   → backup enabled
-    routing_dict={}       → routing disabled (empty dict)
-    routing_dict={...}    → routing enabled (non-empty dict)
-    linkify_dir=None      → linkify disabled
-    linkify_dir=Path      → linkify enabled
+    backup_rootdir=None      → backup disabled
+    backup_rootdir=Path      → backup enabled
+    routing_dict={}          → routing disabled (empty dict)
+    routing_dict={...}       → routing enabled (non-empty dict)
+    linkify_md_dir=None      → md linkify disabled
+    linkify_md_dir=Path      → md linkify enabled
+    linkify_html_dir=None    → html linkify disabled
+    linkify_html_dir=Path    → html linkify enabled
     """
     return Config(
         verbose=False,
@@ -57,7 +60,8 @@ def make_config(
         ),
         safety=SafetyConfig(invalid_filename_patterns=[]),
         linkify=LinkifyConfig(
-            linkify_dir=linkify_dir,
+            linkify_md_dir=linkify_md_dir,
+            linkify_html_dir=linkify_html_dir,
         ),
     )
 
@@ -138,11 +142,11 @@ def test_routing_dict_nonempty_routing_dict_comes_from_config(tmp_path):
     assert plan.routing_dict == expected
 
 
-# ----- linkify_dir --------------------------------------------------------------
+# ----- linkify_md_dir / linkify_html_dir ----------------------------------------
 
 
-def test_linkify_dir_none_linkify_dir_is_none(tmp_path):
-    """linkify_dir=None → plan.linkify_dir is None."""
+def test_linkify_md_dir_none_is_none(tmp_path):
+    """linkify_md_dir=None → plan.linkify_md_dir is None."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -150,14 +154,14 @@ def test_linkify_dir_none_linkify_dir_is_none(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(linkify_dir=None),
+        config=make_config(linkify_md_dir=None),
     )
 
-    assert plan.linkify_dir is None
+    assert plan.linkify_md_dir is None
 
 
-def test_linkify_dir_set_linkify_dir_comes_from_config(tmp_path):
-    """linkify_dir=Path → plan.linkify_dir equals config.linkify.linkify_dir."""
+def test_linkify_md_dir_set_comes_from_config(tmp_path):
+    """linkify_md_dir=Path → plan.linkify_md_dir equals config value."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -165,10 +169,40 @@ def test_linkify_dir_set_linkify_dir_comes_from_config(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(linkify_dir=Path("markdown")),
+        config=make_config(linkify_md_dir=Path(".linkify")),
     )
 
-    assert plan.linkify_dir == Path("markdown")
+    assert plan.linkify_md_dir == Path(".linkify")
+
+
+def test_linkify_html_dir_none_is_none(tmp_path):
+    """linkify_html_dir=None → plan.linkify_html_dir is None."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
+
+    plan = resolve_run_plan(
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(linkify_html_dir=None),
+    )
+
+    assert plan.linkify_html_dir is None
+
+
+def test_linkify_html_dir_set_comes_from_config(tmp_path):
+    """linkify_html_dir=Path → plan.linkify_html_dir equals config value."""
+    datadir = tmp_path / "data"
+    datadir.mkdir()
+    rulefile = datadir / DATADIR_RULEFILE_NAME
+    rulefile.touch()
+
+    plan = resolve_run_plan(
+        structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
+        config=make_config(linkify_html_dir=Path(".linkify_html")),
+    )
+
+    assert plan.linkify_html_dir == Path(".linkify_html")
 
 
 # ----- backup ----------------------------------------------------------------

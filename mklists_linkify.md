@@ -9,10 +9,10 @@ by an HTML `<a>` tag.
 
 The file extension determines where the output is usable:
 
-| Extension | GitHub | Dropbox |
-|-----------|--------|---------|
-| `.md`     | clickable links (GitHub renders Markdown and passes through `<pre>` and `<a>` tags) | raw text — tags visible as literal markup, links not clickable |
-| `.html`   | raw text — GitHub displays HTML files as source code | clickable links (any web server that serves `.html` files, including Dropbox) |
+| Config key / extension | GitHub | Any web server (e.g. Dropbox) |
+|------------------------|--------|-------------------------------|
+| `linkify_md_dir` / `.md` | clickable links — GitHub renders Markdown and passes through `<pre>` and `<a>` tags | raw text — tags appear as literal markup |
+| `linkify_html_dir` / `.html` | raw text — GitHub displays `.html` files as source code | clickable links — served as rendered HTML |
 
 There is no single extension that works for both platforms.
 
@@ -22,23 +22,19 @@ There is no single extension that works for both platforms.
 
 ```yaml
 linkify:
-  linkify_enabled: True
-  linkify_dir: .linkify          # writes <filename>.md  — for GitHub
-  linkify_html_dir: .linkify_html  # writes <filename>.html — for Dropbox
+  linkify_md_dir: .linkify          # writes <filename>.md  — for GitHub
+  linkify_html_dir: .linkify_html   # writes <filename>.html — for any web server
 ```
 
-Either or both targets can be enabled independently:
-
-- Set `linkify_dir` to generate `.md` files (GitHub).
-- Set `linkify_html_dir` to generate `.html` files (Dropbox).
-- Set both to generate output for both platforms in one run.
+Either or both targets can be enabled independently by setting a path (relative
+or absolute); `null` disables that output.
 
 Both directories are wiped and rebuilt from scratch on every run.
 
 ## Choosing what you need
 
-- **GitHub only** — use `linkify_dir`; leave `linkify_html_dir` unset.
-- **Web server only** (including Dropbox) — use `linkify_html_dir`; leave `linkify_dir` unset.
+- **GitHub only** — set `linkify_md_dir`; leave `linkify_html_dir: null`.
+- **Web server only** (including Dropbox) — set `linkify_html_dir`; leave `linkify_md_dir: null`.
 - **Both** — set both to cover GitHub and any web server in one run; the extra cost per run is negligible.
 
 ## Known limitation

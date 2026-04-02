@@ -293,9 +293,13 @@ def _make_linkify_config(
         Assumes all required keys are present.
     """
     linkify_raw = config_dict["linkify"]
-    linkify_dir_raw = linkify_raw["linkify_dir"]
 
-    if linkify_dir_raw is None:
-        return LinkifyConfig(linkify_dir=None)
+    def _resolve_dir(raw: str | None) -> Path | None:
+        if raw is None:
+            return None
+        return (config_rootdir / raw).resolve()
 
-    return LinkifyConfig(linkify_dir=(config_rootdir / linkify_dir_raw).resolve())
+    return LinkifyConfig(
+        linkify_md_dir=_resolve_dir(linkify_raw["linkify_md_dir"]),
+        linkify_html_dir=_resolve_dir(linkify_raw["linkify_html_dir"]),
+    )

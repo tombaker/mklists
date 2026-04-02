@@ -100,7 +100,12 @@ Tests mirror source structure under `tests/`.
 
 ### Linkify
 
-`linkify_datadirs()` (`exec/linkify.py`) mirrors every datadir as a tree of Markdown files under `linkify_dir`. For each visible data file it writes `<filename>.md` containing the original lines wrapped in a single `<pre>` block, with every `http://` or `https://` URL replaced by an HTML `<a>` tag. The files use HTML-in-Markdown: the content is raw HTML, but the `.md` extension is intentional because GitHub renders `.md` files and passes through `<pre>` and `<a>` tags, making links clickable when browsing the repository. A `.html` extension would cause GitHub to display the raw source instead.
+`exec/linkify.py` mirrors every datadir as a tree of files with URLs converted to clickable `<a>` tags. Each file is wrapped in a single `<pre>` block. Two output formats are supported, controlled by separate config keys:
+
+- **`linkify_md_dir`** — writes `<filename>.md` (HTML-in-Markdown). GitHub renders `.md` files and passes through `<pre>` and `<a>` tags, so links are clickable when browsing the repository. A `.html` extension would cause GitHub to show raw source instead.
+- **`linkify_html_dir`** — writes `<filename>.html`. Any web server (including Dropbox) serves `.html` as rendered HTML with clickable links.
+
+Either or both can be set independently. The public functions are `linkify_md_datadirs()` and `linkify_html_datadirs()`; both delegate to the private `_mirror_datadirs(datadirs, output_dir, suffix)` helper. The output directory is wiped and rebuilt from scratch on every run.
 
 Example — a data line such as:
 

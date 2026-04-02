@@ -213,7 +213,8 @@ def test_resolve_config_default_linkify_values(tmp_path):
     )
     config = resolve_config(fake_ctx)
 
-    assert config.linkify.linkify_dir is None
+    assert config.linkify.linkify_md_dir is None
+    assert config.linkify.linkify_html_dir is None
 
 
 def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):

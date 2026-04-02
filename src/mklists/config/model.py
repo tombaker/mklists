@@ -29,9 +29,10 @@ class SafetyConfig:
 
 @dataclass(slots=True, frozen=True)
 class LinkifyConfig:
-    """Settings about writing data files in HTML to a destination directory."""
+    """Settings about writing data files to browsable mirror directories."""
 
-    linkify_dir: Path | None
+    linkify_md_dir: Path | None
+    linkify_html_dir: Path | None
 
 
 @dataclass(frozen=True, slots=True)
