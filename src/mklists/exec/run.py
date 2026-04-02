@@ -23,7 +23,8 @@ def run_mklists(run_plan: RunPlan) -> None:
     """
     datadirs = [ctx.datadir for ctx in run_plan.datadir_plans]
 
-    for pass_plan in run_plan.pass_plans:
+    total_passes = len(run_plan.pass_plans)
+    for pass_number, pass_plan in enumerate(run_plan.pass_plans, start=1):
         if pass_plan.snapshot_dir is not None:
 
             init_snapshot_dir(
@@ -48,6 +49,8 @@ def run_mklists(run_plan: RunPlan) -> None:
                 datadirs=datadirs,
                 routing_dict=run_plan.routing_dict,
             )
+
+        logger.info(f"Completed pass {pass_number} out of {total_passes}")
 
     if run_plan.backup is not None:
         prune_backupdirs(

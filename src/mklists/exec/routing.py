@@ -29,7 +29,7 @@ def redistribute_datafiles(
                 continue
 
             if not dest_dir.exists():
-                # Destination directory may be unavailable - eg, USB drive not mounted.
+                logger.info(f"Route {filename}: dest {dest_dir} not found (drive unmounted?)")
                 continue
 
             destination = _unique_destination_filename(
@@ -39,7 +39,7 @@ def redistribute_datafiles(
             )
 
             shutil.move(source, destination)
-            logger.info(f"Move {filename} -> {dest_dir}")
+            logger.info(f"Moved {source} -> {destination}")
 
 
 def _unique_destination_filename(
