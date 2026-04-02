@@ -66,6 +66,11 @@ extend-ignore = [
     "W291",  # trailing whitespace
 ]
 
+[tool.pylint.messages_control]
+disable = [
+    "logging-fstring-interpolation",  # f-strings in logger calls are intentional
+]
+
 [tool.mypy]
 python_version = "3.14"
 strict = true
