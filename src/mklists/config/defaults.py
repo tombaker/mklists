@@ -4,26 +4,29 @@
 DEFAULT_CONFIG_YAML = """\
 verbose: True
 
-# Backup: Snapshot data directory for each pass to a time-stamped backup directory.
+# Backup: snapshot data directories to a time-stamped directory before each pass.
+# Set backup_rootdir (name or absolute path) to enable; null disables backup.
 backup:
-  backup_enabled: False
-  backup_rootdir: backups
+  backup_rootdir: null
   backup_depth: 3
+  # backup_rootdir: backups
 
-# Linkification: After processing, data files can be written in HTML to given directory.
+# Linkify: write data files as HTML-in-Markdown (.md) to a browsable directory.
+# Set linkify_dir (name or absolute path) to enable; null disables linkify.
 linkify:
-  linkify_enabled: False
-  linkify_dir: markdown
+  linkify_dir: null
+  # linkify_dir: .linkify
 
-# Routing: Newly generated files with special names can be moved to given directories.
+# Routing: move newly generated files with special names to other directories.
+# Populate routing_dict to enable; an empty mapping disables routing.
 routing:
-  routing_enabled: False
-  routing_dict:
-    to_a.txt: a
-    to_b.txt: b
-    to_bar.txt: /Users/foo/bar
+  routing_dict: {}
+  # routing_dict:
+  #   to_a.txt: a
+  #   to_b.txt: b
+  #   to_bar.txt: /Users/foo/bar
 
-# Safety: Processing halts if safety criteria are violated.
+# Safety: processing halts if safety criteria are violated.
 safety:
   invalid_filename_patterns:
    - \\.swp$

@@ -39,12 +39,12 @@ def resolve_run_plan(
 
     # ----- linkify ---------------------------------------------------
     linkify_dir = None
-    if config.linkify.linkify_enabled:
-        linkify_dir = config_rootdir / config.linkify.linkify_dir
+    if config.linkify.linkify_dir:
+        linkify_dir = config.linkify.linkify_dir
 
     # ----- routing ---------------------------------------------------
     routing_dict = {}
-    if config.routing.routing_enabled:
+    if config.routing.routing_dict:
         routing_dict = config.routing.routing_dict
 
     # ----- datadir plans ---------------------------------------------
@@ -52,7 +52,7 @@ def resolve_run_plan(
         structural_context=structural_context,
     )
 
-    if config.backup.backup_enabled:
+    if config.backup.backup_rootdir:
         backup = BackupPlan(
             backup_rootdir=config.backup.backup_rootdir,
             backup_depth=config.backup.backup_depth,
@@ -142,11 +142,11 @@ def _resolve_pass_plans(
 
     # Determine pass count.
     pass_count = 1
-    if config.routing.routing_enabled and len(datadir_contexts) > 1:
+    if config.routing.routing_dict and len(datadir_contexts) > 1:
         pass_count = 2
 
     # Determine snapshot fields (None when backup disabled).
-    if not config.backup.backup_enabled:
+    if not config.backup.backup_rootdir:
         timestamp = None
         snapshot_datatree_configfiles = []
     else:

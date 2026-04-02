@@ -192,9 +192,10 @@ def _make_backup_config(
     """
     backup_raw = config_dict["backup"]
     backup_rootdir_raw = backup_raw["backup_rootdir"]
+    backup_depth = int(backup_raw["backup_depth"])
 
     if backup_rootdir_raw is None:
-        raise ValueError("backup_rootdir must not be configured as null.")
+        return BackupConfig(backup_rootdir=None, backup_depth=backup_depth)
 
     backup_rootdir = Path(backup_rootdir_raw)
 
@@ -206,11 +207,7 @@ def _make_backup_config(
             )
         backup_rootdir = (config_rootdir / backup_rootdir).resolve()
 
-    return BackupConfig(
-        backup_enabled=bool(backup_raw["backup_enabled"]),
-        backup_rootdir=backup_rootdir,
-        backup_depth=int(backup_raw["backup_depth"]),
-    )
+    return BackupConfig(backup_rootdir=backup_rootdir, backup_depth=backup_depth)
 
 
 def _make_routing_config(
@@ -231,7 +228,6 @@ def _make_routing_config(
         Assumes all required keys are present.
     """
     routing_raw = config_dict["routing"]
-    routing_enabled = bool(routing_raw["routing_enabled"])
     files2dirs_raw = routing_raw["routing_dict"]
 
     routing_dict: dict[str, Path] = {}
@@ -252,10 +248,7 @@ def _make_routing_config(
 
         routing_dict[filename] = (config_rootdir / dirname).resolve()
 
-    return RoutingConfig(
-        routing_enabled=routing_enabled,
-        routing_dict=routing_dict,
-    )
+    return RoutingConfig(routing_dict=routing_dict)
 
 
 def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
@@ -303,9 +296,6 @@ def _make_linkify_config(
     linkify_dir_raw = linkify_raw["linkify_dir"]
 
     if linkify_dir_raw is None:
-        raise ValueError("linkify_dir must not be configured as null.")
+        return LinkifyConfig(linkify_dir=None)
 
-    return LinkifyConfig(
-        linkify_enabled=bool(linkify_raw["linkify_enabled"]),
-        linkify_dir=(config_rootdir / linkify_dir_raw).resolve(),
-    )
+    return LinkifyConfig(linkify_dir=(config_rootdir / linkify_dir_raw).resolve())

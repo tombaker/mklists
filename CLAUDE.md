@@ -98,6 +98,28 @@ Three context dataclasses thread state through the pipeline:
 
 Tests mirror source structure under `tests/`.
 
+### Linkify
+
+`linkify_datadirs()` (`exec/linkify.py`) mirrors every datadir as a tree of Markdown files under `linkify_dir`. For each visible data file it writes `<filename>.md` containing the original lines wrapped in a single `<pre>` block, with every `http://` or `https://` URL replaced by an HTML `<a>` tag. The files use HTML-in-Markdown: the content is raw HTML, but the `.md` extension is intentional because GitHub renders `.md` files and passes through `<pre>` and `<a>` tags, making links clickable when browsing the repository. A `.html` extension would cause GitHub to display the raw source instead.
+
+Example — a data line such as:
+
+```
+See https://example.com for details.
+```
+
+becomes:
+
+```html
+<pre>
+See <a href="https://example.com">https://example.com</a> for details.
+</pre>
+```
+
+Trailing punctuation characters (`.,;:!?)`) are detected and moved outside the `<a>` tag so they are not included in the link target. URLs that genuinely end with one of those characters (rare) will have that character incorrectly stripped.
+
+The mirror directory is wiped and rebuilt from scratch on every run, so stale files from previous runs are never left behind.
+
 ### Binary file detection heuristic
 
 `_check_file_contents` in `exec/safety.py` reads the first 8192 bytes of each file and raises an error if a NUL byte (`\x00`) is found. This is the same heuristic used by ripgrep: both treat NUL-byte presence in the leading 8192-byte window as the signal for binary content. The practical difference is purpose — ripgrep uses the result to suppress output, while mklists uses it to abort processing.

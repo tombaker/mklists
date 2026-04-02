@@ -11,7 +11,7 @@ def linkify_datadirs(datadirs: list[Path], linkify_dir: Path) -> None:
     """Mirror datadirs to linkify_dir with URL-linkified .md files.
 
     For each datadir, a corresponding subdirectory is created under linkify_dir.
-    Each visible data file is written as <filename>.md, the content of which is 
+    Each visible data file is written as <filename>.md, the content of which is
     the original text wrapped in a single <pre> block with URLs converted to
     clickable <a> tags, suitable for rendering on GitHub.
 
