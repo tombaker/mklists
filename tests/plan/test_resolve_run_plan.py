@@ -31,29 +31,33 @@ from mklists.plan.resolve import resolve_run_plan
 
 def make_config(
     *,
-    backup_enabled: bool = False,
-    routing_enabled: bool = False,
+    backup_rootdir: Path | None = None,
     routing_dict: dict | None = None,
-    linkify_enabled: bool = False,
+    linkify_dir: Path | None = None,
 ) -> Config:
-    """Build a minimal Config for testing resolve_run_plan."""
+    """Build a minimal Config for testing resolve_run_plan.
+
+    backup_rootdir=None   → backup disabled (backup_rootdir is None)
+    backup_rootdir=Path   → backup enabled
+    routing_dict={}       → routing disabled (empty dict)
+    routing_dict={...}    → routing enabled (non-empty dict)
+    linkify_dir=None      → linkify disabled
+    linkify_dir=Path      → linkify enabled
+    """
     return Config(
         verbose=False,
         configfile_used=None,
         config_rootdir=Path("/unused"),
         backup=BackupConfig(
-            backup_enabled=backup_enabled,
-            backup_rootdir=Path("backups"),
+            backup_rootdir=backup_rootdir,
             backup_depth=2,
         ),
         routing=RoutingConfig(
-            routing_enabled=routing_enabled,
             routing_dict=routing_dict or {},
         ),
         safety=SafetyConfig(invalid_filename_patterns=[]),
         linkify=LinkifyConfig(
-            linkify_enabled=linkify_enabled,
-            linkify_dir=Path("markdown"),
+            linkify_dir=linkify_dir,
         ),
     )
 
@@ -103,8 +107,8 @@ def test_returns_runplan_instance(tmp_path):
 # ----- routing_dict ----------------------------------------------------------
 
 
-def test_routing_disabled_routing_dict_is_empty(tmp_path):
-    """routing_enabled=False → routing_dict is {} even when config has entries."""
+def test_routing_dict_empty_routing_dict_is_empty(tmp_path):
+    """Empty routing_dict → plan.routing_dict is {}."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -112,17 +116,14 @@ def test_routing_disabled_routing_dict_is_empty(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(
-            routing_enabled=False,
-            routing_dict={"to_a.txt": Path("/some/dir")},
-        ),
+        config=make_config(routing_dict={}),
     )
 
     assert plan.routing_dict == {}
 
 
-def test_routing_enabled_routing_dict_comes_from_config(tmp_path):
-    """routing_enabled=True → routing_dict equals config.routing.routing_dict."""
+def test_routing_dict_nonempty_routing_dict_comes_from_config(tmp_path):
+    """Non-empty routing_dict → plan.routing_dict equals config.routing.routing_dict."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -131,7 +132,7 @@ def test_routing_enabled_routing_dict_comes_from_config(tmp_path):
     expected = {"to_a.txt": Path("/some/dir")}
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(routing_enabled=True, routing_dict=expected),
+        config=make_config(routing_dict=expected),
     )
 
     assert plan.routing_dict == expected
@@ -140,8 +141,8 @@ def test_routing_enabled_routing_dict_comes_from_config(tmp_path):
 # ----- linkify_dir --------------------------------------------------------------
 
 
-def test_linkify_disabled_linkify_dir_is_none(tmp_path):
-    """linkify_enabled=False → linkify_dir is None."""
+def test_linkify_dir_none_linkify_dir_is_none(tmp_path):
+    """linkify_dir=None → plan.linkify_dir is None."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -149,14 +150,14 @@ def test_linkify_disabled_linkify_dir_is_none(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(linkify_enabled=False),
+        config=make_config(linkify_dir=None),
     )
 
     assert plan.linkify_dir is None
 
 
-def test_linkify_enabled_linkify_dir_resolves_under_config_rootdir(tmp_path):
-    """linkify_enabled=True → linkify_dir is config_rootdir / linkify_dir."""
+def test_linkify_dir_set_linkify_dir_comes_from_config(tmp_path):
+    """linkify_dir=Path → plan.linkify_dir equals config.linkify.linkify_dir."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -164,17 +165,17 @@ def test_linkify_enabled_linkify_dir_resolves_under_config_rootdir(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(linkify_enabled=True),
+        config=make_config(linkify_dir=Path("markdown")),
     )
 
-    assert plan.linkify_dir == tmp_path / "markdown"
+    assert plan.linkify_dir == Path("markdown")
 
 
 # ----- backup ----------------------------------------------------------------
 
 
-def test_backup_disabled_backup_is_none(tmp_path):
-    """backup_enabled=False → backup is None."""
+def test_backup_rootdir_none_backup_is_none(tmp_path):
+    """backup_rootdir=None → plan.backup is None."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -182,14 +183,14 @@ def test_backup_disabled_backup_is_none(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(backup_enabled=False),
+        config=make_config(backup_rootdir=None),
     )
 
     assert plan.backup is None
 
 
-def test_backup_enabled_backup_rootdir_comes_from_config(tmp_path):
-    """backup_enabled=True → backup.backup_rootdir equals config.backup.backup_rootdir."""
+def test_backup_rootdir_set_backup_rootdir_comes_from_config(tmp_path):
+    """backup_rootdir=Path("backups") → backup.backup_rootdir equals config value."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / DATADIR_RULEFILE_NAME
@@ -197,7 +198,7 @@ def test_backup_enabled_backup_rootdir_comes_from_config(tmp_path):
 
     plan = resolve_run_plan(
         structural_context=make_structural_context(tmp_path, datadir_rulefile=rulefile),
-        config=make_config(backup_enabled=True),
+        config=make_config(backup_rootdir=Path("backups")),
     )
 
     assert plan.backup.backup_rootdir == Path("backups")

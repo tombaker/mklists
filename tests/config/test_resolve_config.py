@@ -193,8 +193,8 @@ def test_resolve_config_returns_config_with_expected_sub_configs(tmp_path):
 
 
 def test_resolve_config_default_backup_values(tmp_path):
-    """Default config has backup disabled, depth 3, rootdir under config_rootdir.
-    
+    """Default config has backup disabled (backup_rootdir is None), depth 3.
+
     This test, and tests below, will fail if DEFAULT_CONFIG_YAML is changed.
     """
     fake_ctx = make_structural_context(
@@ -202,20 +202,18 @@ def test_resolve_config_default_backup_values(tmp_path):
     )
     config = resolve_config(fake_ctx)
 
-    assert config.backup.backup_enabled is False
+    assert config.backup.backup_rootdir is None
     assert config.backup.backup_depth == 3
-    assert config.backup.backup_rootdir == (tmp_path / "backups").resolve()
 
 
 def test_resolve_config_default_linkify_values(tmp_path):
-    """Default config has linkify disabled and linkify_dir under config_rootdir."""
+    """Default config has linkify disabled (linkify_dir is None)."""
     fake_ctx = make_structural_context(
         startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
-    assert config.linkify.linkify_enabled is False
-    assert config.linkify.linkify_dir == (tmp_path / "markdown").resolve()
+    assert config.linkify.linkify_dir is None
 
 
 def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):
@@ -235,16 +233,15 @@ def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):
 def test_resolve_config_user_yaml_overrides_defaults(tmp_path):
     """User config values override defaults while unset values stay at defaults."""
     configfile = tmp_path / DATATREE_CONFIGFILE_NAME
-    configfile.write_text("backup:\n  backup_enabled: true\n  backup_depth: 5\n")
+    configfile.write_text("backup:\n  backup_rootdir: backups\n  backup_depth: 5\n")
 
     fake_ctx = make_structural_context(
         startdir=tmp_path, datatree_configfile_found=configfile
     )
     config = resolve_config(fake_ctx)
 
-    assert config.backup.backup_enabled is True
     assert config.backup.backup_depth == 5
-    assert config.backup.backup_rootdir == (tmp_path / "backups").resolve()  # default
+    assert config.backup.backup_rootdir == (tmp_path / "backups").resolve()
 
 
 def test_resolve_config_invalid_regex_in_user_configfile_raises_value_error(tmp_path):

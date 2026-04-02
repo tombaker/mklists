@@ -22,26 +22,29 @@ def fake_make_config(
     backup_enabled: bool,
     routing_enabled: bool = False,
 ) -> Config:
-    """Fake stand-in makes Config object by varying key variables."""
+    """Fake stand-in makes Config object by varying key variables.
+
+    backup_enabled=True  → backup_rootdir=Path("backups") (non-None enables backup)
+    backup_enabled=False → backup_rootdir=None (None disables backup)
+    routing_enabled=True → non-empty routing_dict (non-empty dict enables routing)
+    routing_enabled=False → empty routing_dict
+    """
     return Config(
         verbose=False,
         configfile_used=Path("foo"),
         config_rootdir=Path("bar"),
         backup=BackupConfig(
-            backup_enabled=backup_enabled,
-            backup_rootdir=Path("backups"),  # relative - resolved in plan
+            backup_rootdir=Path("backups") if backup_enabled else None,
             backup_depth=2,
         ),
         routing=RoutingConfig(
-            routing_enabled=routing_enabled,
-            routing_dict={},
+            routing_dict={"placeholder.txt": Path("/some/dir")} if routing_enabled else {},
         ),
         safety=SafetyConfig(
             invalid_filename_patterns=[],
         ),
         linkify=LinkifyConfig(
-            linkify_enabled=False,
-            linkify_dir=Path("markdown"),
+            linkify_dir=None,
         ),
     )
 
