@@ -71,6 +71,9 @@ disable = [
     "logging-fstring-interpolation",  # f-strings in logger calls are intentional
 ]
 
+[tool.pylint.design]
+max-attributes = 10  # default 7 is too low for data-holding dataclasses
+
 [tool.mypy]
 python_version = "3.14"
 strict = true
