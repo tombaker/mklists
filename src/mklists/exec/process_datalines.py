@@ -134,6 +134,6 @@ def _sort_datalines(datalines: list[str], onebased_sortkey: int | None) -> list[
         if zerobased >= len(ruleline_fields):
             return ""
 
-        return ruleline_fields[zerobased]
+        return " ".join(ruleline_fields[zerobased:])
 
     return sorted(datalines, key=sortkey_fn)
