@@ -58,8 +58,11 @@ def run_mklists(run_plan: RunPlan) -> None:
             backup_depth=run_plan.backup.backup_depth,
         )
 
-    if run_plan.linkify_md_dir:
-        linkify_md_datadirs(datadirs=datadirs, linkify_md_dir=run_plan.linkify_md_dir)
-
-    if run_plan.linkify_html_dir:
-        linkify_html_datadirs(datadirs=datadirs, linkify_html_dir=run_plan.linkify_html_dir)
+    if run_plan.linkify_md_dir or run_plan.linkify_html_dir:
+        if not run_plan.is_datatree_root:
+            logger.info("Skip linkify because run directory is not datatree root")
+        else:
+            if run_plan.linkify_md_dir:
+                linkify_md_datadirs(datadirs=datadirs, linkify_md_dir=run_plan.linkify_md_dir)
+            if run_plan.linkify_html_dir:
+                linkify_html_datadirs(datadirs=datadirs, linkify_html_dir=run_plan.linkify_html_dir)

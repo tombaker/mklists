@@ -49,5 +49,6 @@ class RunPlan:
     routing_dict: dict
     linkify_md_dir: Path | None
     linkify_html_dir: Path | None
+    is_datatree_root: bool
     safety: SafetyConfig
     backup: BackupPlan | None

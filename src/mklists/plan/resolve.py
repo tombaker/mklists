@@ -64,6 +64,7 @@ def resolve_run_plan(
         routing_dict=routing_dict,
         linkify_md_dir=linkify_md_dir,
         linkify_html_dir=linkify_html_dir,
+        is_datatree_root=structural_context.startdir_context.is_datatree_root,
         safety=config.safety,
         backup=backup,
     )
