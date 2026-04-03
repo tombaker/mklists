@@ -1,6 +1,7 @@
 """Resolve Config from defaults and optional user config file."""
 
 from copy import deepcopy
+import difflib
 from pathlib import Path
 import re
 from re import Pattern
@@ -155,11 +156,31 @@ def _load_yaml_from_string(yamltext: str) -> Any:
     return yaml.safe_load(yamltext)
 
 
+def _collect_valid_keys(d: dict[str, Any], _path: str = "") -> list[str]:
+    """Return all dotted-path key names reachable from d.
+
+    Args:
+        d: Dictionary to collect key paths from.
+        _path: Dot-separated prefix accumulated during recursion (internal use).
+
+    Returns:
+        Flat list of dotted-path strings such as ``['verbose', 'backup.backup_depth', ...]``.
+    """
+    keys: list[str] = []
+    for key, value in d.items():
+        full_key = f"{_path}.{key}" if _path else key
+        keys.append(full_key)
+        if isinstance(value, dict):
+            keys.extend(_collect_valid_keys(value, full_key))
+    return keys
+
+
 def _check_for_unknown_keys(
     user_dict: dict[str, Any],
     defaults_dict: dict[str, Any],
     configfile: Path,
     _path: str = "",
+    _valid_keys: list[str] | None = None,
 ) -> None:
     """Raise ConfigError if user_dict contains keys absent from defaults_dict.
 
@@ -168,18 +189,30 @@ def _check_for_unknown_keys(
         defaults_dict: Config dictionary loaded from built-in defaults.
         configfile: Path of the user config file (used in error messages).
         _path: Dot-separated key path accumulated during recursion (internal use).
+        _valid_keys: Pre-collected list of all valid dotted-path keys (internal use).
 
     Raises:
         ConfigError: If any key in user_dict is not present in defaults_dict.
     """
+    if _valid_keys is None:
+        _valid_keys = _collect_valid_keys(defaults_dict)
+
     for key in user_dict:
         full_key = f"{_path}.{key}" if _path else key
         if key not in defaults_dict:
-            raise ConfigError(
-                f"Config file {configfile.name!r} contains unsupported key: {full_key!r}."
-            )
+            msg = f"Config file {configfile.name!r} contains unsupported key: {full_key!r}."
+            suggestions = difflib.get_close_matches(full_key, _valid_keys, n=2, cutoff=0.6)
+            if suggestions:
+                quoted = [f"{s!r}" for s in suggestions]
+                if len(quoted) == 1:
+                    msg += f" Did you mean: {quoted[0]}?"
+                else:
+                    msg += f" Did you mean: {quoted[0]} or {quoted[1]}?"
+            raise ConfigError(msg)
         if isinstance(user_dict[key], dict) and isinstance(defaults_dict[key], dict):
-            _check_for_unknown_keys(user_dict[key], defaults_dict[key], configfile, full_key)
+            _check_for_unknown_keys(
+                user_dict[key], defaults_dict[key], configfile, full_key, _valid_keys
+            )
 
 
 def _merge_config_dicts(
