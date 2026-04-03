@@ -4,6 +4,8 @@ import re
 import shutil
 from pathlib import Path
 
+from mklists.logging import logger
+
 URL_RE = re.compile(r"(https?://[^\s<>()]*[^\s<>().,;:!?)])([.,;:!?)]?)")
 
 
@@ -22,6 +24,7 @@ def linkify_md_datadirs(datadirs: list[Path], linkify_md_dir: Path) -> None:
     Returns:
         None, after mirroring datadirs under linkify_md_dir.
     """
+    logger.info(f"Linkify to {linkify_md_dir}")
     _mirror_datadirs(datadirs=datadirs, output_dir=linkify_md_dir, suffix=".md")
 
 
@@ -39,6 +42,7 @@ def linkify_html_datadirs(datadirs: list[Path], linkify_html_dir: Path) -> None:
     Returns:
         None, after mirroring datadirs under linkify_html_dir.
     """
+    logger.info(f"Linkify to {linkify_html_dir}")
     _mirror_datadirs(datadirs=datadirs, output_dir=linkify_html_dir, suffix=".html")
 
 
