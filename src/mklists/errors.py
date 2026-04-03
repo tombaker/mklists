@@ -25,5 +25,9 @@ class RulesNotFoundError(MklistsError):
     """Expected rules not found."""
 
 
+class ConfigError(MklistsError):
+    """Config file contains unsupported or invalid settings."""
+
+
 class InitError(MklistsError):
     """Cannot initialize: conflicting files or directories already exist."""

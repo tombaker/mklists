@@ -6,7 +6,7 @@ import re
 from re import Pattern
 from typing import Any
 import yaml
-from mklists.errors import StructureError
+from mklists.errors import ConfigError, StructureError
 from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.config.model import (
     BackupConfig,
@@ -110,6 +110,7 @@ def _load_merged_configdict(configfile_used: Path | None) -> dict[str, Any]:
         config_user = _load_yaml_from_file(configfile_used) or {}
         if not isinstance(config_user, dict):
             raise TypeError("User config YAML must decode to a mapping.")
+        _check_for_unknown_keys(config_user, config_defaults)
     else:
         config_user = {}
 
@@ -152,6 +153,31 @@ def _load_yaml_from_string(yamltext: str) -> Any:
     """
     # yaml.safe_load raises YAMLError if YAML is invalid.
     return yaml.safe_load(yamltext)
+
+
+def _check_for_unknown_keys(
+    user_dict: dict[str, Any],
+    defaults_dict: dict[str, Any],
+    _path: str = "",
+) -> None:
+    """Raise ConfigError if user_dict contains keys absent from defaults_dict.
+
+    Args:
+        user_dict: Config dictionary loaded from user config file.
+        defaults_dict: Config dictionary loaded from built-in defaults.
+        _path: Dot-separated key path accumulated during recursion (internal use).
+
+    Raises:
+        ConfigError: If any key in user_dict is not present in defaults_dict.
+    """
+    for key in user_dict:
+        full_key = f"{_path}.{key}" if _path else key
+        if key not in defaults_dict:
+            raise ConfigError(
+                f"Config file contains unsupported key: {full_key!r}."
+            )
+        if isinstance(user_dict[key], dict) and isinstance(defaults_dict[key], dict):
+            _check_for_unknown_keys(user_dict[key], defaults_dict[key], full_key)
 
 
 def _merge_config_dicts(
