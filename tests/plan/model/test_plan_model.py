@@ -35,6 +35,7 @@ from mklists.plan.model import (
             routing_dict={},
             linkify_md_dir=None,
             linkify_html_dir=None,
+            is_datatree_root=True,
             safety=SafetyConfig(invalid_filename_patterns=[]),
             backup=None,
         ),
