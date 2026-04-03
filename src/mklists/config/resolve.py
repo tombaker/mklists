@@ -209,7 +209,11 @@ def _check_for_unknown_keys(
                 else:
                     msg += f" Did you mean: {quoted[0]} or {quoted[1]}?"
             raise ConfigError(msg)
-        if isinstance(user_dict[key], dict) and isinstance(defaults_dict[key], dict):
+        if (
+            isinstance(user_dict[key], dict)
+            and isinstance(defaults_dict[key], dict)
+            and defaults_dict[key]
+        ):
             _check_for_unknown_keys(
                 user_dict[key], defaults_dict[key], configfile, full_key, _valid_keys
             )

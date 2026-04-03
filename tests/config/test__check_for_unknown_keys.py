@@ -63,6 +63,19 @@ def test_multiple_valid_keys_pass():
     )
 
 
+def test_free_form_mapping_passes():
+    """Arbitrary keys inside a dict whose defaults value is empty are not flagged.
+
+    routing_dict is defined as {} in defaults, signalling a free-form mapping.
+    User-supplied filenames inside it must not be treated as unknown keys.
+    """
+    _check_for_unknown_keys(
+        {"routing": {"routing_dict": {"abc": "/some/path", "xyz": "/other/path"}}},
+        {"routing": {"routing_dict": {}}},
+        CONFIGFILE,
+    )
+
+
 # ---------------------------------------------------------------------------
 # _check_for_unknown_keys — raises, no suggestion
 # ---------------------------------------------------------------------------
