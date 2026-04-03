@@ -110,7 +110,7 @@ def _load_merged_configdict(configfile_used: Path | None) -> dict[str, Any]:
         config_user = _load_yaml_from_file(configfile_used) or {}
         if not isinstance(config_user, dict):
             raise TypeError("User config YAML must decode to a mapping.")
-        _check_for_unknown_keys(config_user, config_defaults)
+        _check_for_unknown_keys(config_user, config_defaults, configfile_used)
     else:
         config_user = {}
 
@@ -158,6 +158,7 @@ def _load_yaml_from_string(yamltext: str) -> Any:
 def _check_for_unknown_keys(
     user_dict: dict[str, Any],
     defaults_dict: dict[str, Any],
+    configfile: Path,
     _path: str = "",
 ) -> None:
     """Raise ConfigError if user_dict contains keys absent from defaults_dict.
@@ -165,6 +166,7 @@ def _check_for_unknown_keys(
     Args:
         user_dict: Config dictionary loaded from user config file.
         defaults_dict: Config dictionary loaded from built-in defaults.
+        configfile: Path of the user config file (used in error messages).
         _path: Dot-separated key path accumulated during recursion (internal use).
 
     Raises:
@@ -174,10 +176,10 @@ def _check_for_unknown_keys(
         full_key = f"{_path}.{key}" if _path else key
         if key not in defaults_dict:
             raise ConfigError(
-                f"Config file contains unsupported key: {full_key!r}."
+                f"Config file {configfile.name!r} contains unsupported key: {full_key!r}."
             )
         if isinstance(user_dict[key], dict) and isinstance(defaults_dict[key], dict):
-            _check_for_unknown_keys(user_dict[key], defaults_dict[key], full_key)
+            _check_for_unknown_keys(user_dict[key], defaults_dict[key], configfile, full_key)
 
 
 def _merge_config_dicts(
