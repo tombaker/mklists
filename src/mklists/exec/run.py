@@ -63,6 +63,10 @@ def run_mklists(run_plan: RunPlan) -> None:
             logger.info("Skip linkify because run directory is not datatree root")
         else:
             if run_plan.linkify_md_dir:
-                linkify_md_datadirs(datadirs=datadirs, linkify_md_dir=run_plan.linkify_md_dir)
+                linkify_md_datadirs(
+                    datadirs=datadirs, linkify_md_dir=run_plan.linkify_md_dir
+                )
             if run_plan.linkify_html_dir:
-                linkify_html_datadirs(datadirs=datadirs, linkify_html_dir=run_plan.linkify_html_dir)
+                linkify_html_datadirs(
+                    datadirs=datadirs, linkify_html_dir=run_plan.linkify_html_dir
+                )

@@ -201,7 +201,9 @@ def _check_for_unknown_keys(
         full_key = f"{_path}.{key}" if _path else key
         if key not in defaults_dict:
             msg = f"Config file {configfile.name!r} contains unsupported key: {full_key!r}."
-            suggestions = difflib.get_close_matches(full_key, _valid_keys, n=2, cutoff=0.6)
+            suggestions = difflib.get_close_matches(
+                full_key, _valid_keys, n=2, cutoff=0.6
+            )
             if suggestions:
                 quoted = [f"{s!r}" for s in suggestions]
                 if len(quoted) == 1:

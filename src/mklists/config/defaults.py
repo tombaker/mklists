@@ -1,6 +1,5 @@
 """Default configuration settings in YAML."""
 
-
 DEFAULT_CONFIG_YAML = """\
 verbose: True
 

@@ -97,10 +97,84 @@ def datadir(path: str, rules: bool, self_contained: bool) -> None:
     "directory",
     default=None,
     metavar="<path>",
+    help="Show status as if started in <path> instead of current directory.",
+)
+def status(directory: str | None) -> None:
+    """Show current directory's mklists structural context and configuration."""
+    startdir = Path(directory).resolve() if directory else Path.cwd()
+    try:
+        structural_context = resolve_structural_context(startdir)
+    except MklistsError as e:
+        raise click.ClickException(str(e)) from e
+
+    sc = structural_context.startdir_context
+
+    if sc.is_datatree_root:
+        role = "datatree root"
+    elif sc.is_datadir_selfcontained:
+        role = "self-contained datadir"
+    else:
+        role = "datadir (in datatree)"
+
+    datadir_names = ", ".join(
+        dc.datadir.name for dc in structural_context.datadir_contexts
+    )
+
+    def found(path: object) -> str:
+        return str(path) if path is not None else "not found"
+
+    click.echo(f"Directory : {sc.startdir}")
+    click.echo(f"Role      : {role}")
+    click.echo(f"Datadirs  : {datadir_names or '(none)'}")
+    click.echo("")
+    click.echo("Marker files:")
+    click.echo(f"  mklists.yaml  : {found(sc.datatree_configfile_found)}")
+    click.echo(f"  mklists.rules : {found(sc.datatree_rulefile_found)}")
+    click.echo(f"  .rules        : {found(sc.datadir_rulefile_found)}")
+    click.echo(f"  .mklistsrc    : {found(sc.datadir_configfile_found)}")
+
+    try:
+        config = resolve_config(structural_context)
+    except MklistsError as e:
+        raise click.ClickException(str(e)) from e
+
+    def show(path: object) -> str:
+        return str(path) if path is not None else "not set"
+
+    routing_lines = config.routing.routing_dict
+    if routing_lines:
+        routing_str = ", ".join(f"{k} -> {v}" for k, v in sorted(routing_lines.items()))
+    else:
+        routing_str = "none"
+
+    safety_patterns = config.safety.invalid_filename_patterns
+    if safety_patterns:
+        safety_str = ", ".join(p.pattern for p in safety_patterns)
+    else:
+        safety_str = "none"
+
+    click.echo("")
+    click.echo("Config:")
+    click.echo(f"  Config file      : {show(config.configfile_used)}")
+    click.echo(f"  Verbose          : {config.verbose}")
+    click.echo(f"  Backup dir       : {show(config.backup.backup_rootdir)}")
+    click.echo(f"  Backup depth     : {config.backup.backup_depth}")
+    click.echo(f"  Linkify MD dir   : {show(config.linkify.linkify_md_dir)}")
+    click.echo(f"  Linkify HTML dir : {show(config.linkify.linkify_html_dir)}")
+    click.echo(f"  Routing          : {routing_str}")
+    click.echo(f"  Safety patterns  : {safety_str}")
+
+
+@cli.command()
+@click.option(
+    "-C",
+    "directory",
+    default=None,
+    metavar="<path>",
     help="Run as if started in <path> instead of current directory.",
 )
 def run(directory: str | None) -> None:
-    """Run mklists against the current directory."""
+    """Run mklists against current directory."""
     startdir = Path(directory).resolve() if directory else Path.cwd()
     try:
         structural_context = resolve_structural_context(startdir)

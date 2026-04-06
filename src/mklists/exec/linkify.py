@@ -81,7 +81,9 @@ def _mirror_datadirs(datadirs: list[Path], output_dir: Path, suffix: str) -> Non
                 continue
             text = datafile.read_text(encoding="utf-8")
             content = _linkify_lines(text)
-            (mirror_dir / (datafile.name + suffix)).write_text(content, encoding="utf-8")
+            (mirror_dir / (datafile.name + suffix)).write_text(
+                content, encoding="utf-8"
+            )
 
 
 def _linkify_lines(text: str) -> str:
