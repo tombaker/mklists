@@ -3,6 +3,7 @@
 import re
 import pytest
 from mklists.config.model import SafetyConfig
+from mklists.errors import SafetyError
 from mklists.exec.process_datadirs import process_datadir
 from mklists.plan.model import DatadirPlan
 from mklists.rules.model import Rule
@@ -94,7 +95,7 @@ def test_process_datadir_hidden_files_not_deleted(tmp_path):
 
 
 def test_process_datadir_raises_on_blank_line(tmp_path):
-    """Safety check raises ValueError before dispatching if a file has a blank line."""
+    """Safety check raises SafetyError before dispatching if a file has a blank line."""
     (tmp_path / "input.txt").write_text("alpha\n\nbeta\n")
 
     plan = DatadirPlan(
@@ -103,12 +104,12 @@ def test_process_datadir_raises_on_blank_line(tmp_path):
         rulefiles_used=[],
     )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(SafetyError):
         process_datadir(datadir_plan=plan, safety=_SAFETY)
 
 
 def test_process_datadir_raises_on_invalid_filename(tmp_path):
-    """Safety check raises ValueError if a filename matches a forbidden pattern."""
+    """Safety check raises SafetyError if a filename matches a forbidden pattern."""
     (tmp_path / "bad~file.txt").write_text("data\n")
 
     plan = DatadirPlan(
@@ -118,5 +119,5 @@ def test_process_datadir_raises_on_invalid_filename(tmp_path):
     )
     safety = SafetyConfig(invalid_filename_patterns=[re.compile(r"~")])
 
-    with pytest.raises(ValueError):
+    with pytest.raises(SafetyError):
         process_datadir(datadir_plan=plan, safety=safety)
