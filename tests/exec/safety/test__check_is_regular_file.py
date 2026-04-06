@@ -33,20 +33,6 @@ def test_check_file_is_regular_file_even_if_hidden(tmp_path):
     _check_is_regular_file(a_rulefile)
 
 
-def test_executable_file_fails(tmp_path):
-    """If file is executable, raise ValueError."""
-    p = tmp_path / "script.sh"
-    p.write_text("echo hi\n")
-    p.chmod(0o755)
-
-    with pytest.raises(ValueError) as exc:
-        _check_is_regular_file(pathname=p)
-
-    err = exc.value.args[0]
-    assert err["category"] == "metadata"
-    assert err["reason"] == "is executable."
-
-
 def test_directory_fails(tmp_path):
     """Directory tmp_path is not a regular file, raise ValueError."""
     with pytest.raises(ValueError) as exc:

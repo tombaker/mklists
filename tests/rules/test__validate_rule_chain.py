@@ -1,19 +1,26 @@
 """Tests ~/github/tombaker/mklists/src/mklists/rules.py"""
 
+from pathlib import Path
+
 import pytest
 from mklists.errors import RuleError
 from mklists.rules.model import Rule
 from mklists.rules.load import _validate_rulechain
 
+_FAKE_RULEFILE = Path("/fake/rules")
+
 
 def minimal_rule(source, target):
-    """Helper that creates minimal Rule object for chain testing."""
-    return Rule(
-        source_matchfield=1,  # not relevant here
-        source_matchpattern=None,  # not relevant here
-        source=source,
-        target=target,
-        target_sortkey=1,  # not relevant here
+    """Helper that creates minimal (rulefile, Rule) pair for chain testing."""
+    return (
+        _FAKE_RULEFILE,
+        Rule(
+            source_matchfield=1,  # not relevant here
+            source_matchpattern=None,  # not relevant here
+            source=source,
+            target=target,
+            target_sortkey=1,  # not relevant here
+        ),
     )
 
 
