@@ -36,17 +36,30 @@ def init(ctx: click.Context) -> None:
     help="Populate rule files with commented example content.",
 )
 @click.option(
-    "--subdirs",
-    default="a,b",
+    "--datadirs",
+    default=None,
     metavar="<names>",
-    help="Comma-separated subdir names (default: a,b).",
+    help="Comma-separated datadir names to create (default: a,b).",
 )
-def datatree(path: str, rules: bool, subdirs: str) -> None:
+@click.option(
+    "--bare",
+    is_flag=True,
+    default=False,
+    help="Create only mklists.yaml and mklists.rules; no datadirs.",
+)
+def datatree(path: str, rules: bool, datadirs: str | None, bare: bool) -> None:
     """Initialize a new mklists datatree (where datadirs share rules)."""
+    if bare and datadirs is not None:
+        raise click.UsageError("--bare and --datadirs are mutually exclusive.")
     resolved = Path(path).resolve()
-    subdir_tuple = tuple(s.strip() for s in subdirs.split(",") if s.strip())
+    if bare:
+        datadir_tuple: tuple[str, ...] = ()
+    elif datadirs is not None:
+        datadir_tuple = tuple(s.strip() for s in datadirs.split(",") if s.strip())
+    else:
+        datadir_tuple = ("a", "b")
     try:
-        written = init_datatree(resolved, rules=rules, subdirs=subdir_tuple)
+        written = init_datatree(resolved, rules=rules, datadirs=datadir_tuple)
     except MklistsError as e:
         raise click.ClickException(str(e)) from e
     for file_path in written:
