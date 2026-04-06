@@ -77,15 +77,6 @@ def _check_is_regular_file(pathname: Path) -> None:
             }
         )
 
-    # reject executable files
-    if st.st_mode & stat.S_IXUSR:
-        raise ValueError(
-            {
-                "category": CATEGORY_METADATA,
-                "reason": "is executable.",
-                "filename": pathname.name,
-            }
-        )
 
 
 def _check_is_valid_name(filename: str, safety: SafetyConfig) -> None:
