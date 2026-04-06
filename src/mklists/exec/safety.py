@@ -132,14 +132,24 @@ def _check_file_contents(filename: Path) -> None:
                 }
             )
 
-    with filename.open("rt", encoding="utf-8", errors="strict") as f:
-        for lineno, line in enumerate(f, start=1):
-            if line.strip() == "":
-                raise ValueError(
-                    {
-                        "category": CATEGORY_CONTENT,
-                        "reason": "has blank or whitespace-only line",
-                        "filename": filename.name,
-                        "lineno": lineno,
-                    }
-                )
+    try:
+        with filename.open("rt", encoding="utf-8", errors="strict") as f:
+            for lineno, line in enumerate(f, start=1):
+                if line.strip() == "":
+                    raise ValueError(
+                        {
+                            "category": CATEGORY_CONTENT,
+                            "reason": "has blank or whitespace-only line",
+                            "filename": filename.name,
+                            "lineno": lineno,
+                        }
+                    )
+    except UnicodeDecodeError as e:
+        raise ValueError(
+            {
+                "category": CATEGORY_CONTENT,
+                "reason": "is not valid UTF-8",
+                "filename": filename.name,
+                "detail": str(e),
+            }
+        ) from e
