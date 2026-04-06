@@ -34,17 +34,24 @@ def init_datadir(
     path: Path,
     rules: bool = False,
     self_contained: bool = False,
-) -> None:
+) -> list[Path]:
     """Initialize a mklists datadir at path.
 
     Always creates an empty .rules file as a structural marker.
     If rules is True, populates .rules with commented example content.
     If self_contained is True, also creates an empty .mklistsrc.
     Raises InitError if any mklists marker file already exists in path.
+    Returns a list of paths of files written.
     """
     _check_no_conflicts(path)
     path.mkdir(parents=True, exist_ok=True)
     rules_content = EXAMPLE_RULES if rules else ""
-    (path / ".rules").write_text(rules_content)
+    written: list[Path] = []
+    rules_path = path / ".rules"
+    rules_path.write_text(rules_content)
+    written.append(rules_path)
     if self_contained:
-        (path / ".mklistsrc").write_text(DEFAULT_CONFIG_YAML)
+        mklistsrc_path = path / ".mklistsrc"
+        mklistsrc_path.write_text(DEFAULT_CONFIG_YAML)
+        written.append(mklistsrc_path)
+    return written

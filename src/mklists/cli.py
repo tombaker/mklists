@@ -46,9 +46,11 @@ def datatree(path: str, rules: bool, subdirs: str) -> None:
     resolved = Path(path).resolve()
     subdir_tuple = tuple(s.strip() for s in subdirs.split(",") if s.strip())
     try:
-        init_datatree(resolved, rules=rules, subdirs=subdir_tuple)
+        written = init_datatree(resolved, rules=rules, subdirs=subdir_tuple)
     except MklistsError as e:
         raise click.ClickException(str(e)) from e
+    for file_path in written:
+        click.echo(f"Wrote {file_path}")
 
 
 @init.command()
@@ -69,9 +71,11 @@ def datadir(path: str, rules: bool, self_contained: bool) -> None:
     """Initialize a new mklists datadir (with its own rules)."""
     resolved = Path(path).resolve()
     try:
-        init_datadir(resolved, rules=rules, self_contained=self_contained)
+        written = init_datadir(resolved, rules=rules, self_contained=self_contained)
     except MklistsError as e:
         raise click.ClickException(str(e)) from e
+    for file_path in written:
+        click.echo(f"Wrote {file_path}")
 
 
 @cli.command()

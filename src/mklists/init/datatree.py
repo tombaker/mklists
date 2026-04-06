@@ -23,20 +23,29 @@ def init_datatree(
     path: Path,
     rules: bool = False,
     subdirs: tuple[str, ...] = ("a", "b"),
-) -> None:
+) -> list[Path]:
     """Initialize a mklists datatree at path.
 
     Always creates mklists.yaml, mklists.rules, and subdirectories each
     containing an empty .rules file.
     If rules is True, populates all rule files with commented example content.
     Raises InitError if any mklists marker file or named subdir already exists.
+    Returns a list of paths of files written.
     """
     _check_no_conflicts(path, subdirs)
     path.mkdir(parents=True, exist_ok=True)
     rules_content = EXAMPLE_RULES if rules else ""
-    (path / "mklists.yaml").write_text(DEFAULT_CONFIG_YAML)
-    (path / "mklists.rules").write_text(rules_content)
+    written: list[Path] = []
+    yaml_path = path / "mklists.yaml"
+    yaml_path.write_text(DEFAULT_CONFIG_YAML)
+    written.append(yaml_path)
+    rules_path = path / "mklists.rules"
+    rules_path.write_text(rules_content)
+    written.append(rules_path)
     for subdir in subdirs:
         subdir_path = path / subdir
         subdir_path.mkdir()
-        (subdir_path / ".rules").write_text(rules_content)
+        subdir_rules_path = subdir_path / ".rules"
+        subdir_rules_path.write_text(rules_content)
+        written.append(subdir_rules_path)
+    return written
