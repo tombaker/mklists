@@ -19,8 +19,8 @@ def test_creates_default_subdirs(tmp_path):
 
 
 def test_creates_custom_subdirs(tmp_path):
-    """Creates subdirectories named by the subdirs parameter."""
-    init_datatree(tmp_path, subdirs=("x", "y", "z"))
+    """Creates subdirectories named by the datadirs parameter."""
+    init_datatree(tmp_path, datadirs=("x", "y", "z"))
     assert (tmp_path / "x").is_dir()
     assert (tmp_path / "y").is_dir()
     assert (tmp_path / "z").is_dir()

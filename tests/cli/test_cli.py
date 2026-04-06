@@ -101,8 +101,8 @@ def test_init_datatree_rules_flag_populates_all_rules_files(tmp_path):
 
 
 def test_init_datatree_custom_subdirs(tmp_path):
-    """mklists init datatree --subdirs creates the named subdirs."""
-    result = CliRunner().invoke(cli, ["init", "datatree", "--subdirs", "x,y", str(tmp_path)])
+    """mklists init datatree --datadirs creates the named datadirs."""
+    result = CliRunner().invoke(cli, ["init", "datatree", "--datadirs", "x,y", str(tmp_path)])
     assert result.exit_code == 0
     assert (tmp_path / "x").is_dir()
     assert (tmp_path / "y").is_dir()
