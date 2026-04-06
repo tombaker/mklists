@@ -9,7 +9,7 @@ class StructureError(MklistsError):
     """Invalid datatree or datadir structure."""
 
 
-class RuleError(ValueError):
+class RuleError(MklistsError):
     """Invalid rule syntax or semantics."""
 
 
