@@ -31,3 +31,7 @@ class ConfigError(MklistsError):
 
 class InitError(MklistsError):
     """Cannot initialize: conflicting files or directories already exist."""
+
+
+class SafetyError(MklistsError):
+    """Data directory fails a safety check."""

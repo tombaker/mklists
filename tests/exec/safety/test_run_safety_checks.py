@@ -2,6 +2,7 @@
 
 import re
 import pytest
+from mklists.errors import SafetyError
 from mklists.exec.safety import SafetyConfig, run_safety_checks
 
 
@@ -28,7 +29,7 @@ def test_run_safety_checks_stops_on_violation(tmp_path, safety_config):
     (tmp_path / "ok.txt").write_text("alpha\nbeta\n")
     (tmp_path / "bad.swp").write_text("junk\n")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(SafetyError):
         run_safety_checks(tmp_path, safety_config)
 
 
