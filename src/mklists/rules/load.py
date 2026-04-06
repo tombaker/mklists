@@ -249,7 +249,7 @@ def _validate_rulechain(rules_with_source: list[tuple[Path, Rule]]) -> None:
         return
 
     listnames_seen: set[str] = set()
-    first_rulefile, first_rule = rules_with_source[0]
+    _, first_rule = rules_with_source[0]
     listnames_seen.add(first_rule.source)
     listnames_seen.add(first_rule.target)
 
