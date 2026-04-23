@@ -5,13 +5,46 @@ from pathlib import Path
 import click
 
 from mklists.config.resolve import resolve_config
-from mklists.errors import MklistsError
+from mklists.errors import MklistsError, StructureError
 from mklists.exec.run import run_mklists
 from mklists.init.datadir import init_datadir
 from mklists.init.datatree import init_datatree
 from mklists.logging import init_logger
 from mklists.plan.resolve import resolve_run_plan
+from mklists.structure.markers import (
+    DATADIR_CONFIGFILE_NAME,
+    DATADIR_RULEFILE_NAME,
+    DATATREE_CONFIGFILE_NAME,
+    DATATREE_RULEFILE_NAME,
+)
 from mklists.structure.resolve import resolve_structural_context
+
+
+def _echo_startdir_context(startdir: Path) -> None:
+    """Echo directory, role, and marker file presence for startdir."""
+
+    def found(path: object) -> str:
+        return str(path) if path is not None else "not found"
+
+    def if_file_exists(p: Path) -> Path | None:
+        return p if p.is_file() else None
+
+    yaml = found(if_file_exists(startdir / DATATREE_CONFIGFILE_NAME))
+    rules = found(if_file_exists(startdir / DATATREE_RULEFILE_NAME))
+    dot_rules = found(if_file_exists(startdir / DATADIR_RULEFILE_NAME))
+    dot_rc = found(if_file_exists(startdir / DATADIR_CONFIGFILE_NAME))
+    click.echo(f"Directory : {startdir}")
+    click.echo("Role      : unknown (neither datatree root nor datadir)")
+    click.echo("Datadirs  : none in scope")
+    click.echo("")
+    click.echo("Datatree marker/config files:")
+    click.echo(f"  mklists.yaml  : {yaml}")
+    click.echo(f"  mklists.rules : {rules}")
+    click.echo("")
+    click.echo("Datadir marker/config files:")
+    click.echo(f"  .rules        : {dot_rules}")
+    click.echo(f"  .mklistsrc    : {dot_rc}")
+    click.echo("")
 
 
 @click.group()
@@ -104,7 +137,8 @@ def status(directory: str | None) -> None:
     startdir = Path(directory).resolve() if directory else Path.cwd()
     try:
         structural_context = resolve_structural_context(startdir)
-    except MklistsError as e:
+    except StructureError as e:
+        _echo_startdir_context(startdir)
         raise click.ClickException(str(e)) from e
 
     sc = structural_context.startdir_context
@@ -123,13 +157,26 @@ def status(directory: str | None) -> None:
     def found(path: object) -> str:
         return str(path) if path is not None else "not found"
 
+    def if_file_exists(p: Path) -> Path | None:
+        return p if p.is_file() else None
+
+    if sc.is_datadir_in_datatree:
+        datatree_root = sc.config_rootdir
+        datatree_configfile = if_file_exists(datatree_root / DATATREE_CONFIGFILE_NAME)
+        datatree_rulefile = if_file_exists(datatree_root / DATATREE_RULEFILE_NAME)
+    else:
+        datatree_configfile = sc.datatree_configfile_found
+        datatree_rulefile = sc.datatree_rulefile_found
+
     click.echo(f"Directory : {sc.startdir}")
     click.echo(f"Role      : {role}")
-    click.echo(f"Datadirs  : {datadir_names or '(none)'}")
+    click.echo(f"Datadirs  : {datadir_names or 'none'} in scope")
     click.echo("")
-    click.echo("Marker files:")
-    click.echo(f"  mklists.yaml  : {found(sc.datatree_configfile_found)}")
-    click.echo(f"  mklists.rules : {found(sc.datatree_rulefile_found)}")
+    click.echo("Datatree marker/config files:")
+    click.echo(f"  mklists.yaml  : {found(datatree_configfile)}")
+    click.echo(f"  mklists.rules : {found(datatree_rulefile)}")
+    click.echo("")
+    click.echo("Datadir marker/config files:")
     click.echo(f"  .rules        : {found(sc.datadir_rulefile_found)}")
     click.echo(f"  .mklistsrc    : {found(sc.datadir_configfile_found)}")
 
@@ -156,13 +203,9 @@ def status(directory: str | None) -> None:
     click.echo("")
     click.echo("Config:")
     click.echo(f"  Config file      : {show(config.configfile_used)}")
-    click.echo(f"  Verbose          : {config.verbose}")
     click.echo(f"  Backup dir       : {show(config.backup.backup_rootdir)}")
-    click.echo(f"  Backup depth     : {config.backup.backup_depth}")
     click.echo(f"  Linkify MD dir   : {show(config.linkify.linkify_md_dir)}")
     click.echo(f"  Linkify HTML dir : {show(config.linkify.linkify_html_dir)}")
-    click.echo(f"  Routing          : {routing_str}")
-    click.echo(f"  Safety patterns  : {safety_str}")
 
 
 @cli.command()
@@ -178,11 +221,17 @@ def run(directory: str | None) -> None:
     startdir = Path(directory).resolve() if directory else Path.cwd()
     try:
         structural_context = resolve_structural_context(startdir)
+    except StructureError as e:
+        _echo_startdir_context(startdir)
+        raise click.ClickException(str(e)) from e
+    try:
         config = resolve_config(structural_context)
         init_logger(logfile=None, verbose=config.verbose)
         run_plan = resolve_run_plan(
             structural_context=structural_context, config=config
         )
-        run_mklists(run_plan)
+        empty_datadirs = run_mklists(run_plan)
     except MklistsError as e:
         raise click.ClickException(str(e)) from e
+    for path in empty_datadirs:
+        click.echo(f"No data found in {path}")
