@@ -11,6 +11,16 @@ Guides Claude Code (claude.ai/code) when working on code for `mklists`.
 
 - Never use informal contractions (e.g., "it's", "that's", "don't", "isn't"); always use the full form (e.g., "it is", "that is", "do not", "is not")
 
+## Installation
+
+To make `mklists` available globally — in every shell session, regardless of which Poetry venv (if any) is active — install it with [pipx](https://pipx.pypa.io/):
+
+```bash
+pipx install --editable /Users/tbaker/github/tombaker/mklists
+```
+
+`pipx` creates an isolated virtual environment for the tool and symlinks the `mklists` entry point into `~/.local/bin` (which is on `PATH`). The `--editable` flag installs from the local source tree, so edits to the source take effect immediately without reinstalling.
+
 ## Commands
 
 Do NOT run `pytest` or any test commands. The user runs tests independently.
