@@ -29,7 +29,7 @@ def run_safety_checks(datadir: Path, safety_cfg: SafetyConfig) -> None:
         if entry.name.startswith("."):
             continue
         _check_is_regular_file(entry)
-        _check_is_valid_name(entry.name, safety_cfg)
+        _check_is_valid_name(entry, safety_cfg)
         _check_file_contents(entry)
 
 
@@ -54,11 +54,11 @@ def _check_is_regular_file(pathname: Path) -> None:
         raise SafetyError(f"{pathname}: is not a regular file")
 
 
-def _check_is_valid_name(filename: str, safety: SafetyConfig) -> None:
+def _check_is_valid_name(pathname: Path, safety: SafetyConfig) -> None:
     """Verify that a filename satisfies safety constraints.
 
     Args:
-        filename: Name of file (without path components).
+        pathname: Full path to the file being checked.
         safety: Normalized safety configuration object.
 
     Returns:
@@ -71,9 +71,10 @@ def _check_is_valid_name(filename: str, safety: SafetyConfig) -> None:
         Validates filenames against a configured set of forbidden filename patterns.
     """
     for pat in safety.invalid_filename_patterns:
-        if pat.search(filename):
+        if pat.search(pathname.name):
             raise SafetyError(
-                f"{filename!r}: matches forbidden filename pattern {pat.pattern!r}"
+                f"'{pathname}' matches forbidden filename pattern {pat.pattern!r}.\n"
+                f"Processing interrupted."
             )
 
 
