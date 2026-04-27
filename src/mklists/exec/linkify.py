@@ -6,7 +6,7 @@ from pathlib import Path
 
 from mklists.logging import logger
 
-URL_RE = re.compile(r"(https?://[^\s<>()]*[^\s<>().,;:!?)])([.,;:!?)]?)")
+URL_RE = re.compile(r"((?:https?|file)://[^\s<>()]*[^\s<>().,;:!?)])([.,;:!?)]?)")
 
 
 def linkify_md_datadirs(datadirs: list[Path], linkify_md_dir: Path) -> None:
@@ -107,6 +107,9 @@ def _linkify_lines(text: str) -> str:
 
         >>> _linkify_lines("No URLs here.")
         '<pre>\\nNo URLs here.\\n</pre>\\n'
+
+        >>> _linkify_lines("See file:///path/to/file.html here.")
+        '<pre>\\nSee <a href="file:///path/to/file.html">file:///path/to/file.html</a> here.\\n</pre>\\n'
     """
     linked_text = URL_RE.sub(_replace_url, text)
     return "<pre>\n" + linked_text.rstrip("\n") + "\n</pre>\n"
