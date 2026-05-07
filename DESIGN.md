@@ -123,7 +123,7 @@ This structure keeps responsibilities clear, avoids redundant computation, and m
 
 ### Dispatch filenames
 
-Files moved to a routing destination are named `{timestamp}.{datadir}.{routefile}` — for example, `20260507T053537280790.phone.personz`. The timestamp prefix guarantees that no dispatch ever overwrites an earlier one, even when the destination directory is on a different volume and is not processed between source runs. Accumulated dispatch files are processed in order when the destination datatree is next run.
+Files moved to a routing destination are named `{timestamp}.{datadir}.{routefile}` — for example, `20260507T053537280790.phone.personz` (12 digits after `T`: `HHMMSS` + 6-digit microseconds). The timestamp prefix guarantees that no dispatch ever overwrites an earlier one, even when the destination directory is on a different volume and is not processed between source runs. Accumulated dispatch files are processed in order when the destination datatree is next run.
 
 ### Backup directory names
 

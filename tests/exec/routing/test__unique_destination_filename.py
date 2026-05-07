@@ -20,5 +20,5 @@ def test_unique_destination_filename(tmp_path: Path):
     )
 
     assert dest_path.parent == dest_dir
-    assert re.match(r"^\d{8}T\d{14}\.data_a\.to_a\.txt$", dest_path.name)
+    assert re.match(r"^\d{8}T\d{12}\.data_a\.to_a\.txt$", dest_path.name)
     assert not dest_path.exists()
