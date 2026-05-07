@@ -188,18 +188,6 @@ def status(directory: str | None) -> None:
     def show(path: object) -> str:
         return str(path) if path is not None else "not set"
 
-    routing_lines = config.routing.routing_dict
-    if routing_lines:
-        routing_str = ", ".join(f"{k} -> {v}" for k, v in sorted(routing_lines.items()))
-    else:
-        routing_str = "none"
-
-    safety_patterns = config.safety.invalid_filename_patterns
-    if safety_patterns:
-        safety_str = ", ".join(p.pattern for p in safety_patterns)
-    else:
-        safety_str = "none"
-
     click.echo("")
     click.echo("Config:")
     click.echo(f"  Config file      : {show(config.configfile_used)}")
