@@ -56,21 +56,11 @@ def _unique_destination_filename(
         dest_dir:
 
     Returns:
-        Absolute pathname of target file in destination directory.
+        Absolute pathname of target file in destination directory,
+        always prefixed with a UTC timestamp so that successive dispatches
+        to the same destination accumulate rather than overwrite.
     """
     stem = datadir.name
     src = Path(filename)
-
-    # Base: <datadir>.<original-name>
-    candidate = dest_dir / f"{stem}.{src.name}"
-    if not candidate.exists():
-        return candidate
-
-    # Timestamp fallback (UTC, timezone-aware)
     ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%f")
-    candidate = dest_dir / f"{stem}.{src.stem}.{ts}{src.suffix}"
-    if not candidate.exists():
-        return candidate
-
-    # This should never happen
-    raise RuntimeError(f"Unresolvable filename collision: {candidate}")
+    return dest_dir / f"{ts}.{stem}.{src.name}"
