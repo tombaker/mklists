@@ -28,7 +28,7 @@ def resolve_structural_context(startdir: Path | str) -> StructuralContext:
     Note:
         Execution begins in work tree unless CLI-specified.
     """
-    startdir = Path(startdir).resolve()
+    startdir = Path(startdir).absolute()
 
     # 1. Determine startdir context.
     startdir_context = _resolve_startdir_context(startdir=startdir)
