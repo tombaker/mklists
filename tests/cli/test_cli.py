@@ -30,16 +30,22 @@ def test_init_datadir_creates_rules_file(tmp_path):
     assert (tmp_path / ".rules").exists()
 
 
-def test_init_datadir_rules_file_empty_by_default(tmp_path):
-    """mklists init datadir creates an empty .rules without --rules."""
+def test_init_datadir_rules_file_has_example_content_by_default(tmp_path):
+    """mklists init datadir populates .rules with example content by default."""
     CliRunner().invoke(cli, ["init", "datadir", str(tmp_path)])
+    assert (tmp_path / ".rules").read_text() == EXAMPLE_RULES
+
+
+def test_init_datadir_bare_creates_empty_rules_file(tmp_path):
+    """mklists init datadir --bare creates an empty .rules."""
+    CliRunner().invoke(cli, ["init", "datadir", "--bare", str(tmp_path)])
     assert (tmp_path / ".rules").read_text() == ""
 
 
-def test_init_datadir_rules_flag_populates_rules_file(tmp_path):
-    """mklists init datadir --rules populates .rules with example content."""
-    CliRunner().invoke(cli, ["init", "datadir", "--rules", str(tmp_path)])
-    assert (tmp_path / ".rules").read_text() == EXAMPLE_RULES
+def test_init_datadir_bare_self_contained_creates_empty_mklistsrc(tmp_path):
+    """mklists init datadir --bare --self-contained creates an empty .mklistsrc."""
+    CliRunner().invoke(cli, ["init", "datadir", "--bare", "--self-contained", str(tmp_path)])
+    assert (tmp_path / ".mklistsrc").read_text() == ""
 
 
 def test_init_datadir_no_mklistsrc_by_default(tmp_path):
@@ -65,14 +71,6 @@ def test_init_datadir_conflict_exits_with_error(tmp_path):
 # ── mklists init datatree ─────────────────────────────────────────────────────
 
 
-def test_init_datatree_creates_subdirs(tmp_path):
-    """mklists init datatree always creates default subdirs a/ and b/."""
-    result = CliRunner().invoke(cli, ["init", "datatree", str(tmp_path)])
-    assert result.exit_code == 0
-    assert (tmp_path / "a").is_dir()
-    assert (tmp_path / "b").is_dir()
-
-
 def test_init_datatree_creates_mklists_yaml(tmp_path):
     """mklists init datatree always creates mklists.yaml."""
     CliRunner().invoke(cli, ["init", "datatree", str(tmp_path)])
@@ -85,35 +83,61 @@ def test_init_datatree_creates_mklists_rules(tmp_path):
     assert (tmp_path / "mklists.rules").exists()
 
 
-def test_init_datatree_creates_subdir_rules_files(tmp_path):
-    """mklists init datatree always creates .rules in each subdir."""
+def test_init_datatree_mklists_rules_has_example_content(tmp_path):
+    """mklists init datatree populates mklists.rules with example content."""
     CliRunner().invoke(cli, ["init", "datatree", str(tmp_path)])
-    assert (tmp_path / "a" / ".rules").exists()
-    assert (tmp_path / "b" / ".rules").exists()
-
-
-def test_init_datatree_rules_flag_populates_all_rules_files(tmp_path):
-    """mklists init datatree --rules populates all rule files with example content."""
-    CliRunner().invoke(cli, ["init", "datatree", "--rules", str(tmp_path)])
     assert (tmp_path / "mklists.rules").read_text() == EXAMPLE_RULES
-    assert (tmp_path / "a" / ".rules").read_text() == EXAMPLE_RULES
-    assert (tmp_path / "b" / ".rules").read_text() == EXAMPLE_RULES
 
 
-def test_init_datatree_custom_subdirs(tmp_path):
-    """mklists init datatree --datadirs creates the named datadirs."""
-    result = CliRunner().invoke(cli, ["init", "datatree", "--datadirs", "x,y", str(tmp_path)])
-    assert result.exit_code == 0
-    assert (tmp_path / "x").is_dir()
-    assert (tmp_path / "y").is_dir()
-    assert not (tmp_path / "a").exists()
+def test_init_datatree_creates_no_subdirs(tmp_path):
+    """mklists init datatree does not create any datadir subdirectories."""
+    CliRunner().invoke(cli, ["init", "datatree", str(tmp_path)])
+    subdirs = [p for p in tmp_path.iterdir() if p.is_dir()]
+    assert subdirs == []
+
+
+def test_init_datatree_prints_advisory_message(tmp_path):
+    """mklists init datatree prints advice to run mklists init datadir."""
+    result = CliRunner().invoke(cli, ["init", "datatree", str(tmp_path)])
+    assert "mklists init datadir" in result.output
 
 
 def test_init_datatree_conflict_exits_with_error(tmp_path):
-    """mklists init datatree exits with code 1 if a named subdir already exists."""
-    (tmp_path / "a").mkdir()
+    """mklists init datatree exits with code 1 if mklists.yaml already exists."""
+    (tmp_path / "mklists.yaml").write_text("")
     result = CliRunner().invoke(cli, ["init", "datatree", str(tmp_path)])
     assert result.exit_code == 1
+
+
+# ── mklists init datadir — parent check ──────────────────────────────────────
+
+
+def test_init_datadir_prints_parent_datatree_files(tmp_path):
+    """mklists init datadir prints paths of datatree files found in parent."""
+    (tmp_path / "mklists.yaml").write_text("")
+    (tmp_path / "mklists.rules").write_text("")
+    subdir = tmp_path / "sub"
+    subdir.mkdir()
+    result = CliRunner().invoke(cli, ["init", "datadir", str(subdir)])
+    assert str(tmp_path / "mklists.yaml") in result.output
+    assert str(tmp_path / "mklists.rules") in result.output
+
+
+def test_init_datadir_no_parent_output_when_no_datatree_files(tmp_path):
+    """mklists init datadir prints nothing about parent when no datatree files exist."""
+    subdir = tmp_path / "sub"
+    subdir.mkdir()
+    result = CliRunner().invoke(cli, ["init", "datadir", str(subdir)])
+    assert "Found in parent" not in result.output
+
+
+def test_init_datadir_self_contained_skips_parent_check(tmp_path):
+    """mklists init datadir --self-contained does not print parent datatree files."""
+    (tmp_path / "mklists.yaml").write_text("")
+    subdir = tmp_path / "sub"
+    subdir.mkdir()
+    result = CliRunner().invoke(cli, ["init", "datadir", "--self-contained", str(subdir)])
+    assert "Found in parent" not in result.output
 
 
 

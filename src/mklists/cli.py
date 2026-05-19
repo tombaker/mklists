@@ -62,50 +62,27 @@ def init(ctx: click.Context) -> None:
 
 @init.command()
 @click.argument("path", default=".", metavar="[PATH]")
-@click.option(
-    "--rules",
-    is_flag=True,
-    default=False,
-    help="Populate rule files with commented example content.",
-)
-@click.option(
-    "--datadirs",
-    default=None,
-    metavar="<names>",
-    help="Comma-separated datadir names to create (default: a,b).",
-)
-@click.option(
-    "--bare",
-    is_flag=True,
-    default=False,
-    help="Create only mklists.yaml and mklists.rules; no datadirs.",
-)
-def datatree(path: str, rules: bool, datadirs: str | None, bare: bool) -> None:
+def datatree(path: str) -> None:
     """Initialize a new datatree (with shared mklists.rules)."""
-    if bare and datadirs is not None:
-        raise click.UsageError("Options --bare and --datadirs are mutually exclusive.")
     resolved = Path(path).resolve()
-    if bare:
-        datadir_tuple: tuple[str, ...] = ()
-    elif datadirs is not None:
-        datadir_tuple = tuple(s.strip() for s in datadirs.split(",") if s.strip())
-    else:
-        datadir_tuple = ("a", "b")
     try:
-        written = init_datatree(resolved, rules=rules, datadirs=datadir_tuple)
+        written = init_datatree(resolved)
     except MklistsError as e:
         raise click.ClickException(str(e)) from e
     for file_path in written:
         click.echo(f"Wrote {file_path}")
+    click.echo(
+        "To add a datadir under this root, run: mklists init datadir <path>"
+    )
 
 
 @init.command()
 @click.argument("path", default=".", metavar="[PATH]")
 @click.option(
-    "--rules",
+    "--bare",
     is_flag=True,
     default=False,
-    help="Populate .rules with commented example content.",
+    help="Create empty marker files with no example content.",
 )
 @click.option(
     "--self-contained",
@@ -113,15 +90,21 @@ def datatree(path: str, rules: bool, datadirs: str | None, bare: bool) -> None:
     default=False,
     help="Write .mklistsrc, marking the datadir as self-contained.",
 )
-def datadir(path: str, rules: bool, self_contained: bool) -> None:
+def datadir(path: str, bare: bool, self_contained: bool) -> None:
     """Initialize a new mklists datadir (with its own rules)."""
     resolved = Path(path).resolve()
     try:
-        written = init_datadir(resolved, rules=rules, self_contained=self_contained)
+        written = init_datadir(resolved, bare=bare, self_contained=self_contained)
     except MklistsError as e:
         raise click.ClickException(str(e)) from e
     for file_path in written:
         click.echo(f"Wrote {file_path}")
+    if not self_contained:
+        parent = resolved.parent
+        for name in (DATATREE_CONFIGFILE_NAME, DATATREE_RULEFILE_NAME):
+            candidate = parent / name
+            if candidate.is_file():
+                click.echo(f"Found in parent: {candidate}")
 
 
 @cli.command()

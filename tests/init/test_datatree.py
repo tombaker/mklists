@@ -11,26 +11,18 @@ from mklists.init.datatree import init_datatree
 # ── directory structure ───────────────────────────────────────────────────────
 
 
-def test_creates_default_subdirs(tmp_path):
-    """Always creates default subdirectories a/ and b/."""
-    init_datatree(tmp_path)
-    assert (tmp_path / "a").is_dir()
-    assert (tmp_path / "b").is_dir()
-
-
-def test_creates_custom_subdirs(tmp_path):
-    """Creates subdirectories named by the datadirs parameter."""
-    init_datatree(tmp_path, datadirs=("x", "y", "z"))
-    assert (tmp_path / "x").is_dir()
-    assert (tmp_path / "y").is_dir()
-    assert (tmp_path / "z").is_dir()
-
-
 def test_creates_path_if_not_exists(tmp_path):
     """Creates the target directory if it does not yet exist."""
     new_dir = tmp_path / "newdir"
     init_datatree(new_dir)
     assert new_dir.is_dir()
+
+
+def test_creates_no_subdirs(tmp_path):
+    """Never creates any datadir subdirectories."""
+    init_datatree(tmp_path)
+    subdirs = [p for p in tmp_path.iterdir() if p.is_dir()]
+    assert subdirs == []
 
 
 # ── mklists.yaml ──────────────────────────────────────────────────────────────
@@ -57,41 +49,10 @@ def test_creates_mklists_rules(tmp_path):
     assert (tmp_path / "mklists.rules").exists()
 
 
-def test_mklists_rules_is_empty_by_default(tmp_path):
-    """Without rules=True, mklists.rules is empty."""
+def test_mklists_rules_has_example_content(tmp_path):
+    """mklists.rules is always populated with EXAMPLE_RULES."""
     init_datatree(tmp_path)
-    assert (tmp_path / "mklists.rules").read_text() == ""
-
-
-def test_rules_flag_populates_mklists_rules(tmp_path):
-    """With rules=True, mklists.rules contains example content."""
-    init_datatree(tmp_path, rules=True)
     assert (tmp_path / "mklists.rules").read_text() == EXAMPLE_RULES
-
-
-# ── subdir .rules files ───────────────────────────────────────────────────────
-
-
-def test_creates_subdir_rules_files(tmp_path):
-    """Always creates .rules in each subdir."""
-    init_datatree(tmp_path)
-    assert (tmp_path / "a" / ".rules").exists()
-    assert (tmp_path / "b" / ".rules").exists()
-
-
-def test_subdir_rules_files_empty_by_default(tmp_path):
-    """Without rules=True, subdir .rules files are empty."""
-    init_datatree(tmp_path)
-    assert (tmp_path / "a" / ".rules").read_text() == ""
-    assert (tmp_path / "b" / ".rules").read_text() == ""
-
-
-def test_rules_flag_populates_all_rules_files(tmp_path):
-    """With rules=True, all rule files contain example content."""
-    init_datatree(tmp_path, rules=True)
-    assert (tmp_path / "mklists.rules").read_text() == EXAMPLE_RULES
-    assert (tmp_path / "a" / ".rules").read_text() == EXAMPLE_RULES
-    assert (tmp_path / "b" / ".rules").read_text() == EXAMPLE_RULES
 
 
 # ── conflict detection ────────────────────────────────────────────────────────
@@ -125,18 +86,9 @@ def test_raises_if_mklists_rules_exists(tmp_path):
         init_datatree(tmp_path)
 
 
-def test_raises_if_named_subdir_exists(tmp_path):
-    """Raises InitError if a named subdir already exists."""
-    (tmp_path / "a").mkdir()
-    with pytest.raises(InitError):
-        init_datatree(tmp_path)
-
-
 def test_conflict_prevents_all_writes(tmp_path):
     """All-or-nothing: if a conflict is detected, no files are written."""
-    (tmp_path / "a").mkdir()
+    (tmp_path / "mklists.yaml").write_text("")
     with pytest.raises(InitError):
         init_datatree(tmp_path)
-    assert not (tmp_path / "mklists.yaml").exists()
     assert not (tmp_path / "mklists.rules").exists()
-    assert not (tmp_path / "b").exists()

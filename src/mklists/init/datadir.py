@@ -32,26 +32,26 @@ def _check_no_conflicts(path: Path) -> None:
 
 def init_datadir(
     path: Path,
-    rules: bool = False,
+    bare: bool = False,
     self_contained: bool = False,
 ) -> list[Path]:
     """Initialize a mklists datadir at path.
 
-    Always creates an empty .rules file as a structural marker.
-    If rules is True, populates .rules with commented example content.
-    If self_contained is True, also creates an empty .mklistsrc.
+    Always creates .rules with EXAMPLE_RULES content; empty if bare is True.
+    If self_contained is True, also creates .mklistsrc with DEFAULT_CONFIG_YAML; empty if bare is True.
     Raises InitError if any mklists marker file already exists in path.
     Returns a list of paths of files written.
     """
     _check_no_conflicts(path)
     path.mkdir(parents=True, exist_ok=True)
-    rules_content = EXAMPLE_RULES if rules else ""
+    rules_content = "" if bare else EXAMPLE_RULES
     written: list[Path] = []
     rules_path = path / ".rules"
     rules_path.write_text(rules_content)
     written.append(rules_path)
     if self_contained:
         mklistsrc_path = path / ".mklistsrc"
-        mklistsrc_path.write_text(DEFAULT_CONFIG_YAML)
+        mklistsrc_content = "" if bare else DEFAULT_CONFIG_YAML
+        mklistsrc_path.write_text(mklistsrc_content)
         written.append(mklistsrc_path)
     return written

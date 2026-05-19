@@ -16,16 +16,16 @@ def test_creates_rules_file(tmp_path):
     assert (tmp_path / ".rules").exists()
 
 
-def test_rules_file_is_empty_by_default(tmp_path):
-    """Without --rules, .rules is empty."""
+def test_rules_file_has_example_content_by_default(tmp_path):
+    """By default, .rules contains example content."""
     init_datadir(tmp_path)
-    assert (tmp_path / ".rules").read_text() == ""
-
-
-def test_rules_flag_populates_rules_file(tmp_path):
-    """With rules=True, .rules contains example content."""
-    init_datadir(tmp_path, rules=True)
     assert (tmp_path / ".rules").read_text() == EXAMPLE_RULES
+
+
+def test_bare_creates_empty_rules_file(tmp_path):
+    """With bare=True, .rules is empty."""
+    init_datadir(tmp_path, bare=True)
+    assert (tmp_path / ".rules").read_text() == ""
 
 
 # ── .mklistsrc file ───────────────────────────────────────────────────────────
@@ -47,6 +47,12 @@ def test_self_contained_mklistsrc_contains_default_config(tmp_path):
     """Created .mklistsrc is populated with DEFAULT_CONFIG_YAML."""
     init_datadir(tmp_path, self_contained=True)
     assert (tmp_path / ".mklistsrc").read_text() == DEFAULT_CONFIG_YAML
+
+
+def test_bare_self_contained_creates_empty_mklistsrc(tmp_path):
+    """With bare=True and self_contained=True, .mklistsrc is empty."""
+    init_datadir(tmp_path, bare=True, self_contained=True)
+    assert (tmp_path / ".mklistsrc").read_text() == ""
 
 
 # ── path creation ─────────────────────────────────────────────────────────────
