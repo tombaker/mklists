@@ -55,7 +55,7 @@ def cli() -> None:
 @cli.group(invoke_without_command=True)
 @click.pass_context
 def init(ctx: click.Context) -> None:
-    """Initialize a new Mklists datatree or datadir."""
+    """Initialize a new datatree or datadir."""
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help())
 
@@ -81,9 +81,9 @@ def init(ctx: click.Context) -> None:
     help="Create only mklists.yaml and mklists.rules; no datadirs.",
 )
 def datatree(path: str, rules: bool, datadirs: str | None, bare: bool) -> None:
-    """Initialize a new mklists datatree (where datadirs share rules)."""
+    """Initialize a new datatree (with shared mklists.rules)."""
     if bare and datadirs is not None:
-        raise click.UsageError("--bare and --datadirs are mutually exclusive.")
+        raise click.UsageError("Options --bare and --datadirs are mutually exclusive.")
     resolved = Path(path).resolve()
     if bare:
         datadir_tuple: tuple[str, ...] = ()
