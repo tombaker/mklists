@@ -11,7 +11,7 @@ to suppress example content and create empty files instead.
 When run without `--self-contained`, mklists checks the parent directory for
 datatree config files (`mklists.yaml`, `mklists.rules`) and prints the paths of
 whichever exist. This helps orient the user when initializing a datadir inside
-an existing datatree root. No output is produced if neither file is found.
+an existing datatree root. If neither file is found, a warning is printed instead.
 
 | Command | `.rules` | `.mklistsrc` | parent check |
 |---|---|---|---|
