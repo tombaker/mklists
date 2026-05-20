@@ -79,7 +79,17 @@ def init(ctx: click.Context) -> None:
 @init.command(cls=_DateCommand)
 @click.argument("path", default=".", metavar="[PATH]")
 def datatree(path: str) -> None:
-    """Initialize a new datatree (with shared mklists.rules)."""
+    """Initialize a new datatree.
+
+    A datatree is a set of datadirs under a common root directory that
+    potentially share rules (`mklists.rules`) and/or configuration settings
+    (`mklists.yaml`).
+
+    By default, `mklists init datatree` creates `mklists.yaml` and 
+    `mklists.rules` with commented example content.
+
+    Datadirs are created in the datatree with `mklists init datatree`.
+    """
     resolved = Path(path).resolve()
     try:
         written = init_datatree(resolved)
@@ -107,7 +117,10 @@ def datatree(path: str) -> None:
     help="Write .mklistsrc, marking the datadir as self-contained.",
 )
 def datadir(path: str, bare: bool, self_contained: bool) -> None:
-    """Initialize a new mklists datadir (with its own rules)."""
+    """Initialize a new datadir.
+
+    By default, creates a `.rules` file with commented example content.
+    """
     resolved = Path(path).resolve()
     try:
         written = init_datadir(resolved, bare=bare, self_contained=self_contained)
