@@ -32,6 +32,20 @@ be set once per clone:
 git config core.hooksPath hooks
 ```
 
+## Related projects
+
+`/Users/tbaker/n4ma/nalter` is a sibling Python project by the same author.
+Consult it as a reference for shared tooling decisions: MkDocs setup,
+pre-commit hooks, pylint configuration, Poetry workflow, and coding style.
+
+To make changes in `nalter` based on code or settings here, the user must run
+`claude` from within `/Users/tbaker/n4ma/nalter/`. Claude Code's working
+directory determines which project is active: which `CLAUDE.md` is loaded,
+which memory files are used, and where edits land. The cross-reference above
+means Claude will know to look at this project for reference without being told
+the path, but the actual work happens in whichever project `claude` was started
+from.
+
 ## Commands
 
 Do NOT run `pytest` or any test commands. The user runs tests independently.
