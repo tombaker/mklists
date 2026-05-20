@@ -118,31 +118,8 @@ Tests mirror source structure under `tests/`.
 
 ### Linkify
 
-`exec/linkify.py` mirrors every datadir as a tree of files with URLs converted to clickable `<a>` tags. Each file is wrapped in a single `<pre>` block. Two output formats are supported, controlled by separate config keys:
-
-- **`linkify_md_dir`** — writes `<filename>.md` (HTML-in-Markdown). GitHub renders `.md` files and passes through `<pre>` and `<a>` tags, so links are clickable when browsing the repository. A `.html` extension would cause GitHub to show raw source instead.
-- **`linkify_html_dir`** — writes `<filename>.html`. Any web server (including Dropbox) serves `.html` as rendered HTML with clickable links.
-
-Either or both can be set independently. The public functions are `linkify_md_datadirs()` and `linkify_html_datadirs()`; both delegate to the private `_mirror_datadirs(datadirs, output_dir, suffix)` helper. The output directory is wiped and rebuilt from scratch on every run.
-
-Example — a data line such as:
-
-```
-See https://example.com for details.
-```
-
-becomes:
-
-```html
-<pre>
-See <a href="https://example.com">https://example.com</a> for details.
-</pre>
-```
-
-Trailing punctuation characters (`.,;:!?)`) are detected and moved outside the `<a>` tag so they are not included in the link target. URLs that genuinely end with one of those characters (rare) will have that character incorrectly stripped.
-
-The mirror directory is wiped and rebuilt from scratch on every run, so stale files from previous runs are never left behind.
+See [docs/configuration/linkify.md](docs/configuration/linkify.md). Public functions: `linkify_md_datadirs()` and `linkify_html_datadirs()`; both delegate to the private `_mirror_datadirs(datadirs, output_dir, suffix)` helper.
 
 ### Binary file detection heuristic
 
-`_check_file_contents` in `exec/safety.py` reads the first 8192 bytes of each file and raises an error if a NUL byte (`\x00`) is found. This is the same heuristic used by ripgrep: both treat NUL-byte presence in the leading 8192-byte window as the signal for binary content. The practical difference is purpose — ripgrep uses the result to suppress output, while mklists uses it to abort processing.
+See [docs/configuration/binary_file_detection.md](docs/configuration/binary_file_detection.md). Implemented in `_check_file_contents` in `exec/safety.py`.
