@@ -10,3 +10,5 @@ echo '======================================================'
 echo "Running pylint - configure with /Users/tbaker/github/tombaker/mklists/pylintrc (setup.cfg is for flake8)"
 pylint src/mklists/
 echo "End of pylint output"
+echo
+read -r -p "Press Enter to open the commit message editor..." _ < /dev/tty
