@@ -16,6 +16,8 @@ nav:
     - mklists init datatree: mklists/mklists_init_datatree.md
     - mklists run: mklists/mklists_run.md
     - mklists status: mklists/mklists_status.md
+  - Discussion:
+    - Execution model: discussion/execution_model.md
 
 docs_dir: docs
 

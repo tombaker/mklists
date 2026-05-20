@@ -72,30 +72,7 @@ Note: `pytest.ini` enables `--doctest-modules`, so doctests in source modules ar
 
 ### Three-level execution model
 
-1. **Run** — a single invocation; loads config, discovers directories, generates a timestamp
-2. **Pass** — one complete sweep over all data directories (default: 1 pass; 2 passes when routing is enabled and there are multiple data directories); owns per-pass invariants like the backup directory
-3. **Datadir** — processes a single directory: safety checks → read files → apply rules (pre-loaded in plan) → delete old files → write new files
-
-High-level call graph:
-```
-mklists run  (cli.py)
-├── resolve_structural_context()   # filesystem discovery
-├── resolve_config()               # merge defaults + user YAML
-├── resolve_run_plan()             # build execution blueprint
-└── run_mklists()
-    └── for each pass:
-        ├── init_snapshot_dir()    # if backup enabled
-        ├── backup_datadirs()      # if backup enabled
-        └── for each datadir:
-            └── process_datadir()
-                ├── run_safety_checks()
-                ├── read datafiles          # rules pre-loaded via datadir_plan.rules
-                ├── dispatch_datalines_to_targets()
-                └── write new datafiles
-        └── redistribute_datafiles()  # if routing enabled
-    ├── prune_backupdirs()         # if backup enabled
-    └── linkify_datadirs()         # if linkify enabled
-```
+See [docs/discussion/execution_model.md](docs/discussion/execution_model.md).
 
 ### Module roles (from DESIGN.md)
 
