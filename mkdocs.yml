@@ -18,6 +18,7 @@ nav:
     - mklists status: mklists/mklists_status.md
   - Discussion:
     - Execution model: discussion/execution_model.md
+    - Support for audits: discussion/support_for_audits.md
 
 docs_dir: docs
 
