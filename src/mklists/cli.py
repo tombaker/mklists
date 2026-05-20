@@ -117,10 +117,17 @@ def datadir(path: str, bare: bool, self_contained: bool) -> None:
         click.echo(f"Wrote {file_path}")
     if not self_contained:
         parent = resolved.parent
+        found_in_parent = []
         for name in (DATATREE_CONFIGFILE_NAME, DATATREE_RULEFILE_NAME):
             candidate = parent / name
             if candidate.is_file():
+                found_in_parent.append(candidate)
                 click.echo(f"Found in parent: {candidate}")
+        if not found_in_parent:
+            click.echo(
+                f"Warning: no {DATATREE_CONFIGFILE_NAME} or {DATATREE_RULEFILE_NAME}"
+                f" found in parent directory ({parent})."
+            )
 
 
 @cli.command(cls=_DateCommand)
