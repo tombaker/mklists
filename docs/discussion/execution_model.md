@@ -29,3 +29,19 @@ mklists run  (cli.py)
     ├── linkify_md_datadirs()          # if linkify_md_dir configured
     └── linkify_html_datadirs()        # if linkify_html_dir configured
 ```
+
+## Design principles
+
+* **Runs own passes**
+  The loop over passes belongs at the run level. Individual modules (e.g. backups, processing) are not aware of multiple passes.
+
+* **Passes own per-pass invariants**
+  Anything invariant across a pass — such as the per-pass backup directory or per-pass log file — is computed once and reused for all data directories in that pass.
+
+* **Datadir processing is isolated**
+  `process_datadir()` handles all work inside a single data directory and assumes that any required per-pass setup has already been performed.
+
+* **Backups are mechanical, not policy-driven**
+  Backup helpers assume validated paths and copy filesystem state exactly; policy decisions (whether backups are enabled, retention depth, etc.) are handled at higher levels.
+
+This structure keeps responsibilities clear, avoids redundant computation, and makes the execution flow easy to reason about and test.

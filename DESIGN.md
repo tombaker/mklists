@@ -70,52 +70,7 @@ A reader should be able to:
 
 ### Run / Pass / Datadir Execution Model
 
-`mklists` is structured around three nested levels of execution:
-
-1. **Run** – a single invocation of `mklists`
-2. **Pass** – one complete sweep over all data directories
-3. **Datadir** – processing of a single data directory
-
-This separation exists to make per-pass invariants (such as backups and logging) explicit, and to avoid recomputing them for each data directory.
-
-#### High-level call graph
-
-```
-cli.run()  (cli.py)
-├── resolve_structural_context()   # filesystem discovery
-├── resolve_config()               # merge defaults + user YAML
-├── resolve_run_plan()             # build execution blueprint
-└── run_mklists()
-    └── for each pass:
-        ├── init_snapshot_dir()    # if backup enabled
-        ├── backup_datadirs()      # if backup enabled
-        └── for each datadir:
-            └── process_datadir()
-                ├── run_safety_checks()
-                ├── read datafiles          # rules pre-loaded via datadir_plan.rules
-                ├── dispatch_datalines_to_targets()
-                ├── delete old datafiles
-                └── write new datafiles
-        └── redistribute_datafiles()       # if routing enabled
-    ├── prune_backupdirs()         # if backup enabled
-    └── linkify_datadirs()         # if linkify enabled
-```
-
-#### Design principles
-
-* **Runs own passes**
-  The loop over passes belongs at the run level. Individual modules (e.g. backups, processing) are not aware of multiple passes.
-
-* **Passes own per-pass invariants**
-  Anything invariant across a pass—such as the per-pass backup directory or per-pass log file—is computed once in `run_pass()` and reused for all data directories in that pass.
-
-* **Datadir processing is isolated**
-  `process_datadir()` handles all work inside a single data directory and assumes that any required per-pass setup has already been performed.
-
-* **Backups are mechanical, not policy-driven**
-  Backup helpers assume validated paths and copy filesystem state exactly; policy decisions (whether backups are enabled, retention depth, etc.) are handled at higher levels.
-
-This structure keeps responsibilities clear, avoids redundant computation, and makes the execution flow of `mklists` easy to reason about and test.
+See [docs/discussion/execution_model.md](docs/discussion/execution_model.md).
 
 ## 5. Support for audits
 
