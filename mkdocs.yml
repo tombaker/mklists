@@ -9,9 +9,8 @@ theme:
   collapse_navigation: false
 
 nav:
-  - Home: index.md
+  - About: index.md
   - mklists:
-    - mklists: mklists/index.md
     - mklists init datadir: mklists/mklists_init_datadir.md
     - mklists init datatree: mklists/mklists_init_datatree.md
     - mklists run: mklists/mklists_run.md
@@ -22,7 +21,9 @@ nav:
     - Binary file detection: configuration/binary_file_detection.md
   - Discussion:
     - Execution model: discussion/execution_model.md
+    - Datafile sort order: discussion/datafile_sortorder.md
     - Support for audits: discussion/support_for_audits.md
+    - Use of symlinks: discussion/use_of_symlinks.md
 
 docs_dir: docs
 
