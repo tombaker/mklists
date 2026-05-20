@@ -23,7 +23,7 @@ EXAMPLE_RULES = """\
 _CONFLICT_MARKERS = [".rules", ".mklistsrc", "mklists.yaml", "mklists.rules"]
 
 
-def _check_no_conflicts(path: Path) -> None:
+def check_no_conflicts(path: Path) -> None:
     """Raise InitError if path already contains any mklists marker file."""
     for marker in _CONFLICT_MARKERS:
         if (path / marker).exists():
@@ -38,11 +38,12 @@ def init_datadir(
     """Initialize a mklists datadir at path.
 
     Always creates .rules with EXAMPLE_RULES content; empty if bare is True.
-    If self_contained is True, also creates .mklistsrc with DEFAULT_CONFIG_YAML; empty if bare is True.
+    If self_contained is True, also creates .mklistsrc with DEFAULT_CONFIG_YAML;
+    empty if bare is True.
     Raises InitError if any mklists marker file already exists in path.
     Returns a list of paths of files written.
     """
-    _check_no_conflicts(path)
+    check_no_conflicts(path)
     path.mkdir(parents=True, exist_ok=True)
     rules_content = "" if bare else EXAMPLE_RULES
     written: list[Path] = []
