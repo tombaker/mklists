@@ -10,10 +10,12 @@ dynamic = ["dependencies"]
 [tool.poetry]
 packages = [{include = "mklists", from = "src"}]
 
+[tool.poetry.scripts]
+mklists = "mklists.cli:cli"
+
 [tool.poetry.dependencies]
 python = ">=3.14,<4.0"
 pyyaml = ">=6.0.3,<7.0.0"
-loguru = "^0.7.3"
 click = "^8.3.1"
 
 [tool.poetry.group.dev.dependencies]
@@ -25,6 +27,8 @@ pylint = "^4.0.4"
 ruff = "^0.14.11"
 ipython = "^9.9.0"
 mypy = "^1.19.1"
+mkdocs = "^1.6"
+mkdocs-material = "^9.7.6"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
@@ -35,7 +39,6 @@ line-length = 88
 
 [tool.ruff]
 line-length = 88
-select = ["E", "F", "W", "I"]
 
 # Match flake8 excludes
 exclude = [
@@ -52,6 +55,7 @@ exclude = [
 ]
 
 [tool.ruff.lint]
+select = ["E", "F", "W", "I"]
 # Match flake8 ignores (Black-compatible)
 extend-ignore = [
     "E203",  # whitespace before ":"
@@ -63,6 +67,14 @@ extend-ignore = [
     "E501",  # line too long
     "W291",  # trailing whitespace
 ]
+
+[tool.pylint.messages_control]
+disable = [
+    "logging-fstring-interpolation",  # f-strings in logger calls are intentional
+]
+
+[tool.pylint.design]
+max-attributes = 10  # default 7 is too low for data-holding dataclasses
 
 [tool.mypy]
 python_version = "3.14"

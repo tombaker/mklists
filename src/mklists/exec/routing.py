@@ -1,9 +1,10 @@
 """About redistributing files among datadirs according to a routing map."""
 
-from datetime import datetime, UTC
-from pathlib import Path
 import shutil
-from loguru import logger
+from datetime import UTC, datetime
+from pathlib import Path
+
+from mklists.logging import logger
 
 
 def redistribute_datafiles(
@@ -28,7 +29,9 @@ def redistribute_datafiles(
                 continue
 
             if not dest_dir.exists():
-                # Destination directory may be unavailable - eg, USB drive not mounted.
+                logger.info(
+                    f"Dispatch {filename}: dest {dest_dir} not found (drive unmounted?)"
+                )
                 continue
 
             destination = _unique_destination_filename(
@@ -38,7 +41,7 @@ def redistribute_datafiles(
             )
 
             shutil.move(source, destination)
-            logger.info(f"Move {filename} -> {dest_dir}")
+            logger.info(f"Dispatched {source} to {destination}")
 
 
 def _unique_destination_filename(
@@ -53,21 +56,11 @@ def _unique_destination_filename(
         dest_dir:
 
     Returns:
-        Absolute pathname of target file in destination directory.
+        Absolute pathname of target file in destination directory,
+        always prefixed with a UTC timestamp so that successive dispatches
+        to the same destination accumulate rather than overwrite.
     """
     stem = datadir.name
     src = Path(filename)
-
-    # Base: <datadir>.<original-name>
-    candidate = dest_dir / f"{stem}.{src.name}"
-    if not candidate.exists():
-        return candidate
-
-    # Timestamp fallback (UTC, timezone-aware)
     ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%f")
-    candidate = dest_dir / f"{stem}.{src.stem}.{ts}{src.suffix}"
-    if not candidate.exists():
-        return candidate
-
-    # This should never happen
-    raise RuntimeError(f"Unresolvable filename collision: {candidate}")
+    return dest_dir / f"{ts}.{stem}.{src.name}"

@@ -5,6 +5,6 @@ from mklists.structure.resolve import resolve_structural_context
 from mklists.structure.markers import (
     DATADIR_CONFIGFILE_NAME,
     DATADIR_RULEFILE_NAME,
-    REPO_CONFIGFILE_NAME,
-    REPO_RULEFILE_NAME,
+    DATATREE_CONFIGFILE_NAME,
+    DATATREE_RULEFILE_NAME,
 )

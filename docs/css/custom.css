@@ -1,0 +1,27 @@
+/* Custom heading styles — override Windmill/Bootstrap defaults */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 400;
+}
+
+/* Disable highlight.js syntax colouring */
+.hljs {
+    background: transparent;
+    color: inherit;
+}
+.hljs * {
+    color: inherit !important;
+    font-weight: inherit !important;
+}
+
+/* Inline code: slightly larger and blue instead of red */
+.rst-content :not(pre) > code {
+    font-size: 90% !important;
+    font-weight: bold !important;
+    color: #2962CC !important;
+}
+
+/* Suppress italics inside fenced code blocks */
+pre code em,
+pre code i {
+    font-style: normal;
+}

@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+echo "Running pytest"
+pytest
+echo "Running 'ctags -R --languages=python --languages=-Rust --exclude=.git --exclude=build .'"
+ctags -R --languages=python --languages=-Rust --exclude=.git --exclude=build .
+echo
+echo '======================================================'
+echo "Running pylint - configure with /Users/tbaker/github/tombaker/mklists/pylintrc"
+pylint src/mklists/ | grep -v "^$"
+echo "End of pylint output"
+echo
+read -r -p "Press Enter to open the commit message editor..." _ < /dev/tty

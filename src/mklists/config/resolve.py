@@ -1,12 +1,13 @@
 """Resolve Config from defaults and optional user config file."""
 
 from copy import deepcopy
+import difflib
 from pathlib import Path
 import re
 from re import Pattern
 from typing import Any
 import yaml
-from mklists.errors import StructureError
+from mklists.errors import ConfigError, StructureError
 from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.config.model import (
     BackupConfig,
@@ -15,7 +16,7 @@ from mklists.config.model import (
     SafetyConfig,
     Config,
 )
-from mklists.structure.markers import REPO_CONFIGFILE_NAME
+from mklists.structure.markers import DATATREE_CONFIGFILE_NAME
 from mklists.structure.model import StructuralContext
 
 
@@ -31,15 +32,15 @@ def resolve_config(structural_context: StructuralContext) -> Config:
     startdir_context = structural_context.startdir_context
     config_rootdir = startdir_context.config_rootdir
 
-    if startdir_context.is_repo_root:
-        configfile_used = startdir_context.repo_configfile_found
+    if startdir_context.is_datatree_root:
+        configfile_used = startdir_context.datatree_configfile_found
     elif startdir_context.is_datadir_selfcontained:
         configfile_used = startdir_context.datadir_configfile_found
-    elif startdir_context.is_datadir_in_repo:
-        # Look up repo config file relative to discovered config root directory.
-        repo_configfile = config_rootdir / REPO_CONFIGFILE_NAME
-        if repo_configfile.is_file():
-            configfile_used = repo_configfile
+    elif startdir_context.is_datadir_in_datatree:
+        # Look up datatree config file relative to discovered config root directory.
+        datatree_configfile = config_rootdir / DATATREE_CONFIGFILE_NAME
+        if datatree_configfile.is_file():
+            configfile_used = datatree_configfile
         else:
             configfile_used = None
     else:
@@ -110,6 +111,7 @@ def _load_merged_configdict(configfile_used: Path | None) -> dict[str, Any]:
         config_user = _load_yaml_from_file(configfile_used) or {}
         if not isinstance(config_user, dict):
             raise TypeError("User config YAML must decode to a mapping.")
+        _check_for_unknown_keys(config_user, config_defaults, configfile_used)
     else:
         config_user = {}
 
@@ -154,6 +156,71 @@ def _load_yaml_from_string(yamltext: str) -> Any:
     return yaml.safe_load(yamltext)
 
 
+def _collect_valid_keys(d: dict[str, Any], _path: str = "") -> list[str]:
+    """Return all dotted-path key names reachable from d.
+
+    Args:
+        d: Dictionary to collect key paths from.
+        _path: Dot-separated prefix accumulated during recursion (internal use).
+
+    Returns:
+        Flat list of dotted-path strings such as ``['verbose', 'backup.backup_depth', ...]``.
+    """
+    keys: list[str] = []
+    for key, value in d.items():
+        full_key = f"{_path}.{key}" if _path else key
+        keys.append(full_key)
+        if isinstance(value, dict):
+            keys.extend(_collect_valid_keys(value, full_key))
+    return keys
+
+
+def _check_for_unknown_keys(
+    user_dict: dict[str, Any],
+    defaults_dict: dict[str, Any],
+    configfile: Path,
+    _path: str = "",
+    _valid_keys: list[str] | None = None,
+) -> None:
+    """Raise ConfigError if user_dict contains keys absent from defaults_dict.
+
+    Args:
+        user_dict: Config dictionary loaded from user config file.
+        defaults_dict: Config dictionary loaded from built-in defaults.
+        configfile: Path of the user config file (used in error messages).
+        _path: Dot-separated key path accumulated during recursion (internal use).
+        _valid_keys: Pre-collected list of all valid dotted-path keys (internal use).
+
+    Raises:
+        ConfigError: If any key in user_dict is not present in defaults_dict.
+    """
+    if _valid_keys is None:
+        _valid_keys = _collect_valid_keys(defaults_dict)
+
+    for key in user_dict:
+        full_key = f"{_path}.{key}" if _path else key
+        if key not in defaults_dict:
+            msg = f"Config file {configfile.name!r} contains unsupported key: {full_key!r}."
+            suggestions = difflib.get_close_matches(
+                full_key, _valid_keys, n=2, cutoff=0.6
+            )
+            if suggestions:
+                quoted = [f"{s!r}" for s in suggestions]
+                if len(quoted) == 1:
+                    msg += f" Did you mean: {quoted[0]}?"
+                else:
+                    msg += f" Did you mean: {quoted[0]} or {quoted[1]}?"
+            raise ConfigError(msg)
+        if (
+            isinstance(user_dict[key], dict)
+            and isinstance(defaults_dict[key], dict)
+            and defaults_dict[key]
+        ):
+            _check_for_unknown_keys(
+                user_dict[key], defaults_dict[key], configfile, full_key, _valid_keys
+            )
+
+
 def _merge_config_dicts(
     defaults: dict[str, Any],
     overrides: dict[str, Any],
@@ -182,7 +249,7 @@ def _make_backup_config(
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists datatree.
 
     Returns:
         Instance of BackupConfig initialized from config dictionary.
@@ -192,9 +259,10 @@ def _make_backup_config(
     """
     backup_raw = config_dict["backup"]
     backup_rootdir_raw = backup_raw["backup_rootdir"]
+    backup_depth = int(backup_raw["backup_depth"])
 
     if backup_rootdir_raw is None:
-        raise ValueError("backup_rootdir must not be configured as null.")
+        return BackupConfig(backup_rootdir=None, backup_depth=backup_depth)
 
     backup_rootdir = Path(backup_rootdir_raw)
 
@@ -206,11 +274,7 @@ def _make_backup_config(
             )
         backup_rootdir = (config_rootdir / backup_rootdir).resolve()
 
-    return BackupConfig(
-        backup_enabled=bool(backup_raw["backup_enabled"]),
-        backup_rootdir=backup_rootdir,
-        backup_depth=int(backup_raw["backup_depth"]),
-    )
+    return BackupConfig(backup_rootdir=backup_rootdir, backup_depth=backup_depth)
 
 
 def _make_routing_config(
@@ -222,7 +286,7 @@ def _make_routing_config(
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists datatree.
 
     Returns:
         Instance of RoutingConfig initialized from config dictionary.
@@ -231,7 +295,6 @@ def _make_routing_config(
         Assumes all required keys are present.
     """
     routing_raw = config_dict["routing"]
-    routing_enabled = bool(routing_raw["routing_enabled"])
     files2dirs_raw = routing_raw["routing_dict"]
 
     routing_dict: dict[str, Path] = {}
@@ -252,10 +315,7 @@ def _make_routing_config(
 
         routing_dict[filename] = (config_rootdir / dirname).resolve()
 
-    return RoutingConfig(
-        routing_enabled=routing_enabled,
-        routing_dict=routing_dict,
-    )
+    return RoutingConfig(routing_dict=routing_dict)
 
 
 def _make_safety_config(config_dict: dict[str, Any]) -> SafetyConfig:
@@ -291,7 +351,7 @@ def _make_linkify_config(
 
     Args:
         config_dict: Config dictionary as derived from YAML.
-        config_rootdir: Root directory of mklists repo.
+        config_rootdir: Root directory of mklists datatree.
 
     Returns:
         Instance of LinkifyConfig initialized from config dictionary.
@@ -300,12 +360,13 @@ def _make_linkify_config(
         Assumes all required keys are present.
     """
     linkify_raw = config_dict["linkify"]
-    linkify_dir_raw = linkify_raw["linkify_dir"]
 
-    if linkify_dir_raw is None:
-        raise ValueError("linkify_dir must not be configured as null.")
+    def _resolve_dir(raw: str | None) -> Path | None:
+        if raw is None:
+            return None
+        return (config_rootdir / raw).resolve()
 
     return LinkifyConfig(
-        linkify_enabled=bool(linkify_raw["linkify_enabled"]),
-        linkify_dir=(config_rootdir / linkify_dir_raw).resolve(),
+        linkify_md_dir=_resolve_dir(linkify_raw["linkify_md_dir"]),
+        linkify_html_dir=_resolve_dir(linkify_raw["linkify_html_dir"]),
     )

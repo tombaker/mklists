@@ -19,10 +19,10 @@ def test_sort_datalines_zero_sorts_on_entire_line():
 
 
 def test_sort_datalines_onebased_field_sort():
-    """Positive sort key means sorting on nth field (one-based)."""
+    """Positive sort key means sorting on nth field through end of line (one-based)."""
     datalines = ["b 2", "a 10", "a 1"]
     result = _sort_datalines(datalines, 1)
-    assert result == ["a 10", "a 1", "b 2"]
+    assert result == ["a 1", "a 10", "b 2"]
 
 
 def test_sort_datalines_missing_fields_sort_first():
@@ -33,10 +33,10 @@ def test_sort_datalines_missing_fields_sort_first():
 
 
 def test_sort_datalines_is_stable_for_equal_keys():
-    """Sorting is stable, preserving original order of non-sorting fields."""
-    datalines = ["a 2", "a 1", "a 3"]
-    result = _sort_datalines(datalines, 1)
-    assert result == ["a 2", "a 1", "a 3"]
+    """Sorting is stable when field N through end of line is identical across lines."""
+    datalines = ["a x", "b x", "c x"]
+    result = _sort_datalines(datalines, 2)
+    assert result == ["a x", "b x", "c x"]
 
 
 def test_sort_datalines_onebased_indexing_not_zerobased():

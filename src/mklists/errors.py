@@ -6,10 +6,10 @@ class MklistsError(Exception):
 
 
 class StructureError(MklistsError):
-    """Invalid repository or datadir structure."""
+    """Invalid datatree or datadir structure."""
 
 
-class RuleError(ValueError):
+class RuleError(MklistsError):
     """Invalid rule syntax or semantics."""
 
 
@@ -23,3 +23,15 @@ class DataNotFoundError(MklistsError):
 
 class RulesNotFoundError(MklistsError):
     """Expected rules not found."""
+
+
+class ConfigError(MklistsError):
+    """Config file contains unsupported or invalid settings."""
+
+
+class InitError(MklistsError):
+    """Cannot initialize: conflicting files or directories already exist."""
+
+
+class SafetyError(MklistsError):
+    """Data directory fails a safety check."""

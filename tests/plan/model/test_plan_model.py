@@ -22,7 +22,7 @@ from mklists.plan.model import (
         ),
         PassPlan(
             snapshot_dir=Path("/tmp/backups/2026-03-01_123123123_01"),
-            snapshot_repofiles_to_copy=[],
+            snapshot_datatree_configfiles=[],
         ),
         SkippedDatadir(
             datadir=Path("/tmp/datadirb"),
@@ -33,7 +33,9 @@ from mklists.plan.model import (
             datadir_plans=[],
             skipped_datadirs=[],
             routing_dict={},
-            linkify_dir=None,
+            linkify_md_dir=None,
+            linkify_html_dir=None,
+            is_datatree_root=True,
             safety=SafetyConfig(invalid_filename_patterns=[]),
             backup=None,
         ),

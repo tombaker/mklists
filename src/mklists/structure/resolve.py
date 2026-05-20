@@ -6,8 +6,8 @@ from mklists.errors import StructureError
 from mklists.structure.markers import (
     DATADIR_CONFIGFILE_NAME,
     DATADIR_RULEFILE_NAME,
-    REPO_CONFIGFILE_NAME,
-    REPO_RULEFILE_NAME,
+    DATATREE_CONFIGFILE_NAME,
+    DATATREE_RULEFILE_NAME,
 )
 from mklists.structure.model import (
     DatadirStructuralContext,
@@ -26,22 +26,22 @@ def resolve_structural_context(startdir: Path | str) -> StructuralContext:
         Structural context derived from filesystem layout.
 
     Note:
-        Starting directory is CWD path or override path from CLI option.
+        Execution begins in work tree unless CLI-specified.
     """
-    startdir = Path(startdir).resolve()
+    startdir = Path(startdir).absolute()
 
     # 1. Determine startdir context.
     startdir_context = _resolve_startdir_context(startdir=startdir)
 
     # 2. Discover datadirs
     config_rootdir = startdir_context.config_rootdir
-    if startdir_context.is_repo_root:
+    if startdir_context.is_datatree_root:
         datadirs = _find_datadirs(config_rootdir=config_rootdir)
     else:
         datadirs = [startdir]
 
     if not datadirs:
-        raise StructureError("No datadirs found under config root directory.")
+        raise StructureError("No datadirs found in work tree.")
 
     # 3. Build list of datadir structural contexts.
     datadir_contexts: list[DatadirStructuralContext] = []
@@ -65,7 +65,7 @@ def _find_datadirs(config_rootdir: Path | str) -> list[Path]:
         config_rootdir: Path of config root directory.
 
     Yields:
-        Paths of directories directly under repository root that hold a `.rules` file.
+        Paths of directories directly under datatree root that hold a `.rules` file.
     """
     datadirs: list[Path] = []
 
@@ -119,26 +119,26 @@ def _resolve_startdir_context(startdir: Path) -> StartdirStructuralContext:
     def if_file_exists(path: Path) -> Path | None:
         return path if path.is_file() else None
 
-    repo_configfile_found = if_file_exists(startdir / REPO_CONFIGFILE_NAME)
-    repo_rulefile_found = if_file_exists(startdir / REPO_RULEFILE_NAME)
+    datatree_configfile_found = if_file_exists(startdir / DATATREE_CONFIGFILE_NAME)
+    datatree_rulefile_found = if_file_exists(startdir / DATATREE_RULEFILE_NAME)
     datadir_configfile_found = if_file_exists(startdir / DATADIR_CONFIGFILE_NAME)
     datadir_rulefile_found = if_file_exists(startdir / DATADIR_RULEFILE_NAME)
 
-    is_repo_root = bool(repo_configfile_found or repo_rulefile_found)
+    is_datatree_root = bool(datatree_configfile_found or datatree_rulefile_found)
     is_datadir = bool(datadir_rulefile_found)
 
-    if is_datadir and is_repo_root:
+    if is_datadir and is_datatree_root:
         raise StructureError(
-            "Starting directory cannot be both repository root and datadir."
+            "Starting directory cannot be both datatree root and datadir."
         )
 
-    if not is_datadir and not is_repo_root:
-        raise StructureError("Starting directory must be repository root or datadir.")
+    if not is_datadir and not is_datatree_root:
+        raise StructureError("Starting directory must be datatree root or datadir.")
 
     return StartdirStructuralContext(
         startdir=startdir,
-        repo_configfile_found=repo_configfile_found,
-        repo_rulefile_found=repo_rulefile_found,
+        datatree_configfile_found=datatree_configfile_found,
+        datatree_rulefile_found=datatree_rulefile_found,
         datadir_configfile_found=datadir_configfile_found,
         datadir_rulefile_found=datadir_rulefile_found,
     )

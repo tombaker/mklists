@@ -34,7 +34,9 @@ def test_file_is_moved(datadirs, tmp_path):
     )
 
     assert not src.exists()
-    assert (dest / "data1.to_a.txt").exists()
+    names = [p.name for p in dest.iterdir()]
+    assert len(names) == 1
+    assert names[0].endswith(".data1.to_a.txt")
 
 
 def test_dest_missing_file_not_moved(datadirs, tmp_path):
@@ -72,8 +74,9 @@ def test_multiple_datadirs(tmp_path):
 
     assert not (d1 / "to_a.txt").exists()
     assert not (d2 / "to_a.txt").exists()
-    assert (dest / "d1.to_a.txt").exists()
-    assert (dest / "d2.to_a.txt").exists()
+    names = [p.name for p in dest.iterdir()]
+    assert any(n.endswith(".d1.to_a.txt") for n in names)
+    assert any(n.endswith(".d2.to_a.txt") for n in names)
 
 
 def test_redistribute_datafiles_no_collision(tmp_path: Path):
@@ -94,5 +97,7 @@ def test_redistribute_datafiles_no_collision(tmp_path: Path):
         routing_dict={"to_a.txt": dest},
     )
 
-    names = {p.name for p in dest.iterdir()}
-    assert names == {"a.to_a.txt", "b.to_a.txt"}
+    names = [p.name for p in dest.iterdir()]
+    assert len(names) == 2
+    assert any(n.endswith(".a.to_a.txt") for n in names)
+    assert any(n.endswith(".b.to_a.txt") for n in names)

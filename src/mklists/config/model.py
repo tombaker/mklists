@@ -9,8 +9,7 @@ from pathlib import Path
 class BackupConfig:
     """Settings about backing up data files before processing."""
 
-    backup_enabled: bool
-    backup_rootdir: Path
+    backup_rootdir: Path | None
     backup_depth: int
 
 
@@ -18,7 +17,6 @@ class BackupConfig:
 class RoutingConfig:
     """Settings about moving specified files to different destination directories."""
 
-    routing_enabled: bool
     routing_dict: dict[str, Path]
 
 
@@ -31,10 +29,10 @@ class SafetyConfig:
 
 @dataclass(slots=True, frozen=True)
 class LinkifyConfig:
-    """Settings about writing data files in HTML to a desination directory."""
+    """Settings about writing data files to browsable mirror directories."""
 
-    linkify_enabled: bool
-    linkify_dir: Path
+    linkify_md_dir: Path | None
+    linkify_html_dir: Path | None
 
 
 @dataclass(frozen=True, slots=True)

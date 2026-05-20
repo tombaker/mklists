@@ -10,7 +10,8 @@ Run layer:
 import shutil
 from pathlib import Path
 from typing import Iterable
-from loguru import logger
+
+from mklists.logging import logger
 
 
 def backup_datadirs(
@@ -41,13 +42,13 @@ def backup_datadirs(
 
 def init_snapshot_dir(
     snapshot_dir: Path,
-    snapshot_repofiles_to_copy: list[Path],
+    snapshot_datatree_configfiles: list[Path],
 ) -> None:
     """Initialize directory for backup of one pass of a mklists run.
 
     Args:
         snapshot_dir: Backup directory to initialize.
-        snapshot_repofiles_to_copy: List of repo-level config files to back up.
+        snapshot_datatree_configfiles: List of datatree-level config files to back up.
 
     Returns:
         None, after creating and initializing the backup root directory.
@@ -57,8 +58,8 @@ def init_snapshot_dir(
     """
     snapshot_dir.mkdir(parents=True, exist_ok=False)
 
-    for repofile_to_snapshot in snapshot_repofiles_to_copy:
-        shutil.copy2(src=repofile_to_snapshot, dst=snapshot_dir)
+    for datatree_configfile_to_snapshot in snapshot_datatree_configfiles:
+        shutil.copy2(src=datatree_configfile_to_snapshot, dst=snapshot_dir)
 
 
 def prune_backupdirs(backup_rootdir: Path, backup_depth: int) -> None:

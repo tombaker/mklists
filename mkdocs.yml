@@ -1,0 +1,35 @@
+site_name: mklists
+site_description: Rule-based maintenance of plain-text lists
+site_author: Tom Baker
+repo_url: https://github.com/tombaker/mklists
+edit_uri: edit/main/docs/
+
+theme:
+  name: readthedocs
+  collapse_navigation: false
+
+nav:
+  - About: index.md
+  - mklists:
+    - mklists init datadir: mklists/mklists_init_datadir.md
+    - mklists init datatree: mklists/mklists_init_datatree.md
+    - mklists run: mklists/mklists_run.md
+    - mklists status: mklists/mklists_status.md
+  - Configuration:
+    - Config files: configuration/config_files.md
+    - Linkify: configuration/linkify.md
+    - Binary file detection: configuration/binary_file_detection.md
+  - Discussion:
+    - Execution model: discussion/execution_model.md
+    - Datafile sort order: discussion/datafile_sortorder.md
+    - Support for audits: discussion/support_for_audits.md
+    - Use of symlinks: discussion/use_of_symlinks.md
+
+docs_dir: docs
+
+markdown_extensions:
+  - toc:
+      toc_depth: 0
+
+extra_css:
+  - css/custom.css

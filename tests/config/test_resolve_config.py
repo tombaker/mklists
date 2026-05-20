@@ -15,7 +15,7 @@ from mklists.errors import StructureError
 from mklists.structure.markers import (
     DATADIR_CONFIGFILE_NAME,
     DATADIR_RULEFILE_NAME,
-    REPO_CONFIGFILE_NAME,
+    DATATREE_CONFIGFILE_NAME,
 )
 from mklists.structure.model import (
     DatadirStructuralContext,
@@ -27,8 +27,8 @@ from mklists.structure.model import (
 def make_structural_context(
     startdir: Path,
     *,
-    repo_configfile_found: Path | None = None,
-    repo_rulefile_found: Path | None = None,
+    datatree_configfile_found: Path | None = None,
+    datatree_rulefile_found: Path | None = None,
     datadir_configfile_found: Path | None = None,
     datadir_rulefile_found: Path | None = None,
     datadir_contexts: list[DatadirStructuralContext] | None = None,
@@ -37,8 +37,8 @@ def make_structural_context(
     return StructuralContext(
         startdir_context=StartdirStructuralContext(
             startdir=startdir,
-            repo_configfile_found=repo_configfile_found,
-            repo_rulefile_found=repo_rulefile_found,
+            datatree_configfile_found=datatree_configfile_found,
+            datatree_rulefile_found=datatree_rulefile_found,
             datadir_configfile_found=datadir_configfile_found,
             datadir_rulefile_found=datadir_rulefile_found,
         ),
@@ -46,17 +46,17 @@ def make_structural_context(
     )
 
 
-# --- is_repo_root ---
+# --- is_datatree_root ---
 
 
-def test_resolve_config_repo_root_with_configfile_returns_config(tmp_path):
+def test_resolve_config_datatree_root_with_configfile_returns_config(tmp_path):
     """Repo root with config file uses that file and returns a Config."""
-    configfile = tmp_path / REPO_CONFIGFILE_NAME
+    configfile = tmp_path / DATATREE_CONFIGFILE_NAME
     configfile.write_text("verbose: true\n")
 
     fake_ctx = make_structural_context(
         startdir=tmp_path,
-        repo_configfile_found=configfile,
+        datatree_configfile_found=configfile,
     )
     config = resolve_config(fake_ctx)
 
@@ -66,12 +66,12 @@ def test_resolve_config_repo_root_with_configfile_returns_config(tmp_path):
     assert config.verbose is True
 
 
-def test_resolve_config_repo_root_rulefile_only_uses_defaults(tmp_path):
+def test_resolve_config_datatree_root_rulefile_only_uses_defaults(tmp_path):
     """Repo root with only a rule file has configfile_used=None and uses defaults."""
     rulefile = tmp_path / "mklists.rules"
     rulefile.touch()
 
-    fake_ctx = make_structural_context(startdir=tmp_path, repo_rulefile_found=rulefile)
+    fake_ctx = make_structural_context(startdir=tmp_path, datatree_rulefile_found=rulefile)
     config = resolve_config(fake_ctx)
 
     assert config.configfile_used is None
@@ -99,15 +99,15 @@ def test_resolve_config_selfcontained_datadir_uses_local_configfile(tmp_path):
     assert config.verbose is True
 
 
-# --- is_datadir_in_repo ---
+# --- is_datadir_in_datatree ---
 
 
-def test_resolve_config_datadir_in_repo_finds_parent_configfile(tmp_path):
-    """Datadir in repo uses repo config file found in its parent directory."""
+def test_resolve_config_datadir_in_datatree_finds_parent_configfile(tmp_path):
+    """Datadir in datatree uses datatree config file found in its parent directory."""
     datadir = tmp_path / "data"
     datadir.mkdir()
-    repo_configfile = tmp_path / REPO_CONFIGFILE_NAME
-    repo_configfile.write_text("verbose: true\n")
+    datatree_configfile = tmp_path / DATATREE_CONFIGFILE_NAME
+    datatree_configfile.write_text("verbose: true\n")
     rulefile = datadir / "mklists.rules"
     rulefile.touch()
 
@@ -116,13 +116,13 @@ def test_resolve_config_datadir_in_repo_finds_parent_configfile(tmp_path):
     )
     config = resolve_config(fake_ctx)
 
-    assert config.configfile_used == repo_configfile
+    assert config.configfile_used == datatree_configfile
     assert config.config_rootdir == tmp_path  # startdir.parent
     assert config.verbose is True
 
 
-def test_resolve_config_datadir_in_repo_no_parent_configfile_uses_defaults(tmp_path):
-    """Datadir in repo with no parent config file uses defaults."""
+def test_resolve_config_datadir_in_datatree_no_parent_configfile_uses_defaults(tmp_path):
+    """Datadir in datatree with no parent config file uses defaults."""
     datadir = tmp_path / "data"
     datadir.mkdir()
     rulefile = datadir / "mklists.rules"
@@ -134,7 +134,7 @@ def test_resolve_config_datadir_in_repo_no_parent_configfile_uses_defaults(tmp_p
     config = resolve_config(fake_ctx)
 
     assert config.configfile_used is None
-    assert config.verbose is False  # This will break if default settings change.
+    assert config.verbose is True  # This will break if default settings change.
 
 
 # --- unreachable structural state ---
@@ -165,9 +165,9 @@ def test_resolve_config_else_branch_raises_structure_error(tmp_path, mocker):
     """
     mock_startdir_ctx = mocker.MagicMock()
     mock_startdir_ctx.config_rootdir = tmp_path
-    mock_startdir_ctx.is_repo_root = False
+    mock_startdir_ctx.is_datatree_root = False
     mock_startdir_ctx.is_datadir_selfcontained = False
-    mock_startdir_ctx.is_datadir_in_repo = False
+    mock_startdir_ctx.is_datadir_in_datatree = False
 
     mock_ctx = mocker.MagicMock()
     mock_ctx.startdir_context = mock_startdir_ctx
@@ -182,7 +182,7 @@ def test_resolve_config_else_branch_raises_structure_error(tmp_path, mocker):
 def test_resolve_config_returns_config_with_expected_sub_configs(tmp_path):
     """Returned Config has the expected sub-config types."""
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
+        startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
@@ -193,35 +193,34 @@ def test_resolve_config_returns_config_with_expected_sub_configs(tmp_path):
 
 
 def test_resolve_config_default_backup_values(tmp_path):
-    """Default config has backup disabled, depth 3, rootdir under config_rootdir.
-    
+    """Default config has backup disabled (backup_rootdir is None), depth 3.
+
     This test, and tests below, will fail if DEFAULT_CONFIG_YAML is changed.
     """
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
+        startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
-    assert config.backup.backup_enabled is False
+    assert config.backup.backup_rootdir is None
     assert config.backup.backup_depth == 3
-    assert config.backup.backup_rootdir == (tmp_path / "backups").resolve()
 
 
 def test_resolve_config_default_linkify_values(tmp_path):
-    """Default config has linkify disabled and linkify_dir under config_rootdir."""
+    """Default config has linkify disabled (linkify_dir is None)."""
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
+        startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
-    assert config.linkify.linkify_enabled is False
-    assert config.linkify.linkify_dir == (tmp_path / "markdown").resolve()
+    assert config.linkify.linkify_md_dir is None
+    assert config.linkify.linkify_html_dir is None
 
 
 def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):
     """Default safety patterns are compiled into re.Pattern instances."""
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_rulefile_found=tmp_path / "mklists.rules"
+        startdir=tmp_path, datatree_rulefile_found=tmp_path / "mklists.rules"
     )
     config = resolve_config(fake_ctx)
 
@@ -234,26 +233,25 @@ def test_resolve_config_default_safety_patterns_are_compiled_regexes(tmp_path):
 
 def test_resolve_config_user_yaml_overrides_defaults(tmp_path):
     """User config values override defaults while unset values stay at defaults."""
-    configfile = tmp_path / REPO_CONFIGFILE_NAME
-    configfile.write_text("backup:\n  backup_enabled: true\n  backup_depth: 5\n")
+    configfile = tmp_path / DATATREE_CONFIGFILE_NAME
+    configfile.write_text("backup:\n  backup_rootdir: backups\n  backup_depth: 5\n")
 
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_configfile_found=configfile
+        startdir=tmp_path, datatree_configfile_found=configfile
     )
     config = resolve_config(fake_ctx)
 
-    assert config.backup.backup_enabled is True
     assert config.backup.backup_depth == 5
-    assert config.backup.backup_rootdir == (tmp_path / "backups").resolve()  # default
+    assert config.backup.backup_rootdir == (tmp_path / "backups").resolve()
 
 
 def test_resolve_config_invalid_regex_in_user_configfile_raises_value_error(tmp_path):
     """Invalid regex in user config file raises ValueError."""
-    configfile = tmp_path / REPO_CONFIGFILE_NAME
+    configfile = tmp_path / DATATREE_CONFIGFILE_NAME
     configfile.write_text("safety:\n  invalid_filename_patterns:\n    - '['\n")
 
     fake_ctx = make_structural_context(
-        startdir=tmp_path, repo_configfile_found=configfile
+        startdir=tmp_path, datatree_configfile_found=configfile
     )
 
     with pytest.raises(ValueError, match="Invalid regex in config"):

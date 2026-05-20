@@ -108,7 +108,7 @@ def _dataline_matches_pattern(
 
 
 def _sort_datalines(datalines: list[str], onebased_sortkey: int | None) -> list[str]:
-    """Return datalines sorted by a one-based field index.
+    """Return datalines sorted from a one-based field index through end of line.
 
     Args:
         datalines: List of lines.
@@ -118,7 +118,9 @@ def _sort_datalines(datalines: list[str], onebased_sortkey: int | None) -> list[
         Sorted list of lines.
 
     Note:
-        Sort key `0` sorts on entire line, not a specific field (analogously to Awk).
+        Sort key `0` sorts on the entire line, not a specific field (analogously to Awk).
+        Sort key `N` sorts on the substring from field N through end of line, so
+        field N+1, N+2, etc. act as natural tiebreakers.
     """
     if onebased_sortkey is None:
         return datalines
@@ -134,6 +136,6 @@ def _sort_datalines(datalines: list[str], onebased_sortkey: int | None) -> list[
         if zerobased >= len(ruleline_fields):
             return ""
 
-        return ruleline_fields[zerobased]
+        return " ".join(ruleline_fields[zerobased:])
 
     return sorted(datalines, key=sortkey_fn)

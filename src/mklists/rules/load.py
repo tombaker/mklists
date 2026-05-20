@@ -26,18 +26,19 @@ def load_rules_for_datadir(rulefiles: list[Path]) -> list[Rule]:
         Files are processed in given list order.
     """
 
-    all_rules: list[Rule] = []
+    all_rules_with_source: list[tuple[Path, Rule]] = []
 
     for rulefile in rulefiles:
         if not rulefile.is_file():
             raise FileNotFoundError(rulefile)
 
         rules = _load_rules_from_rulefile(rulefile)
-        all_rules.extend(rules)
+        for rule in rules:
+            all_rules_with_source.append((rulefile, rule))
 
-    _validate_rulechain(all_rules)
+    _validate_rulechain(all_rules_with_source)
 
-    return all_rules
+    return [rule for _, rule in all_rules_with_source]
 
 
 def _compile_pattern(text: str) -> Pattern[str]:
@@ -229,11 +230,11 @@ def _validate_filename(filename: str) -> None:
         raise FilenameError("Filename must not start with a dot.")
 
 
-def _validate_rulechain(rules: list[Rule]) -> None:
+def _validate_rulechain(rules_with_source: list[tuple[Path, Rule]]) -> None:
     """Validate chain of Rule objects.
 
     Args:
-        rules: Chain (list) of Rule objects.
+        rules_with_source: List of (rulefile, Rule) pairs.
 
     Returns:
         None, after possibly raising exceptions.
@@ -244,14 +245,17 @@ def _validate_rulechain(rules: list[Rule]) -> None:
         A rule that is valid in isolation may be invalid in the context of a sequence
         of multiple rules.
     """
-    if not rules:
+    if not rules_with_source:
         return
 
     listnames_seen: set[str] = set()
-    listnames_seen.add(rules[0].source)
-    listnames_seen.add(rules[0].target)
+    _, first_rule = rules_with_source[0]
+    listnames_seen.add(first_rule.source)
+    listnames_seen.add(first_rule.target)
 
-    for rule in rules[1:]:
+    for rulefile, rule in rules_with_source[1:]:
         if rule.source not in listnames_seen:
-            raise RuleError(f"Source not previously seen: {rule.source!r}")
+            raise RuleError(
+                f"Source not previously seen: {rule.source!r} (in {rulefile})"
+            )
         listnames_seen.add(rule.target)

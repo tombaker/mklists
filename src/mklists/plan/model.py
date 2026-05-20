@@ -20,7 +20,7 @@ class PassPlan:
     """Execution plan for one pass of a Mklists run."""
 
     snapshot_dir: Path | None
-    snapshot_repofiles_to_copy: list[Path]
+    snapshot_datatree_configfiles: list[Path]
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,6 +47,8 @@ class RunPlan:
     datadir_plans: list[DatadirPlan]
     skipped_datadirs: list[SkippedDatadir]
     routing_dict: dict
-    linkify_dir: Path | None
+    linkify_md_dir: Path | None
+    linkify_html_dir: Path | None
+    is_datatree_root: bool
     safety: SafetyConfig
     backup: BackupPlan | None

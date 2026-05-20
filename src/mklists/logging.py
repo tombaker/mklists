@@ -1,87 +1,43 @@
-"""Initialize logger sinks and formats for a mklists run."""
+"""Initialize logger for a mklists run."""
 
-from dataclasses import dataclass
+import logging
 import sys
 from pathlib import Path
-from typing import Any
-from loguru import logger
 
-
-@dataclass(frozen=True)
-class _LogSinkSpec:
-    sink: Any
-    format: str
-    level: str
-    catch: bool = False
+logger = logging.getLogger("mklists")
 
 
 def init_logger(
     *,
     logfile: Path | None,
     verbose: bool,
-) -> Any:
-    """Initialize logger for a mklists run.
+) -> logging.Logger:
+    """Initialize the mklists logger for a run.
 
     Args:
         logfile: Path of logfile, or None if no logfile is written.
         verbose: If True, print run progress to console.
 
     Returns:
-        Global singleton Logger instance, with sinks configured.
-
-    Note:
-        Removes any existing logger sinks before adding new ones.
+        Configured Logger instance.
     """
-    logger.remove()
-
-    sink_specs = _make_logsink_specs(logfile, verbose)
-
-    for spec in sink_specs:
-        logger.add(
-            sink=spec.sink,
-            format=spec.format,
-            level=spec.level,
-            catch=spec.catch,
-        )
-
-    if sink_specs:
-        logger.info("Start mklists run.")
-
-    return logger
-
-
-def _make_logsink_specs(
-    logfile: Path | None,
-    verbose: bool,
-) -> list[_LogSinkSpec]:
-    """Return list of logsink-specification objects.
-
-    Args:
-        logfile: Absolute path of logfile, or None if no logfile is written.
-        verbose: If True, print run progress to console.
-
-    Returns:
-        List of log-sink specification objects.
-    """
-    sink_specs: list[_LogSinkSpec] = []
+    logger.setLevel(logging.DEBUG)
+    for handler in logger.handlers[:]:
+        handler.close()
+        logger.removeHandler(handler)
 
     if verbose:
-        sink_specs.append(
-            _LogSinkSpec(
-                sink=sys.stdout,
-                format="{message}",
-                level="INFO",
-            )
-        )
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(logging.Formatter("%(message)s"))
+        console_handler.setLevel(logging.INFO)
+        logger.addHandler(console_handler)
 
     if logfile is not None:
-        sink_specs.append(
-            _LogSinkSpec(
-                sink=logfile,
-                format="{time:YYYY-MM-DD HH:mm:ss} | {message}",
-                level="INFO",
-                catch=True,
-            )
+        file_handler = logging.FileHandler(logfile)
+        file_handler.setFormatter(
+            logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
         )
+        file_handler.setLevel(logging.INFO)
+        logger.addHandler(file_handler)
 
-    return sink_specs
+    return logger
