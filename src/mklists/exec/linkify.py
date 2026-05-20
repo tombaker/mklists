@@ -108,8 +108,8 @@ def _linkify_lines(text: str) -> str:
         >>> _linkify_lines("No URLs here.")
         '<pre>\\nNo URLs here.\\n</pre>\\n'
 
-        >>> _linkify_lines("See file:///path/to/file.html here.")
-        '<pre>\\nSee <a href="file:///path/to/file.html">file:///path/to/file.html</a> here.\\n</pre>\\n'
+        >>> _linkify_lines("See file:///foo/bar here.")
+        '<pre>\\nSee <a href="file:///foo/bar">file:///foo/bar</a> here.\\n</pre>\\n'
     """
     linked_text = URL_RE.sub(_replace_url, text)
     return "<pre>\n" + linked_text.rstrip("\n") + "\n</pre>\n"
