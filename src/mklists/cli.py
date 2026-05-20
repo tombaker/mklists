@@ -1,5 +1,6 @@
 """CLI entry point for mklists."""
 
+import datetime
 from pathlib import Path
 
 import click
@@ -18,6 +19,21 @@ from mklists.structure.markers import (
     DATATREE_RULEFILE_NAME,
 )
 from mklists.structure.resolve import resolve_structural_context
+
+
+def _write_date_epilog(formatter: click.HelpFormatter) -> None:
+    formatter.write_paragraph()
+    formatter.write(f"Date: {datetime.date.today().isoformat()}\n")
+
+
+class _DateGroup(click.Group):
+    def format_epilog(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        _write_date_epilog(formatter)
+
+
+class _DateCommand(click.Command):
+    def format_epilog(self, ctx: click.Context, formatter: click.HelpFormatter) -> None:
+        _write_date_epilog(formatter)
 
 
 def _echo_startdir_context(startdir: Path) -> None:
@@ -47,12 +63,12 @@ def _echo_startdir_context(startdir: Path) -> None:
     click.echo("")
 
 
-@click.group()
+@click.group(cls=_DateGroup)
 def cli() -> None:
     """Rule-based maintenance of plain-text lists."""
 
 
-@cli.group(invoke_without_command=True)
+@cli.group(cls=_DateGroup, invoke_without_command=True)
 @click.pass_context
 def init(ctx: click.Context) -> None:
     """Initialize a new datatree or datadir."""
@@ -60,7 +76,7 @@ def init(ctx: click.Context) -> None:
         click.echo(ctx.get_help())
 
 
-@init.command()
+@init.command(cls=_DateCommand)
 @click.argument("path", default=".", metavar="[PATH]")
 def datatree(path: str) -> None:
     """Initialize a new datatree (with shared mklists.rules)."""
@@ -76,7 +92,7 @@ def datatree(path: str) -> None:
     )
 
 
-@init.command()
+@init.command(cls=_DateCommand)
 @click.argument("path", default=".", metavar="[PATH]")
 @click.option(
     "--bare",
@@ -107,7 +123,7 @@ def datadir(path: str, bare: bool, self_contained: bool) -> None:
                 click.echo(f"Found in parent: {candidate}")
 
 
-@cli.command()
+@cli.command(cls=_DateCommand)
 @click.option(
     "-C",
     "directory",
@@ -179,7 +195,7 @@ def status(directory: str | None) -> None:
     click.echo(f"  Linkify HTML dir : {show(config.linkify.linkify_html_dir)}")
 
 
-@cli.command()
+@cli.command(cls=_DateCommand)
 @click.option(
     "-C",
     "directory",
