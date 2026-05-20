@@ -1,4 +1,5 @@
 # Custom ignore rules from mklists project
+prg/
 qst.txt
 site/
 pytest_ignored.txt

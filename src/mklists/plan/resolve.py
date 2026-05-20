@@ -97,7 +97,7 @@ def _resolve_datadir_plans(
     skipped_datadirs: list[SkippedDatadir] = []
 
     for datadir_ctx in structural_context.datadir_contexts:
-        if datadir_ctx.datadir_configfile_found is not None:
+        if startdir_context.is_datatree_root and datadir_ctx.datadir_configfile_found is not None:
             skipped_datadirs.append(
                 SkippedDatadir(
                     datadir=datadir_ctx.datadir,
