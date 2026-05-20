@@ -27,6 +27,8 @@ pylint = "^4.0.4"
 ruff = "^0.14.11"
 ipython = "^9.9.0"
 mypy = "^1.19.1"
+mkdocs = "^1.6"
+mkdocs-material = "^9.7.6"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
