@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "Running pytest"
+pytest
+echo "Running 'ctags -R --languages=python --languages=-TOML --exclude=.git --exclude=build .'"
+ctags -R --languages=python --languages=-TOML --exclude=.git --exclude=build .
+echo
+echo '======================================================'
+echo "Running pylint - configure with /Users/tbaker/github/tombaker/mklists/pylintrc (setup.cfg is for flake8)"
+pylint src/mklists/
+echo "End of pylint output"

@@ -21,6 +21,17 @@ pipx install --editable /Users/tbaker/github/tombaker/mklists
 
 `pipx` creates an isolated virtual environment for the tool and symlinks the `mklists` entry point into `~/.local/bin` (which is on `PATH`). The `--editable` flag installs from the local source tree, so edits to the source take effect immediately without reinstalling.
 
+## Git hooks
+
+The `hooks/` directory is version-controlled and contains a `pre-commit` hook
+that runs pytest, ctags, and pylint before every commit. Git must be told to
+use it — this setting is stored in `.git/config` and is not tracked, so it must
+be set once per clone:
+
+```bash
+git config core.hooksPath hooks
+```
+
 ## Commands
 
 Do NOT run `pytest` or any test commands. The user runs tests independently.
