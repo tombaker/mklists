@@ -63,4 +63,4 @@ def _unique_destination_filename(
     stem = datadir.name
     src = Path(filename)
     ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%f")
-    return dest_dir / f"{ts}.{stem}.{src.name}"
+    return dest_dir / f"{ts}.{src.name}.{stem}"

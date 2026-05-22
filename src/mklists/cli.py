@@ -148,8 +148,8 @@ def datadir(path: str, bare: bool, self_contained: bool) -> None:
     "-C",
     "directory",
     default=None,
-    metavar="<path>",
-    help="Show status as if started in <path> instead of current directory.",
+    metavar="PATH",
+    help="Show status as if run in PATH instead of CWD.",
 )
 def status(directory: str | None) -> None:
     """Show current directory's mklists structural context and configuration."""
@@ -220,11 +220,16 @@ def status(directory: str | None) -> None:
     "-C",
     "directory",
     default=None,
-    metavar="<path>",
-    help="Run as if started in <path> instead of current directory.",
+    metavar="[PATH]",
+    help="Run as if started in PATH instead of CWD.",
 )
 def run(directory: str | None) -> None:
-    """Run mklists against current directory."""
+    """Run mklists in CWD.
+
+    If run in datadir, processes that datadir only.
+
+    If run in datatree, processes all datadirs in datatree.
+    """
     startdir = Path(directory).resolve() if directory else Path.cwd()
     try:
         structural_context = resolve_structural_context(startdir)

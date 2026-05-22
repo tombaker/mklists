@@ -6,7 +6,7 @@ from mklists.exec.routing import _unique_destination_filename
 
 
 def test_unique_destination_filename(tmp_path: Path):
-    """Result is always timestamped: {ts}.{datadir}.{filename}."""
+    """Result is always timestamped: {ts}.{filename}.{datadir}."""
     datadir = tmp_path / "data_a"
     datadir.mkdir()
 
@@ -20,5 +20,5 @@ def test_unique_destination_filename(tmp_path: Path):
     )
 
     assert dest_path.parent == dest_dir
-    assert re.match(r"^\d{8}T\d{12}\.data_a\.to_a\.txt$", dest_path.name)
+    assert re.match(r"^\d{8}T\d{12}\.to_a\.txt\.data_a$", dest_path.name)
     assert not dest_path.exists()

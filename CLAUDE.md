@@ -52,6 +52,19 @@ means Claude will know to look at this project for reference without being told
 the path, but the actual work happens in whichever project `claude` was started
 from.
 
+## MkDocs live reload
+
+Due to a regression in Click 8.3.x, `mkdocs serve` starts with live reload
+silently disabled: Click resolves the `--livereload/--no-livereload` flag pair's
+default to `False` instead of `True`, so the file watcher is never started and
+edits are not detected.
+
+Always pass `--livereload` explicitly:
+
+```bash
+mkdocs serve --livereload
+```
+
 ## Commands
 
 Do NOT run `pytest` or any test commands. The user runs tests independently.

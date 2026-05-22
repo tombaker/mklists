@@ -17,5 +17,9 @@ Options:
 
 Date: 2026-05-20
 ```
-`mklists.yaml` is always written with `DEFAULT_CONFIG_YAML`.
-`mklists.rules` is always written with `EXAMPLE_RULES`.
+
+Note:
+
+- `mklists.yaml` is always written with `DEFAULT_CONFIG_YAML`.
+
+- `mklists.rules` is always written with `EXAMPLE_RULES`.
