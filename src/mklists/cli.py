@@ -122,25 +122,26 @@ def datadir(path: str, bare: bool, self_contained: bool) -> None:
     By default, creates a `.rules` file with commented example content.
     """
     resolved = Path(path).resolve()
-    try:
-        written = init_datadir(resolved, bare=bare, self_contained=self_contained)
-    except MklistsError as e:
-        raise click.ClickException(str(e)) from e
-    for file_path in written:
-        click.echo(f"Wrote {file_path}")
+    found_in_parent = []
     if not self_contained:
         parent = resolved.parent
-        found_in_parent = []
         for name in (DATATREE_CONFIGFILE_NAME, DATATREE_RULEFILE_NAME):
             candidate = parent / name
             if candidate.is_file():
                 found_in_parent.append(candidate)
-                click.echo(f"Found in parent: {candidate}")
-        if not found_in_parent:
-            click.echo(
-                f"Warning: no {DATATREE_CONFIGFILE_NAME} or {DATATREE_RULEFILE_NAME}"
-                f" found in parent directory ({parent})."
-            )
+    try:
+        written = init_datadir(resolved, bare=bare, self_contained=self_contained)
+    except MklistsError as e:
+        raise click.ClickException(str(e)) from e
+    for candidate in found_in_parent:
+        click.echo(f"Found in parent: {candidate}")
+    if not self_contained and not found_in_parent:
+        click.echo(
+            f"Warning: no {DATATREE_CONFIGFILE_NAME} or {DATATREE_RULEFILE_NAME}"
+            f" found in parent directory ({parent})."
+        )
+    for file_path in written:
+        click.echo(f"Wrote {file_path}")
 
 
 @cli.command(cls=_DateCommand)
