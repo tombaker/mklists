@@ -1,10 +1,9 @@
 """Tests $MKLMKL/exec/process_datalines.py"""
 
-from dataclasses import dataclass
 import re
 import pytest
 from mklists.errors import DataNotFoundError, RulesNotFoundError
-from mklists.rules import Rule
+from mklists.rules import Rule, SortKey
 from mklists.exec.process_datalines import dispatch_datalines_to_targets
 
 
@@ -24,7 +23,7 @@ def test_apply_rules_moves_matching_lines():
             source_matchpattern=re.compile(r"beta"),
             source="in",
             target="out",
-            target_sortkey=0,
+            target_sortkeys=[SortKey(field=0)],
         )
     ]
 
@@ -50,7 +49,7 @@ def test_apply_rules_fails_when_no_datalines():
             target="out",
             source_matchpattern=re.compile(r".*"),
             source_matchfield=0,
-            target_sortkey=0,
+            target_sortkeys=[SortKey(field=0)],
         )
     ]
 
@@ -66,7 +65,7 @@ def test_apply_rules_single_rule_no_matches():
             target="out",
             source_matchpattern=re.compile(r"delta"),
             source_matchfield=1,
-            target_sortkey=0,
+            target_sortkeys=[SortKey(field=0)],
         )
     ]
 
@@ -89,7 +88,7 @@ def test_apply_rules_single_rule_all_lines_match():
             target="out",
             source_matchpattern=re.compile(r".*"),
             source_matchfield=0,
-            target_sortkey=0,
+            target_sortkeys=[SortKey(field=0)],
         )
     ]
 
@@ -119,14 +118,14 @@ def test_apply_rules_two_rules_chain_lines_through_targets():
             target="mid",
             source_matchpattern=re.compile(r"beta"),
             source_matchfield=1,
-            target_sortkey=0,
+            target_sortkeys=[SortKey(field=0)],
         ),
         Rule(
             source="mid",
             target="out",
             source_matchpattern=re.compile(r"one"),
             source_matchfield=2,
-            target_sortkey=0,
+            target_sortkeys=[SortKey(field=0)],
         ),
     ]
 
@@ -151,7 +150,7 @@ def test_apply_rules_sorts_target_by_field():
             target="out",
             source_matchpattern=re.compile(r".*"),
             source_matchfield=0,
-            target_sortkey=2,  # sort on second field
+            target_sortkeys=[SortKey(field=2)],
         )
     ]
 
@@ -170,14 +169,14 @@ def test_apply_rules_initializes_all_rule_keys():
             target="mid",
             source_matchpattern=re.compile(r"beta"),
             source_matchfield=1,
-            target_sortkey=0,
+            target_sortkeys=[SortKey(field=0)],
         ),
         Rule(
             source="mid",
             target="out",
             source_matchpattern=re.compile(r"gamma"),
             source_matchfield=1,
-            target_sortkey=0,
+            target_sortkeys=[SortKey(field=0)],
         ),
     ]
 

@@ -6,19 +6,19 @@ from mklists.config.model import SafetyConfig
 from mklists.errors import SafetyError
 from mklists.exec.process_datadirs import process_datadir
 from mklists.plan.model import DatadirPlan
-from mklists.rules.model import Rule
+from mklists.rules.model import Rule, SortKey
 
 
 _SAFETY = SafetyConfig(invalid_filename_patterns=[])
 
 
-def _rule(source, target, pattern=".", field=0, sortkey=None):
+def _rule(source, target, pattern=".", field=0, sortkeys=None):
     return Rule(
         source_matchfield=field,
         source_matchpattern=re.compile(pattern),
         source=source,
         target=target,
-        target_sortkey=sortkey,
+        target_sortkeys=sortkeys,
     )
 
 

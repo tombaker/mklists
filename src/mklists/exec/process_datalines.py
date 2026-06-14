@@ -8,10 +8,13 @@ Dispatch lines according to rules,
 with fan-out behavior and routing semantics.
 """
 
+import functools
 import re
 from typing import Pattern
-from mklists.errors import RulesNotFoundError, DataNotFoundError
+
+from mklists.errors import DataNotFoundError, RulesNotFoundError
 from mklists.rules import Rule
+from mklists.rules.model import SortKey
 
 
 def dispatch_datalines_to_targets(
@@ -59,10 +62,9 @@ def dispatch_datalines_to_targets(
         lines_dict[rule.target].extend(matched)
 
         target_lines = lines_dict[rule.target]
-        sortkey = rule.target_sortkey
         lines_dict[rule.target] = _sort_datalines(
             datalines=target_lines,
-            onebased_sortkey=sortkey,
+            sortkeys=rule.target_sortkeys,
         )
 
     return lines_dict
@@ -107,35 +109,50 @@ def _dataline_matches_pattern(
     return False
 
 
-def _sort_datalines(datalines: list[str], onebased_sortkey: int | None) -> list[str]:
-    """Return datalines sorted from a one-based field index through end of line.
+def _sort_datalines(datalines: list[str], sortkeys: list[SortKey] | None) -> list[str]:
+    """Return datalines sorted by an ordered list of sort keys.
 
     Args:
         datalines: List of lines.
-        onebased_sortkey: Sort key (one-based field number, as in Awk).
+        sortkeys: Ordered list of SortKey objects, or None for no sorting.
 
     Returns:
         Sorted list of lines.
 
     Note:
-        Sort key `0` sorts on the entire line, not a specific field (analogously to Awk).
-        Sort key `N` sorts on the substring from field N through end of line, so
-        field N+1, N+2, etc. act as natural tiebreakers.
+        Field numbers are one-based (as in Awk); field 0 sorts on the entire line.
+        Missing fields compare as empty string.
     """
-    if onebased_sortkey is None:
+    if sortkeys is None:
         return datalines
 
-    if onebased_sortkey == 0:
-        return sorted(datalines)
+    def compare(a: str, b: str) -> int:
+        af = a.split()
+        bf = b.split()
+        for sk in sortkeys:
+            if sk.field == 0:
+                av: str = a
+                bv: str = b
+            else:
+                idx = sk.field - 1
+                av = af[idx] if idx < len(af) else ""
+                bv = bf[idx] if idx < len(bf) else ""
+            if sk.casefold:
+                av, bv = av.casefold(), bv.casefold()
+            if sk.numeric:
+                try:
+                    lt = float(av) < float(bv)
+                    gt = float(av) > float(bv)
+                except ValueError:
+                    lt = av < bv
+                    gt = av > bv
+            else:
+                lt = av < bv
+                gt = av > bv
+            if lt:
+                return 1 if sk.reverse else -1
+            if gt:
+                return -1 if sk.reverse else 1
+        return 0
 
-    zerobased = onebased_sortkey - 1
-
-    def sortkey_fn(line: str) -> str:
-        """Compute sort text using zero-based field index captured from closure."""
-        ruleline_fields = line.split()
-        if zerobased >= len(ruleline_fields):
-            return ""
-
-        return " ".join(ruleline_fields[zerobased:])
-
-    return sorted(datalines, key=sortkey_fn)
+    return sorted(datalines, key=functools.cmp_to_key(compare))

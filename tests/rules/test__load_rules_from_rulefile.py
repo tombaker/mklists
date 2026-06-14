@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 import pytest
 from mklists.errors import RuleError
-from mklists.rules.model import Rule
+from mklists.rules.model import Rule, SortKey
 from mklists.rules.load import _load_rules_from_rulefile
 
 
@@ -66,7 +66,7 @@ def test_single_valid_rule_is_loaded(tmp_path):
             source_matchpattern=re.compile("^abc$"),
             source="source",
             target="target",
-            target_sortkey=1,
+            target_sortkeys=[SortKey(field=1)],
         )
     ]
 

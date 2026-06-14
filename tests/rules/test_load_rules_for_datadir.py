@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 import pytest
 from mklists.errors import RuleError
-from mklists.rules.model import Rule
+from mklists.rules.model import Rule, SortKey
 from mklists.rules.load import load_rules_for_datadir
 
 
@@ -32,7 +32,7 @@ def test_single_rulefile(tmp_path):
             source_matchpattern=re.compile("foo"),
             source="A",
             target="B",
-            target_sortkey=None,
+            target_sortkeys=None,
         )
     ]
 
@@ -53,14 +53,14 @@ def test_multiple_rulefiles_merge_in_order(tmp_path):
             source_matchpattern=re.compile("foo"),
             source="A",
             target="B",
-            target_sortkey=None,
+            target_sortkeys=None,
         ),
         Rule(
             source_matchfield=0,
             source_matchpattern=re.compile("bar"),
             source="B",
             target="C",
-            target_sortkey=None,
+            target_sortkeys=None,
         ),
     ]
 
@@ -93,7 +93,7 @@ def test_empty_rulefile_ok(tmp_path):
             source_matchpattern=re.compile("bar"),
             source="A",
             target="B",
-            target_sortkey=None,
+            target_sortkeys=None,
         )
     ]
 

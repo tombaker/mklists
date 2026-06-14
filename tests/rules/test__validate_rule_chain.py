@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 from mklists.errors import RuleError
-from mklists.rules.model import Rule
+from mklists.rules.model import Rule, SortKey
 from mklists.rules.load import _validate_rulechain
 
 _FAKE_RULEFILE = Path("/fake/rules")
@@ -19,7 +19,7 @@ def minimal_rule(source, target):
             source_matchpattern=None,  # not relevant here
             source=source,
             target=target,
-            target_sortkey=1,  # not relevant here
+            target_sortkeys=[SortKey(field=1)],  # not relevant here
         ),
     )
 

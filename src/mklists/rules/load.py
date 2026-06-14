@@ -3,8 +3,9 @@
 import re
 from pathlib import Path
 from typing import Iterable, Pattern
-from mklists.errors import RuleError, FilenameError
-from mklists.rules.model import Rule
+
+from mklists.errors import FilenameError, RuleError
+from mklists.rules.model import Rule, SortKey
 
 FIELD_COUNT = 5
 PIPE = "|"
@@ -98,6 +99,31 @@ def _load_rules_from_rulefile(rulefile: Path) -> list[Rule]:
     return rules
 
 
+def _parse_sort_spec(raw: str) -> SortKey:
+    """Parse one sort-key spec (e.g. '3', '1r', '2fn') into a SortKey.
+
+    Args:
+        raw: Single sort spec string (field digits followed by optional modifiers).
+
+    Returns:
+        SortKey with field number and modifier flags.
+
+    Raises:
+        RuleError: Spec does not match the expected format.
+    """
+    m = re.fullmatch(r"(\d+)([rnf]*)", raw.strip())
+    if not m:
+        raise RuleError(f"Invalid sort spec: {raw!r}")
+    field = int(m.group(1))
+    modifiers = m.group(2)
+    return SortKey(
+        field=field,
+        reverse="r" in modifiers,
+        numeric="n" in modifiers,
+        casefold="f" in modifiers,
+    )
+
+
 def _parse_rule(ruleline_fields: list[str]) -> Rule:
     """Convert list of raw rule line fields into validated Rule object.
 
@@ -126,8 +152,10 @@ def _parse_rule(ruleline_fields: list[str]) -> Rule:
         4. Target list:
            Name of list to which matching lines are appended.
 
-        5. Target sort field:
-           Integer specifying which field of target line is used for sorting.
+        5. Target sort fields:
+           Comma-separated list of sort specs (e.g. '3', '1,3', '1r,3n').
+           Each spec is a field number (one-based; 0 = whole line) followed
+           by optional modifiers: r=reverse, n=numeric, f=fold-case.
     """
     (raw_matchfield, raw_pattern, raw_source, raw_target, raw_sortorder) = (
         ruleline_fields
@@ -146,15 +174,10 @@ def _parse_rule(ruleline_fields: list[str]) -> Rule:
         raise RuleError("Source match field must be zero or greater.")
 
     if raw_sortorder.strip() == "":
-        target_sortkey = None
+        target_sortkeys = None
     else:
-        try:
-            target_sortkey = int(raw_sortorder)
-        except ValueError as e:
-            raise RuleError("Target sort order must be an integer if specified.") from e
-
-        if target_sortkey < 0:
-            raise RuleError("Target sort field must be a positive integer.")
+        specs = [s for s in raw_sortorder.split(",") if s.strip()]
+        target_sortkeys = [_parse_sort_spec(s) for s in specs]
 
     source_matchpattern = _compile_pattern(raw_pattern)
     source = raw_source.strip()
@@ -172,7 +195,7 @@ def _parse_rule(ruleline_fields: list[str]) -> Rule:
         source_matchpattern=source_matchpattern,
         source=source,
         target=target,
-        target_sortkey=target_sortkey,
+        target_sortkeys=target_sortkeys,
     )
 
 
