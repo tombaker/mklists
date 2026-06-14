@@ -1,14 +1,14 @@
-# Multi-key sort: design analysis
+# Multi-key sort
 
 ## Problem
 
-The current sort key (fifth rule field) accepts a single integer that sorts by
-"field N through end of line."  This means all lines dispatched to a target
-file are sorted by one key only, and fields that carry type information (e.g.
-`bookmark` vs `filehandle` in field 1) cannot be used as a primary group.
+The original sort key (fifth rule field) accepted a single integer that sorted
+by "field N through end of line."  This meant all lines dispatched to a target
+file were sorted by one key only, so fields that carry type information (e.g.
+`bookmark` vs `filehandle` in field 1) could not be used as a primary group.
 
 Concretely: with `sortkey=3`, lines whose field 3 (a file path) falls under the
-same directory are interleaved regardless of their field-1 type:
+same directory were interleaved regardless of their field-1 type:
 
 ```
 bookmark CTRB      /Users/tbaker/Dropbox/WORKSPACES/CTRB
@@ -29,10 +29,10 @@ filehandle :Flatsrap /Users/tbaker/Dropbox/WORKSPACES/FLATSRAP/index.md
 
 ---
 
-## Proposed rule syntax
+## Rule syntax
 
 The fifth field accepts a comma-separated list of sort-key specs.  Each spec is
-a field number (1-based, 0 = whole line) optionally followed by one or more
+a field number (1-based; 0 = whole line) optionally followed by one or more
 single-character modifiers:
 
 ```
@@ -42,7 +42,9 @@ single-character modifiers:
 1f,3n       →  primary field 1 case-insensitive, secondary field 3 numeric
 ```
 
-The rule for the workspaces example becomes:
+Whitespace around commas and specs is ignored: `1, 3` is identical to `1,3`.
+
+The rule for the workspaces example:
 
 ```
 3|tbaker.Dropbox.WORKSPACES|tbaker_dropbox|tbaker_dropbox_workspaces|1,3
@@ -55,10 +57,11 @@ The rule for the workspaces example becomes:
 | Modifier | Meaning | Implementation |
 |---|---|---|
 | `r` | Reverse (descending) | Flip comparison sign in the comparator |
-| `n` | Numeric | Compare as `float`; fall back to string on `ValueError` |
+| `n` | Numeric | Compare as `float`; fall back to string comparison on `ValueError` |
 | `f` | Fold case (case-insensitive) | Apply `str.casefold()` to the field value before comparing |
 
-Modifiers may be combined: `1fr` = field 1, case-insensitive, descending.
+Modifiers may be combined on a single spec: `2rn` = field 2, numeric,
+descending.  Order of modifier letters within a spec does not matter.
 
 ### Why not other Unix `sort` modifiers
 
@@ -75,13 +78,13 @@ Modifiers may be combined: `1fr` = field 1, case-insensitive, descending.
 
 ## Breaking change
 
-The current behavior of a single integer `N` sorts by
+The original behavior of a single integer `N` sorted by
 `" ".join(fields[N-1:])` — field N concatenated with all trailing fields, so
-they act as implicit tiebreakers.
+they acted as implicit tiebreakers.
 
 Under the new design, `N` (as a single-element sort spec) sorts on exact field
-N only.  Rules that happen to rely on trailing fields for tiebreaking will
-produce different output.
+N only.  Rules that relied on trailing fields for tiebreaking will produce
+different output.
 
 In practice this matters only when field N is non-unique and the trailing fields
 previously determined the final order.  The fix is to make the tiebreaker
@@ -89,59 +92,11 @@ explicit: `N,N+1` etc.
 
 ---
 
-## Files to change
+## Implementation
 
-| File | Change |
-|---|---|
-| `rules/model.py` | Add `SortKey` dataclass (`field: int`, `reverse: bool`, `numeric: bool`, `casefold: bool`); replace `Rule.target_sortkey: int \| None` with `Rule.target_sortkeys: list[SortKey] \| None` |
-| `rules/load.py` | Update `_parse_rule` to parse comma-separated sort specs with modifier suffixes |
-| `exec/process_datalines.py` | Replace `_sort_datalines` with a `functools.cmp_to_key` comparator that iterates over `SortKey` list |
-| `tests/rules/` and `tests/exec/` | Update and extend tests accordingly |
-
----
-
-## Implementation sketch
-
-```python
-# rules/model.py
-@dataclass(frozen=True)
-class SortKey:
-    field: int
-    reverse: bool = False
-    numeric: bool = False
-    casefold: bool = False
-
-# exec/process_datalines.py
-import functools
-
-def _sort_datalines(datalines: list[str], sortkeys: list[SortKey] | None) -> list[str]:
-    if sortkeys is None:
-        return datalines
-
-    def compare(a: str, b: str) -> int:
-        af, bf = a.split(), b.split()
-        for sk in sortkeys:
-            if sk.field == 0:
-                av, bv = a, b
-            else:
-                idx = sk.field - 1
-                av = af[idx] if idx < len(af) else ""
-                bv = bf[idx] if idx < len(bf) else ""
-            if sk.casefold:
-                av, bv = av.casefold(), bv.casefold()
-            if sk.numeric:
-                try:
-                    av_cmp: float | str = float(av)
-                    bv_cmp: float | str = float(bv)
-                except ValueError:
-                    av_cmp, bv_cmp = av, bv
-            else:
-                av_cmp, bv_cmp = av, bv
-            if av_cmp < bv_cmp:
-                return 1 if sk.reverse else -1
-            if av_cmp > bv_cmp:
-                return -1 if sk.reverse else 1
-        return 0
-
-    return sorted(datalines, key=functools.cmp_to_key(compare))
-```
+- `rules/model.py` — `SortKey` dataclass (`field: int`, `reverse: bool`,
+  `numeric: bool`, `casefold: bool`); `Rule.target_sortkeys: list[SortKey] | None`
+- `rules/load.py` — `_parse_sort_spec` parses one spec; `_parse_rule` splits
+  the fifth field on commas and produces a `list[SortKey]`
+- `exec/process_datalines.py` — `_sort_datalines` uses `functools.cmp_to_key`
+  with a comparator that iterates over the `SortKey` list
