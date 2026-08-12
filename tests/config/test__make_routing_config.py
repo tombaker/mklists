@@ -50,3 +50,12 @@ def test_make_routing_config_dirname_resolved_against_config_rootdir(tmp_path):
     )
 
     assert cfg.routing_dict["file.txt"] == (tmp_path / "dest").resolve()
+
+
+def test_make_routing_config_dotdot_dirname_raises(tmp_path):
+    """A bare '..' has a single path component but must still be rejected."""
+    with pytest.raises(ValueError, match="must be a directory name or absolute path"):
+        _make_routing_config(
+            config_dict=_config_dict({"file.txt": ".."}),
+            config_rootdir=tmp_path,
+        )

@@ -267,7 +267,7 @@ def _make_backup_config(
     backup_rootdir = Path(backup_rootdir_raw)
 
     if not backup_rootdir.is_absolute():
-        if len(backup_rootdir.parts) != 1:
+        if len(backup_rootdir.parts) != 1 or backup_rootdir.parts[0] == "..":
             raise ValueError(
                 f"{str(backup_rootdir)!r} must be directory name or absolute path, "
                 "not relative."
@@ -307,11 +307,13 @@ def _make_routing_config(
             )
 
         # --- Validate / normalize dirname (value) ---
-        if not Path(dirname).is_absolute() and len(Path(dirname).parts) != 1:
-            raise ValueError(
-                f"{dirname!r} (in `routing_dict`) must be a directory name or "
-                "absolute path, not a relative path."
-            )
+        dirname_path = Path(dirname)
+        if not dirname_path.is_absolute():
+            if len(dirname_path.parts) != 1 or dirname_path.parts[0] == "..":
+                raise ValueError(
+                    f"{dirname!r} (in `routing_dict`) must be a directory name or "
+                    "absolute path, not a relative path."
+                )
 
         routing_dict[filename] = (config_rootdir / dirname).resolve()
 
@@ -364,7 +366,14 @@ def _make_linkify_config(
     def _resolve_dir(raw: str | None) -> Path | None:
         if raw is None:
             return None
-        return (config_rootdir / raw).resolve()
+        raw_path = Path(raw)
+        if not raw_path.is_absolute():
+            if len(raw_path.parts) != 1 or raw_path.parts[0] == "..":
+                raise ValueError(
+                    f"{raw!r} (in `linkify`) must be a directory name or "
+                    "absolute path, not a relative path."
+                )
+        return (config_rootdir / raw_path).resolve()
 
     return LinkifyConfig(
         linkify_md_dir=_resolve_dir(linkify_raw["linkify_md_dir"]),

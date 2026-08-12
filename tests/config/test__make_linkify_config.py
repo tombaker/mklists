@@ -55,3 +55,30 @@ def test_make_linkify_config_both_dirs_set(tmp_path):
 
     assert cfg.linkify_md_dir == (tmp_path / ".linkify").resolve()
     assert cfg.linkify_html_dir == (tmp_path / ".linkify_html").resolve()
+
+
+def test_make_linkify_config_relative_dirname_with_multiple_parts_raises(tmp_path):
+    """Relative value with more than one path component is invalid."""
+    with pytest.raises(ValueError, match="must be a directory name or absolute path"):
+        _make_linkify_config(
+            config_dict=_config_dict(linkify_md_dir="subdir/md"),
+            config_rootdir=tmp_path,
+        )
+
+
+def test_make_linkify_config_dotdot_alone_raises(tmp_path):
+    """A bare '..' has a single path component but must still be rejected."""
+    with pytest.raises(ValueError, match="must be a directory name or absolute path"):
+        _make_linkify_config(
+            config_dict=_config_dict(linkify_md_dir=".."),
+            config_rootdir=tmp_path,
+        )
+
+
+def test_make_linkify_config_dotdot_prefixed_value_raises(tmp_path):
+    """A relative value climbing out via '..' is invalid, even combined with a name."""
+    with pytest.raises(ValueError, match="must be a directory name or absolute path"):
+        _make_linkify_config(
+            config_dict=_config_dict(linkify_html_dir="../_html"),
+            config_rootdir=tmp_path,
+        )

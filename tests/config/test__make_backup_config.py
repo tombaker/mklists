@@ -95,3 +95,22 @@ def test_make_backup_config_rejects_nested_relative_backup_rootdir(tmp_path):
             config_dict=config_dict,
             config_rootdir=tmp_path,
         )
+
+
+def test_make_backup_config_rejects_dotdot_backup_rootdir(tmp_path):
+    """A bare '..' has a single path component but must still be rejected."""
+    config_dict = {
+        "backup": {
+            "backup_rootdir": "..",
+            "backup_depth": 3,
+        }
+    }
+
+    with pytest.raises(
+        ValueError,
+        match=r".+ must be directory name or absolute path, not relative\.",
+    ):
+        _make_backup_config(
+            config_dict=config_dict,
+            config_rootdir=tmp_path,
+        )
