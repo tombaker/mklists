@@ -88,7 +88,7 @@ def datatree(path: str) -> None:
     By default, `mklists init datatree` creates `mklists.yaml` and 
     `mklists.rules` with commented example content.
 
-    Datadirs are created in the datatree with `mklists init datatree`.
+    Datadirs are created in datatree with `mklists init datatree`.
     """
     resolved = Path(path).resolve()
     try:
@@ -98,7 +98,7 @@ def datatree(path: str) -> None:
     for file_path in written:
         click.echo(f"Wrote {file_path}")
     click.echo(
-        "To add a datadir under this root, run: mklists init datadir <path>"
+        "To add a datadir under this root, run: mklists init datadir <path>."
     )
 
 
@@ -114,7 +114,7 @@ def datatree(path: str) -> None:
     "--self-contained",
     is_flag=True,
     default=False,
-    help="Write .mklistsrc, marking the datadir as self-contained.",
+    help="Write .mklistsrc, marking datadir as self-contained.",
 )
 def datadir(path: str, bare: bool, self_contained: bool) -> None:
     """Initialize a new datadir.
