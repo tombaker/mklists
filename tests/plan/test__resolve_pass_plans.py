@@ -148,6 +148,34 @@ def test_routing_enabled_multiple_datadirs_returns_two_passes(tmp_path):
     assert len(result) == 2
 
 
+# ----- explicit passes -------------------------------------------------------
+
+
+def test_passes_1_overrides_routing_default_of_two(tmp_path):
+    """Routing enabled, multiple datadirs, passes=1: one pass."""
+    sc = fake_make_structural_context(tmp_path, num_datadirs=2)
+    cc = fake_make_config(backup_enabled=True, routing_enabled=True)
+    result = _resolve_pass_plans(structural_context=sc, config=cc, passes=1)
+    assert len(result) == 1
+
+
+def test_passes_3_overrides_default_of_one(tmp_path):
+    """Routing disabled, passes=3: three passes with suffixes '_01' to '_03'."""
+    sc = fake_make_structural_context(tmp_path)
+    cc = fake_make_config(backup_enabled=True, routing_enabled=False)
+    result = _resolve_pass_plans(structural_context=sc, config=cc, passes=3)
+    assert len(result) == 3
+    assert result[2].snapshot_dir.name.endswith("_03")
+
+
+def test_passes_none_uses_default(tmp_path):
+    """passes=None: routing enabled, multiple datadirs, default two passes."""
+    sc = fake_make_structural_context(tmp_path, num_datadirs=2)
+    cc = fake_make_config(backup_enabled=False, routing_enabled=True)
+    result = _resolve_pass_plans(structural_context=sc, config=cc, passes=None)
+    assert len(result) == 2
+
+
 # ----- snapshot_dir paths ----------------------------------------------------
 
 

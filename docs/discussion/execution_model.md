@@ -3,7 +3,7 @@
 `mklists` processes data across three nested levels of scope:
 
 1. **Run** — a single invocation; loads config, discovers directories, generates a timestamp
-2. **Pass** — one complete sweep over all data directories (default: 1 pass; 2 passes when routing is enabled and there are multiple data directories); owns per-pass invariants such as the backup directory
+2. **Pass** — one complete sweep over all data directories (default: 1 pass; 2 passes when routing is enabled and there are multiple data directories; overridden with `mklists run --passes N`); owns per-pass invariants such as the backup directory
 3. **Datadir** — processes a single directory: safety checks → read files → apply rules (pre-loaded in plan) → delete old files → write new files
 
 ## High-level call graph

@@ -19,12 +19,14 @@ def resolve_run_plan(
     *,
     structural_context: StructuralContext,
     config: Config,
+    passes: int | None = None,
 ) -> RunPlan:
     """Construct executable plan for this run.
 
     Args:
         structural_context: Execution context for one Mklists run.
         config: Instance of configuration object Config.
+        passes: Number of passes requested (None for the default).
 
     Returns:
         RunPlan object, holding info needed for execution.
@@ -33,6 +35,7 @@ def resolve_run_plan(
     pass_plans = _resolve_pass_plans(
         structural_context=structural_context,
         config=config,
+        passes=passes,
     )
 
     # ----- linkify ---------------------------------------------------
@@ -129,12 +132,14 @@ def _resolve_pass_plans(
     *,
     structural_context: StructuralContext,
     config: Config,
+    passes: int | None = None,
 ) -> list[PassPlan]:
     """Construct executable plan for this run.
 
     Args:
         structural_context: Execution context for one Mklists run.
         config: Instance of configuration object Config.
+        passes: Number of passes requested (None for the default).
 
     Returns:
         List of PassPlan instances.
@@ -142,10 +147,13 @@ def _resolve_pass_plans(
     config_rootdir = structural_context.startdir_context.config_rootdir
     datadir_contexts = structural_context.datadir_contexts
 
-    # Determine pass count.
-    pass_count = 1
-    if config.routing.routing_dict and len(datadir_contexts) > 1:
+    # Determine pass count: explicit request, else 2 if routing among datadirs.
+    if passes is not None:
+        pass_count = passes
+    elif config.routing.routing_dict and len(datadir_contexts) > 1:
         pass_count = 2
+    else:
+        pass_count = 1
 
     # Determine snapshot fields (None when backup disabled).
     if not config.backup.backup_rootdir:

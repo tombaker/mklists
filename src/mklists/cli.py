@@ -222,7 +222,14 @@ def status(directory: str | None) -> None:
     metavar="[PATH]",
     help="Run as if started in PATH instead of CWD.",
 )
-def run(directory: str | None) -> None:
+@click.option(
+    "--passes",
+    type=click.IntRange(min=1),
+    default=None,
+    metavar="N",
+    help="Make N passes (default: 2 if routing among datadirs, else 1).",
+)
+def run(directory: str | None, passes: int | None) -> None:
     """Run mklists in CWD.
 
     If run in datadir, processes that datadir only.
@@ -239,7 +246,7 @@ def run(directory: str | None) -> None:
         config = resolve_config(structural_context)
         init_logger(logfile=None, verbose=config.verbose)
         run_plan = resolve_run_plan(
-            structural_context=structural_context, config=config
+            structural_context=structural_context, config=config, passes=passes
         )
         empty_datadirs = run_mklists(run_plan)
     except MklistsError as e:
