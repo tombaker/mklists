@@ -20,7 +20,9 @@ def test_collect_valid_keys_flat():
 
 def test_collect_valid_keys_nested():
     """Nested dict yields both parent and child keys as dotted paths."""
-    result = _collect_valid_keys({"linkify": {"linkify_md_dir": None, "linkify_html_dir": None}})
+    result = _collect_valid_keys(
+        {"linkify": {"linkify_md_dir": None, "linkify_html_dir": None}}
+    )
     assert result == ["linkify", "linkify.linkify_md_dir", "linkify.linkify_html_dir"]
 
 

@@ -83,4 +83,6 @@ def _run_linkify(*, run_plan: RunPlan, datadirs: list[Path]) -> None:
     if run_plan.linkify_md_dir:
         linkify_md_datadirs(datadirs=datadirs, linkify_md_dir=run_plan.linkify_md_dir)
     if run_plan.linkify_html_dir:
-        linkify_html_datadirs(datadirs=datadirs, linkify_html_dir=run_plan.linkify_html_dir)
+        linkify_html_datadirs(
+            datadirs=datadirs, linkify_html_dir=run_plan.linkify_html_dir
+        )

@@ -144,7 +144,9 @@ def test_selfcontained_datadir_goes_to_skipped_not_plans(tmp_path):
     plans, skipped = _resolve_datadir_plans(structural_context=ctx)
 
     assert plans == []
-    assert skipped == [SkippedDatadir(datadir=datadir, datadir_configfile_found=configfile)]
+    assert skipped == [
+        SkippedDatadir(datadir=datadir, datadir_configfile_found=configfile)
+    ]
 
 
 # ----- mixed datadirs --------------------------------------------------------

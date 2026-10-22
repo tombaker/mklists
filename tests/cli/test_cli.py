@@ -44,7 +44,9 @@ def test_init_datadir_bare_creates_empty_rules_file(tmp_path):
 
 def test_init_datadir_bare_self_contained_creates_empty_mklistsrc(tmp_path):
     """mklists init datadir --bare --self-contained creates an empty .mklistsrc."""
-    CliRunner().invoke(cli, ["init", "datadir", "--bare", "--self-contained", str(tmp_path)])
+    CliRunner().invoke(
+        cli, ["init", "datadir", "--bare", "--self-contained", str(tmp_path)]
+    )
     assert (tmp_path / ".mklistsrc").read_text() == ""
 
 
@@ -56,7 +58,9 @@ def test_init_datadir_no_mklistsrc_by_default(tmp_path):
 
 def test_init_datadir_self_contained_creates_mklistsrc(tmp_path):
     """mklists init datadir --self-contained creates .mklistsrc."""
-    result = CliRunner().invoke(cli, ["init", "datadir", "--self-contained", str(tmp_path)])
+    result = CliRunner().invoke(
+        cli, ["init", "datadir", "--self-contained", str(tmp_path)]
+    )
     assert result.exit_code == 0
     assert (tmp_path / ".mklistsrc").exists()
 
@@ -136,9 +140,10 @@ def test_init_datadir_self_contained_skips_parent_check(tmp_path):
     (tmp_path / "mklists.yaml").write_text("")
     subdir = tmp_path / "sub"
     subdir.mkdir()
-    result = CliRunner().invoke(cli, ["init", "datadir", "--self-contained", str(subdir)])
+    result = CliRunner().invoke(
+        cli, ["init", "datadir", "--self-contained", str(subdir)]
+    )
     assert "Found in parent" not in result.output
-
 
 
 def test_run_exits_cleanly_on_valid_datadir(tmp_path):

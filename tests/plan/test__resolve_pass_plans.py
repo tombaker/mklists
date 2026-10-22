@@ -38,7 +38,9 @@ def fake_make_config(
             backup_depth=2,
         ),
         routing=RoutingConfig(
-            routing_dict={"placeholder.txt": Path("/some/dir")} if routing_enabled else {},
+            routing_dict=(
+                {"placeholder.txt": Path("/some/dir")} if routing_enabled else {}
+            ),
         ),
         safety=SafetyConfig(
             invalid_filename_patterns=[],

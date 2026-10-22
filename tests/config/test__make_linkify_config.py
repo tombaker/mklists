@@ -24,14 +24,21 @@ def test_make_linkify_config_both_null_returns_disabled(tmp_path):
 
 def test_make_linkify_config_md_dir_relative_resolved_against_config_rootdir(tmp_path):
     """Relative linkify_md_dir is resolved against config_rootdir."""
-    cfg = _make_linkify_config(config_dict=_config_dict(linkify_md_dir=".linkify"), config_rootdir=tmp_path)
+    cfg = _make_linkify_config(
+        config_dict=_config_dict(linkify_md_dir=".linkify"), config_rootdir=tmp_path
+    )
 
     assert cfg.linkify_md_dir == (tmp_path / ".linkify").resolve()
 
 
-def test_make_linkify_config_html_dir_relative_resolved_against_config_rootdir(tmp_path):
+def test_make_linkify_config_html_dir_relative_resolved_against_config_rootdir(
+    tmp_path,
+):
     """Relative linkify_html_dir is resolved against config_rootdir."""
-    cfg = _make_linkify_config(config_dict=_config_dict(linkify_html_dir=".linkify_html"), config_rootdir=tmp_path)
+    cfg = _make_linkify_config(
+        config_dict=_config_dict(linkify_html_dir=".linkify_html"),
+        config_rootdir=tmp_path,
+    )
 
     assert cfg.linkify_html_dir == (tmp_path / ".linkify_html").resolve()
 
@@ -49,7 +56,9 @@ def test_make_linkify_config_md_dir_absolute_used_as_is(tmp_path):
 def test_make_linkify_config_both_dirs_set(tmp_path):
     """Both dirs can be set independently."""
     cfg = _make_linkify_config(
-        config_dict=_config_dict(linkify_md_dir=".linkify", linkify_html_dir=".linkify_html"),
+        config_dict=_config_dict(
+            linkify_md_dir=".linkify", linkify_html_dir=".linkify_html"
+        ),
         config_rootdir=tmp_path,
     )
 

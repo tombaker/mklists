@@ -18,6 +18,7 @@ from mklists.structure.resolve import resolve_structural_context
 
 # ─── Error conditions ─────────────────────────────────────────
 
+
 def test_raises_when_startdir_has_no_markers(tmp_path):
     """Raises if startdir has no datatree or datadir markers."""
     with pytest.raises(StructureError):
@@ -28,7 +29,9 @@ def test_raises_when_startdir_has_no_markers(tmp_path):
     "datatree_marker",
     [DATATREE_CONFIGFILE_NAME, DATATREE_RULEFILE_NAME],
 )
-def test_raises_when_startdir_is_both_datatree_root_and_datadir(tmp_path, datatree_marker):
+def test_raises_when_startdir_is_both_datatree_root_and_datadir(
+    tmp_path, datatree_marker
+):
     """Raises if startdir has both datatree marker and datadir marker (ie, .rules)."""
     (tmp_path / datatree_marker).touch()
     (tmp_path / DATADIR_RULEFILE_NAME).touch()
@@ -228,6 +231,7 @@ def test_datatree_root_subdirs_without_rules_are_excluded(tmp_path):
 
     assert len(structural_context.datadir_contexts) == 1
     assert structural_context.datadir_contexts[0].datadir == included
+
 
 # ─── Standalone datadir behaviour ─────────────────────────────
 

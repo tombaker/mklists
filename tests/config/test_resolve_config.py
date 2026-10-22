@@ -71,7 +71,9 @@ def test_resolve_config_datatree_root_rulefile_only_uses_defaults(tmp_path):
     rulefile = tmp_path / "mklists.rules"
     rulefile.touch()
 
-    fake_ctx = make_structural_context(startdir=tmp_path, datatree_rulefile_found=rulefile)
+    fake_ctx = make_structural_context(
+        startdir=tmp_path, datatree_rulefile_found=rulefile
+    )
     config = resolve_config(fake_ctx)
 
     assert config.configfile_used is None
@@ -121,7 +123,9 @@ def test_resolve_config_datadir_in_datatree_finds_parent_configfile(tmp_path):
     assert config.verbose is True
 
 
-def test_resolve_config_datadir_in_datatree_no_parent_configfile_uses_defaults(tmp_path):
+def test_resolve_config_datadir_in_datatree_no_parent_configfile_uses_defaults(
+    tmp_path,
+):
     """Datadir in datatree with no parent config file uses defaults."""
     datadir = tmp_path / "data"
     datadir.mkdir()

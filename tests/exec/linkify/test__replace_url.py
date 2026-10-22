@@ -2,13 +2,13 @@
 
 replace_url receives a re.Match object and calls .group(1) and .group(2) on it.
 
-Constructing a real re.Match requires running an actual regex against a string, 
-which would couple the test to URL_RE internals. 
+Constructing a real re.Match requires running an actual regex against a string,
+which would couple the test to URL_RE internals.
 
-Instead, mocker.Mock() creates a lightweight stand-in 
-whose .group() method is given a side_effect — 
-a lambda that returns controlled values keyed by argument — 
-so each test can specify exactly the URL and punctuation it wants to exercise, 
+Instead, mocker.Mock() creates a lightweight stand-in
+whose .group() method is given a side_effect —
+a lambda that returns controlled values keyed by argument —
+so each test can specify exactly the URL and punctuation it wants to exercise,
 independently of the regex.
 """
 

@@ -85,7 +85,7 @@ def datatree(path: str) -> None:
     potentially share rules (`mklists.rules`) and/or configuration settings
     (`mklists.yaml`).
 
-    By default, `mklists init datatree` creates `mklists.yaml` and 
+    By default, `mklists init datatree` creates `mklists.yaml` and
     `mklists.rules` with commented example content.
 
     Datadirs are created in datatree with `mklists init datatree`.
@@ -97,9 +97,7 @@ def datatree(path: str) -> None:
         raise click.ClickException(str(e)) from e
     for file_path in written:
         click.echo(f"Wrote {file_path}")
-    click.echo(
-        "To add a datadir under this root, run: mklists init datadir <path>."
-    )
+    click.echo("To add a datadir under this root, run: mklists init datadir <path>.")
 
 
 @init.command(cls=_DateCommand)
