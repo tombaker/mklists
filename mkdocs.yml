@@ -1,5 +1,5 @@
 site_name: mklists
-site_description: Rule-based maintenance of plain-text lists
+site_description: Maintain plain-text lists with evolving rules
 site_author: Tom Baker
 repo_url: https://github.com/tombaker/mklists
 edit_uri: edit/main/docs/

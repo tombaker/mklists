@@ -65,7 +65,7 @@ def _echo_startdir_context(startdir: Path) -> None:
 
 @click.group(cls=_DateGroup)
 def cli() -> None:
-    """Rule-based maintenance of plain-text lists."""
+    """Maintain plain-text lists with evolving rules."""
 
 
 @cli.group(cls=_DateGroup, invoke_without_command=True)
