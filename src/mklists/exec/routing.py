@@ -57,10 +57,11 @@ def _unique_destination_filename(
 
     Returns:
         Absolute pathname of target file in destination directory,
-        always prefixed with a UTC timestamp so that successive dispatches
-        to the same destination accumulate rather than overwrite.
+        named `{timestamp}.{filename}-from-directory-{datadir}`. The UTC
+        timestamp prefix ensures that successive dispatches to the same
+        destination accumulate rather than overwrite.
     """
     stem = datadir.name
     src = Path(filename)
     ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%f")
-    return dest_dir / f"{ts}.{src.name}.{stem}"
+    return dest_dir / f"{ts}.{src.name}-from-directory-{stem}"
