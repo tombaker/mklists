@@ -15,7 +15,7 @@ Guides Claude Code (claude.ai/code) when working on code for `mklists`.
 ## Installation
 
 To make `mklists` available globally — in every shell session, regardless of
-which Poetry venv (if any) is active — install it with
+which virtual environment (if any) is active — install it with
 [pipx](https://pipx.pypa.io/):
 
 ```bash
@@ -42,7 +42,7 @@ git config core.hooksPath hooks
 
 `/Users/tbaker/n4ma/nalter` is a sibling Python project by the same author.
 Consult it as a reference for shared tooling decisions: MkDocs setup,
-pre-commit hooks, pylint configuration, Poetry workflow, and coding style.
+pre-commit hooks, pylint configuration, dependency-management workflow, and coding style.
 
 To make changes in `nalter` based on code or settings here, the user must run
 `claude` from within `/Users/tbaker/n4ma/nalter/`. Claude Code's working
@@ -72,9 +72,9 @@ Do NOT run `pytest` or any test commands. The user runs tests independently.
 Other commands must be prefixed with `cd /Users/tbaker/github/tombaker/mklists &&`, for example:
 
 ```bash
-cd /Users/tbaker/github/tombaker/mklists && poetry run black src/ tests/
-cd /Users/tbaker/github/tombaker/mklists && poetry run ruff check src/
-cd /Users/tbaker/github/tombaker/mklists && poetry run mypy src/
+cd /Users/tbaker/github/tombaker/mklists && uv run black src/ tests/
+cd /Users/tbaker/github/tombaker/mklists && uv run ruff check src/
+cd /Users/tbaker/github/tombaker/mklists && uv run mypy src/
 ```
 
 Note: `pytest.ini` enables `--doctest-modules`, so doctests in source modules are collected automatically.
