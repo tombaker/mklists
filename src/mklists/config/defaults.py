@@ -19,7 +19,7 @@ linkify:
   linkify_md_dir: null
   linkify_html_dir: null
   # linkify_md_dir: .linkify
-  # linkify_html_dir: .linkify_html             # good for single, self-contained datadirs
+  # linkify_html_dir: .linkify_html   # good for single, self-contained datadirs
   # linkify_rootdir: /path/to/htmldir
 
 # Routing: move newly generated files with special names to other directories.

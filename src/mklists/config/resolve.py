@@ -1,21 +1,23 @@
 """Resolve Config from defaults and optional user config file."""
 
-from copy import deepcopy
 import difflib
-from pathlib import Path
 import re
+from copy import deepcopy
+from pathlib import Path
 from re import Pattern
 from typing import Any
+
 import yaml
-from mklists.errors import ConfigError, StructureError
+
 from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.config.model import (
     BackupConfig,
+    Config,
     LinkifyConfig,
     RoutingConfig,
     SafetyConfig,
-    Config,
 )
+from mklists.errors import ConfigError, StructureError
 from mklists.structure.markers import DATATREE_CONFIGFILE_NAME
 from mklists.structure.model import StructuralContext
 
@@ -164,7 +166,7 @@ def _collect_valid_keys(d: dict[str, Any], _path: str = "") -> list[str]:
         _path: Dot-separated prefix accumulated during recursion (internal use).
 
     Returns:
-        Flat list of dotted-path strings such as ``['verbose', 'backup.backup_depth', ...]``.
+        Flat list of dotted-path strings eg ``['verbose', 'backup.backup_depth', ...]``.
     """
     keys: list[str] = []
     for key, value in d.items():
@@ -197,10 +199,13 @@ def _check_for_unknown_keys(
     if _valid_keys is None:
         _valid_keys = _collect_valid_keys(defaults_dict)
 
-    for key in user_dict:
-        full_key = f"{_path}.{key}" if _path else key
+    for key, user_value in user_dict.items():
+        if _path:
+            full_key = f"{_path}.{key}"
+        else:
+            full_key = key
         if key not in defaults_dict:
-            msg = f"Config file {configfile.name!r} contains unsupported key: {full_key!r}."
+            msg = f"Config file {configfile.name!r} has unsupported key: {full_key!r}."
             suggestions = difflib.get_close_matches(
                 full_key, _valid_keys, n=2, cutoff=0.6
             )
@@ -212,12 +217,12 @@ def _check_for_unknown_keys(
                     msg += f" Did you mean: {quoted[0]} or {quoted[1]}?"
             raise ConfigError(msg)
         if (
-            isinstance(user_dict[key], dict)
+            isinstance(user_value, dict)
             and isinstance(defaults_dict[key], dict)
             and defaults_dict[key]
         ):
             _check_for_unknown_keys(
-                user_dict[key], defaults_dict[key], configfile, full_key, _valid_keys
+                user_value, defaults_dict[key], configfile, full_key, _valid_keys
             )
 
 

@@ -8,8 +8,8 @@ Run layer:
 """
 
 import shutil
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 from mklists.logging import logger
 

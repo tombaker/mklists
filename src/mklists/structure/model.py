@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from pathlib import Path
+
 from mklists.errors import StructureError
 
 

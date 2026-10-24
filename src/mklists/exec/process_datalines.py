@@ -10,7 +10,7 @@ with fan-out behavior and routing semantics.
 
 import functools
 import re
-from typing import Pattern
+from re import Pattern
 
 from mklists.errors import DataNotFoundError, RulesNotFoundError
 from mklists.rules import Rule

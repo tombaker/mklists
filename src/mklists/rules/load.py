@@ -1,8 +1,9 @@
 """Load and validate transformation rules for a given data directory."""
 
 import re
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, Pattern
+from re import Pattern
 
 from mklists.errors import FilenameError, RuleError
 from mklists.rules.model import Rule, SortKey

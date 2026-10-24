@@ -1,7 +1,7 @@
 """Load and validate transformation rules for a given data directory."""
 
 from dataclasses import dataclass
-from typing import Pattern
+from re import Pattern
 
 
 @dataclass(frozen=True)

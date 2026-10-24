@@ -1,8 +1,8 @@
 """@@@"""
 
-from typing import Pattern
 from dataclasses import dataclass
 from pathlib import Path
+from re import Pattern
 
 
 @dataclass(slots=True, frozen=True)

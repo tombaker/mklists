@@ -2,6 +2,7 @@
 
 from operator import attrgetter
 from pathlib import Path
+
 from mklists.errors import StructureError
 from mklists.structure.markers import (
     DATADIR_CONFIGFILE_NAME,

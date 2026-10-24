@@ -2,10 +2,11 @@
 
 from operator import attrgetter
 from pathlib import Path
+
 from mklists.config.model import SafetyConfig
-from mklists.plan.model import DatadirPlan
 from mklists.exec.process_datalines import dispatch_datalines_to_targets
 from mklists.exec.safety import run_safety_checks
+from mklists.plan.model import DatadirPlan
 
 
 def process_datadir(

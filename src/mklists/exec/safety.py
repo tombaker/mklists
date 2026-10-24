@@ -102,7 +102,7 @@ def _check_file_contents(pathname: Path) -> None:
             for lineno, line in enumerate(f, start=1):
                 if line.strip() == "":
                     raise SafetyError(
-                        f"{pathname}: has blank or whitespace-only line at line {lineno}"
+                        f"{pathname}: at line {lineno}, blank or whitespace-only line."
                     )
     except UnicodeDecodeError as e:
         raise SafetyError(f"{pathname}: is not valid UTF-8: {e}") from e
