@@ -49,13 +49,13 @@ The previous documentation site needs to be re-created from scratch.
 ### 3a — Install MkDocs
 
 ```bash
-poetry add --group dev mkdocs mkdocs-material
+uv add --dev mkdocs mkdocs-material
 ```
 
 ### 3b — Initialise the docs tree
 
 ```bash
-poetry run mkdocs new .
+uv run mkdocs new .
 ```
 
 This creates `mkdocs.yml` and `docs/index.md`. Edit `mkdocs.yml` at minimum:
@@ -82,7 +82,7 @@ existing readthedocs pages for what to include.
 ### 3d — Preview locally
 
 ```bash
-poetry run mkdocs serve
+uv run mkdocs serve --livereload
 ```
 
 Open `http://127.0.0.1:8000` and review every page before publishing.
@@ -132,16 +132,18 @@ Commit both files.
 
 ### 5a — Configure a PyPI token (once per machine)
 
-Generate an API token at https://pypi.org/manage/account/token/ and store it:
+Generate an API token at https://pypi.org/manage/account/token/ and make it
+available to `uv publish` (for example, in your shell profile):
 
 ```bash
-poetry config pypi-token.pypi pypi-<your-token>
+export UV_PUBLISH_TOKEN=pypi-<your-token>
 ```
 
 ### 5b — Build and upload
 
 ```bash
-poetry publish --build
+uv build
+uv publish
 ```
 
 This builds the source distribution and wheel, then uploads both to PyPI.
@@ -175,6 +177,6 @@ Add a redirect or notice if the old URL appears in any external links.
 - [ ] Documentation previewed locally with `mkdocs serve`
 - [ ] Read the Docs build triggered and verified
 - [ ] PyPI token configured
-- [ ] `poetry publish --build` run successfully
+- [ ] `uv build` and `uv publish` run successfully
 - [ ] New version visible at pypi.org/project/mklists/
 - [ ] GitHub Pages site retired (optional)
