@@ -32,7 +32,7 @@ def test_blank_line_fails(tmp_path):
     with pytest.raises(SafetyError) as exc:
         _check_file_contents(p)
 
-    assert "has blank or whitespace-only line" in str(exc.value)
+    assert "blank or whitespace-only line" in str(exc.value)
     assert "line 2" in str(exc.value)
 
 
