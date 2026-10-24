@@ -15,7 +15,6 @@ from mklists.structure.model import (
 )
 from mklists.structure.resolve import resolve_structural_context
 
-
 # ─── Error conditions ─────────────────────────────────────────
 
 

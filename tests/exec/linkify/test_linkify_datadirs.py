@@ -2,7 +2,6 @@
 
 from mklists.exec.linkify import linkify_html_datadirs, linkify_md_datadirs
 
-
 # ---------------------------------------------------------------------------
 # linkify_md_datadirs — flat layout
 # ---------------------------------------------------------------------------

@@ -4,7 +4,6 @@ from click.testing import CliRunner
 from mklists.cli import cli
 from mklists.init.datadir import EXAMPLE_RULES
 
-
 # ── mklists init ──────────────────────────────────────────────────────────────
 
 

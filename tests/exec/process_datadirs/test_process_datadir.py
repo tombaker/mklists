@@ -8,7 +8,6 @@ from mklists.exec.process_datadirs import process_datadir
 from mklists.plan.model import DatadirPlan
 from mklists.rules.model import Rule, SortKey
 
-
 _SAFETY = SafetyConfig(invalid_filename_patterns=[])
 
 

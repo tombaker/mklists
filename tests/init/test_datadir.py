@@ -6,7 +6,6 @@ from mklists.config.defaults import DEFAULT_CONFIG_YAML
 from mklists.errors import InitError
 from mklists.init.datadir import EXAMPLE_RULES, init_datadir
 
-
 # ── .rules file ──────────────────────────────────────────────────────────────
 
 

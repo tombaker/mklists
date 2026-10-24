@@ -7,7 +7,6 @@ from mklists.errors import InitError
 from mklists.init.datadir import EXAMPLE_RULES
 from mklists.init.datatree import init_datatree
 
-
 # ── directory structure ───────────────────────────────────────────────────────
 
 

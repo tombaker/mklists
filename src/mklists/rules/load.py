@@ -157,9 +157,7 @@ def _parse_rule(ruleline_fields: list[str]) -> Rule:
            Each spec is a field number (one-based; 0 = whole line) followed
            by optional modifiers: r=reverse, n=numeric, f=fold-case.
     """
-    (raw_matchfield, raw_pattern, raw_source, raw_target, raw_sortorder) = (
-        ruleline_fields
-    )
+    raw_matchfield, raw_pattern, raw_source, raw_target, raw_sortorder = ruleline_fields
     if not all(
         value.strip() for value in (raw_matchfield, raw_pattern, raw_source, raw_target)
     ):
