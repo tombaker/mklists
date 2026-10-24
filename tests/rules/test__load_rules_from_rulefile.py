@@ -27,7 +27,6 @@ def test_empty_rulefile_returns_empty_list(tmp_path):
     """If rulefile is empty, list returned is also empty."""
     rulefile = write_rulefile(tmp_ruledir=tmp_path, text_to_write="")
     rules = _load_rules_from_rulefile(rulefile)
-    # pylint: disable=use-implicit-booleaness-not-comparison
     assert rules == []
 
 
@@ -45,7 +44,6 @@ def test_comments_and_blank_lines_are_ignored(tmp_path):
 
     rules = _load_rules_from_rulefile(rulefile)
 
-    # pylint: disable=use-implicit-booleaness-not-comparison
     assert rules == []
 
 

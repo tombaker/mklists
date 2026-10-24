@@ -4,8 +4,6 @@ House rule: All regex literals must be raw strings.
 Documentation should make this clear.
 """
 
-# pylint: disable=anomalous-backslash-in-string
-
 import re
 import pytest
 from mklists.errors import RuleError

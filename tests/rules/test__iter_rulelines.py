@@ -1,7 +1,5 @@
 """Tests $MKLMKL/rules/resolve.py"""
 
-# pylint: disable=use-implicit-booleaness-not-comparison
-
 from pathlib import Path
 from mklists.rules.load import _iter_rulelines
 
