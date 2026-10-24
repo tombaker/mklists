@@ -47,7 +47,7 @@ class RunPlan:
     pass_plans: list[PassPlan]
     datadir_plans: list[DatadirPlan]
     skipped_datadirs: list[SkippedDatadir]
-    routing_dict: dict
+    routing_dict: dict[str, Path]
     linkify_md_dir: Path | None
     linkify_html_dir: Path | None
     is_datatree_root: bool

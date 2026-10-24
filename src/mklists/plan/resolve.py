@@ -156,10 +156,13 @@ def _resolve_pass_plans(
         pass_count = 1
 
     # Determine snapshot fields (None when backup disabled).
-    if not config.backup.backup_rootdir:
+    backup_rootdir = config.backup.backup_rootdir
+    if not backup_rootdir:
+        snapshot_rootdir = None
         timestamp = None
         snapshot_datatree_configfiles = []
     else:
+        snapshot_rootdir = config_rootdir / backup_rootdir
         timestamp = datetime.now(UTC).strftime("%Y-%m-%d_%H%M_%S%f")
         snapshot_datatree_configfiles = [
             f
@@ -170,16 +173,16 @@ def _resolve_pass_plans(
             if f is not None
         ]
 
-    return [
-        PassPlan(
-            snapshot_dir=(
-                config_rootdir
-                / config.backup.backup_rootdir
-                / f"{timestamp}_{i + 1:02d}"
-                if timestamp
-                else None
-            ),
-            snapshot_datatree_configfiles=snapshot_datatree_configfiles,
+    pass_plans: list[PassPlan] = []
+    for i in range(pass_count):
+        if snapshot_rootdir is None:
+            snapshot_dir = None
+        else:
+            snapshot_dir = snapshot_rootdir / f"{timestamp}_{i + 1:02d}"
+        pass_plans.append(
+            PassPlan(
+                snapshot_dir=snapshot_dir,
+                snapshot_datatree_configfiles=snapshot_datatree_configfiles,
+            )
         )
-        for i in range(pass_count)
-    ]
+    return pass_plans

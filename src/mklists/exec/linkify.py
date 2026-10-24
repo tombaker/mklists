@@ -115,7 +115,7 @@ def _linkify_lines(text: str) -> str:
     return "<pre>\n" + linked_text.rstrip("\n") + "\n</pre>\n"
 
 
-def _replace_url(match: re.Match) -> str:
+def _replace_url(match: re.Match[str]) -> str:
     """Convert a detected URL into an HTML link while preserving punctuation.
 
     Args:
@@ -133,6 +133,6 @@ def _replace_url(match: re.Match) -> str:
         >>> _replace_url(m)
         '<a href="https://foo.com/path">https://foo.com/path</a>'
     """
-    url = match.group(1)
-    punctuation = match.group(2)
+    url: str = match.group(1)
+    punctuation: str = match.group(2)
     return f'<a href="{url}">{url}</a>' + punctuation

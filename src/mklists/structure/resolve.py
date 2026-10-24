@@ -58,7 +58,7 @@ def resolve_structural_context(startdir: Path | str) -> StructuralContext:
     )
 
 
-def _find_datadirs(config_rootdir: Path | str) -> list[Path]:
+def _find_datadirs(config_rootdir: Path) -> list[Path]:
     """List paths of data directories under config root directory.
 
     Args:
