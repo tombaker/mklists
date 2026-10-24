@@ -17,7 +17,6 @@ mklists = "mklists.cli:cli"
 dev = [
     "pytest>=9.0.3,<10.0.0",
     "pytest-mock>=3.15.1,<4.0.0",
-    "black>=26.3.1,<27.0.0",
     "coverage>=7.5,<8.0",
     "pylint>=4.0.4,<5.0.0",
     "ruff>=0.14.11,<0.15.0",
@@ -39,9 +38,6 @@ constraint-dependencies = [
 requires = ["uv_build>=0.11.8,<0.12.0"]
 build-backend = "uv_build"
 
-[tool.black]
-line-length = 88
-
 [tool.ruff]
 line-length = 88
 
@@ -56,11 +52,12 @@ exclude = [
   "explore",
   "htmlcov",
   "notes",
-  "tests",
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I"]
+# tests/ is formatted by `ruff format` but not linted
+exclude = ["tests"]
+select = ["E", "F", "W", "I", "PL", "B", "UP"]
 # Match flake8 ignores (Black-compatible)
 extend-ignore = [
     "E203",  # whitespace before ":"

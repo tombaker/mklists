@@ -173,7 +173,9 @@ def _resolve_pass_plans(
     return [
         PassPlan(
             snapshot_dir=(
-                config_rootdir / config.backup.backup_rootdir / f"{timestamp}_{i+1:02d}"
+                config_rootdir
+                / config.backup.backup_rootdir
+                / f"{timestamp}_{i + 1:02d}"
                 if timestamp
                 else None
             ),

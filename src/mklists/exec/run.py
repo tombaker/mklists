@@ -30,7 +30,6 @@ def run_mklists(run_plan: RunPlan) -> list[Path]:
     total_passes = len(run_plan.pass_plans)
     for pass_number, pass_plan in enumerate(run_plan.pass_plans, start=1):
         if pass_plan.snapshot_dir is not None:
-
             init_snapshot_dir(
                 snapshot_dir=pass_plan.snapshot_dir,
                 snapshot_datatree_configfiles=pass_plan.snapshot_datatree_configfiles,
