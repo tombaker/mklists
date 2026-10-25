@@ -36,7 +36,7 @@ def test_file_is_moved(datadirs, tmp_path):
     assert not src.exists()
     names = [p.name for p in dest.iterdir()]
     assert len(names) == 1
-    assert names[0].endswith(".to_a.txt-from-directory-data1")
+    assert names[0].endswith(".to_a.txt-fromdir-data1")
 
 
 def test_dest_missing_file_not_moved(datadirs, tmp_path):
@@ -75,8 +75,8 @@ def test_multiple_datadirs(tmp_path):
     assert not (d1 / "to_a.txt").exists()
     assert not (d2 / "to_a.txt").exists()
     names = [p.name for p in dest.iterdir()]
-    assert any(n.endswith(".to_a.txt-from-directory-d1") for n in names)
-    assert any(n.endswith(".to_a.txt-from-directory-d2") for n in names)
+    assert any(n.endswith(".to_a.txt-fromdir-d1") for n in names)
+    assert any(n.endswith(".to_a.txt-fromdir-d2") for n in names)
 
 
 def test_redistribute_datafiles_no_collision(tmp_path: Path):
@@ -99,5 +99,5 @@ def test_redistribute_datafiles_no_collision(tmp_path: Path):
 
     names = [p.name for p in dest.iterdir()]
     assert len(names) == 2
-    assert any(n.endswith(".to_a.txt-from-directory-a") for n in names)
-    assert any(n.endswith(".to_a.txt-from-directory-b") for n in names)
+    assert any(n.endswith(".to_a.txt-fromdir-a") for n in names)
+    assert any(n.endswith(".to_a.txt-fromdir-b") for n in names)
